@@ -1,0 +1,69 @@
+import { Link, routes } from '@redwoodjs/router'
+
+const MAX_STRING_LENGTH = 150
+
+const <%= model.pascalCasePluralName %> = ({ <%= model.pluralName %> }) => {
+  const truncate = (text) => {
+    let output = text
+
+    if (text && text.length > MAX_STRING_LENGTH) {
+      output = output.substring(0, MAX_STRING_LENGTH) + '...'
+    }
+
+    return output
+  }
+
+  const onDeleteClick = (id) => {
+    if (confirm('Are you sure you want to delete <%= model.name %> ' + id + '?')) {
+      // TODO: Implement
+      // delete<%= model.name %>({ variables: { id } })
+    }
+  }
+
+  return (
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>
+              <span className="sr-only">Actions</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {<%= model.pluralName %>.map((<%= model.name %>) => (
+            <tr key={<%= model.name %>.id}>
+              <td>{truncate(<%= model.name %>.id)}</td>
+              <td>
+                <nav className="rw-table-actions">
+                  <Link
+                    to={routes.arwdmin<%= model.pascalCaseName %>({ id: <%= model.name %>.id })}
+                    title={'Show <%= model.name %> ' + <%= model.name %>.id + ' details'}
+                  >
+                    Show
+                  </Link>
+                  <Link
+                    to={routes.arwdminEdit<%= model.pascalCaseName %>({ id: <%= model.name %>.id })}
+                    title={'Edit <%= model.name %> ' + <%= model.name %>.id}
+                  >
+                    Edit
+                  </Link>
+                  <button
+                    type="button"
+                    title={'Delete <%= model.name %> ' + <%= model.name %>.id}
+                    onClick={() => onDeleteClick(<%= model.name %>.id)}
+                  >
+                    Delete
+                  </button>
+                </nav>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+export default <%= model.pascalCasePluralName %>

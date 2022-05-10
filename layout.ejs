@@ -1,0 +1,24 @@
+import { Link, routes } from '@redwoodjs/router'
+
+const ArwdminLayout = ({ children }) => {
+  return (
+    <div>
+      <div>
+        <nav>
+          <ul>
+            <% for (let name of pluralModelNames) { %>
+              <li>
+                <Link to={routes.arwdmin${name}()}>
+                  ${name}
+                </Link>
+              </li>
+            <% } %>
+          </ul>
+        </nav>
+        <main>{children}</main>
+      </div>
+    </div>
+  )
+}
+
+export default ArwdminLayout

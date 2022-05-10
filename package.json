@@ -1,0 +1,24 @@
+{
+  "name": "arwdmin",
+  "version": "0.1.0",
+  "description": "RedwoodJS Admin Panel",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tobbe Lundberg",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/sdk": "^3.13.0",
+    "ejs": "^3.1.7",
+    "pascalcase": "^2.0.0",
+    "pluralize": "^8.0.0"
+  },
+  "devDependencies": {
+    "@types/ejs": "^3.1.0",
+    "@types/pascalcase": "^1.0.1",
+    "@types/pluralize": "^0.0.29",
+    "@types/prompts": "^2.0.14"
+  },
+  "type": "module"
+}
