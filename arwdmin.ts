@@ -257,7 +257,7 @@ function findLastIndex<T>(
 }
 
 function generateLayout(modelNames: string[]) {
-  const template: string = fs.readFileSync("./modelListPage.ejs", "utf-8");
+  const template: string = fs.readFileSync("./layout.ejs", "utf-8");
 
   return ejsRender(template, { pluralModelNames: modelNames.map(pluralize) });
 }
@@ -283,7 +283,6 @@ function createArwdminLayoutDir(rwRoot: string) {
 
 // TODO: Filter models first, then pass the same list here and to `createModelPages`
 function createLayout(layoutPath: string, modelNames: string[]) {
-  // const modelNameVariants = getModelNameVariants(modelName)
   const layout = generateLayout(modelNames);
 
   fs.writeFileSync(path.join(layoutPath, "ArwdminLayout.tsx"), layout);
