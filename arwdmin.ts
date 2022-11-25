@@ -6,6 +6,7 @@ import path from "path";
 import ejs from "ejs";
 import prismaSdk from "@prisma/sdk";
 import pascalcase from "pascalcase";
+import camelcase from "camelcase";
 
 import { pluralize } from "./lib/rwPluralize";
 
@@ -19,7 +20,7 @@ const { getDMMF } = prismaSdk;
 
 console.log("aRWdmin v0.1.0");
 
-const rwRoot = findRwRoot(path.join(process.cwd(), "..", "acm-store-rw"));
+const rwRoot = findRwRoot(path.join(process.cwd(), "..", "acm-admin"));
 const modelNames = await getModelNames(rwRoot);
 const pagesPath = createArwdminPagesDir(rwRoot);
 const layoutPath = createArwdminLayoutDir(rwRoot);
@@ -123,15 +124,19 @@ function createModelPages(pagesPath: string, modelNames: string[]) {
 
 interface ModelNameVariants {
   modelName: string;
-  pascalCaseModelName: string;
   pluralModelName: string;
+  camelCaseModelName: string;
+  camelCasePluralModelName: string;
+  pascalCaseModelName: string;
   pascalCasePluralModelName: string;
 }
 
 function getModelNameVariants(modelName: string): ModelNameVariants {
   return {
     modelName,
-    pluralModelName: modelName + "s",
+    pluralModelName: pluralize(modelName),
+    camelCaseModelName: camelcase(modelName),
+    camelCasePluralModelName: pluralize(camelcase(modelName)),
     pascalCaseModelName: pascalcase(modelName),
     pascalCasePluralModelName: pluralize(pascalcase(modelName)),
   };
@@ -177,20 +182,25 @@ function updateRoutes(rwRoot: string, modelNames: string[]) {
 
   const routesFileLines = fs.readFileSync(routesPath).toString().split("\n");
 
-  const existingLayoutImportIndex = findLastIndex(routesFileLines, (line) =>
-    /^\s*import \w+Layout from/.test(line)
-  );
-
-  console.log("Current routes file", routesFileLines);
-  console.log("Last layout import", routesFileLines[existingLayoutImportIndex]);
-
   const hasArwdminLayoutImport = !!routesFileLines.find((line) =>
     /^\s*import ArwdminLayout from/.test(line)
   );
 
   if (!hasArwdminLayoutImport) {
+    // First look for Layout imports
+    let existingImportIndex = findLastIndex(routesFileLines, (line) =>
+      /^\s*import .+Layout\b.* from/.test(line)
+    );
+
+    if (existingImportIndex === -1) {
+      // Didn't find any Layout imports. Let's look for any kind of import
+      existingImportIndex = findLastIndex(routesFileLines, (line) =>
+        /^\s*import .+ from/.test(line)
+      );
+    }
+
     routesFileLines.splice(
-      existingLayoutImportIndex + 1,
+      existingImportIndex + 1,
       0,
       "import ArwdminLayout from 'src/layouts/ArwdminLayout'"
     );
@@ -202,13 +212,12 @@ function updateRoutes(rwRoot: string, modelNames: string[]) {
   const indent =
     "  " + routesFileLines[routerEndIndex]?.match(/^(\s*)/)?.[1] ?? "";
 
-  console.log("routerEndIndex", routerEndIndex);
-  console.log("routerEndIndex line", routesFileLines[routerEndIndex]);
-
   let arwdminRoutesBeginIndex = routerEndIndex - 1;
 
   // If the "notfound" page is currently last, let's keep it there
-  if (/^\s*<Route\s.*\snotfound\s/.test(routesFileLines[routerEndIndex - 1] || '')) {
+  if (
+    /^\s*<Route\s.*\snotfound\s/.test(routesFileLines[routerEndIndex - 1] || "")
+  ) {
     arwdminRoutesBeginIndex--;
   }
 
@@ -216,18 +225,17 @@ function updateRoutes(rwRoot: string, modelNames: string[]) {
     arwdminRoutesBeginIndex,
     0,
     `${indent}<Set wrap={ArwdminLayout}>`,
-    ...modelNames.map(
-      (name) =>
-        `${indent}  <Route path="/arwdmin/${pluralize(
-          name
-        )}" page={Arwdmin${pluralize(name)}Page} name="arwdmin${pluralize(
-          name
-        )} />"`
-    ),
+    ...modelNames.map((name) => {
+      const modelNames = getModelNameVariants(name);
+      const routeName = modelNames.camelCasePluralModelName;
+      const pluralName = modelNames.pluralModelName;
+      return `${indent}  <Route path="/arwdmin/${routeName}" page={Arwdmin${pluralName}Page} name="arwdmin${pluralName}" />`;
+    }),
     `${indent}</Set>`
   );
 
   console.log("New routes file", routesFileLines);
+  fs.writeFileSync(routesPath, routesFileLines.join("\n"));
 }
 
 /**
@@ -247,7 +255,7 @@ function findLastIndex<T>(
   let l = array.length;
 
   while (l--) {
-    const arrayElement = array[l]
+    const arrayElement = array[l];
     if (arrayElement !== undefined && predicate(arrayElement, l, array)) {
       return l;
     }
