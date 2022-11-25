@@ -1,0 +1,40 @@
+import type { Find<%= model.pluralName %> } from 'types/graphql'
+
+import { Link, routes } from '@redwoodjs/router'
+import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
+
+import <%= model.pluralName %> from './<%= model.pluralName %>'
+
+export const QUERY = gql`
+  query Find<%= model.pluralName %> {
+    <%= model.camelPluralName %> {
+      id
+      createdAt
+      updatedAt
+      name
+    }
+  }
+`
+
+export const Loading = () => <div>Loading...</div>
+
+export const Empty = () => {
+  return (
+    <div className="rw-text-center">
+      No <%= model.camelPluralName %> yet.{' '}
+      <Link to={routes.new<%= model.name %>()} className="rw-link">
+        Create one?
+      </Link>
+    </div>
+  )
+}
+
+export const Failure = ({ error }: CellFailureProps) => {
+  console.error('error', error)
+
+  return <div className="rw-cell-error">{error?.message}</div>
+}
+
+export const Success = ({ <%= model.camelPluralName %> }: CellSuccessProps<Find<%= model.pluralName %>>) => {
+  return <<%= model.pluralName %> <%= model.camelPluralName %>={<%= model.camelPluralName %>} />
+}

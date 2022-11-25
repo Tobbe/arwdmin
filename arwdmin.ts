@@ -85,7 +85,7 @@ function createModelPages(pagesPath: string, modelNames: string[]) {
     const modelListPage = generateModelListPage({
       pascalCasePluralName: modelNameVariants.pascalCasePluralModelName,
     });
-    // const modelListCell = generateModelListCell(modelNameVariants);
+    const modelListCell = generateModelListCell(modelNameVariants);
     const modelListComponent = generateModelListComponent(modelNameVariants);
     // const modelPage = generateModelComponent(modelNameVariants);
     // const modelCell = generateModelComponent(modelNameVariants);
@@ -95,7 +95,7 @@ function createModelPages(pagesPath: string, modelNames: string[]) {
       path.join(
         pagesPath,
         modelNameVariants.pascalCaseModelName,
-        modelNameVariants.pascalCasePluralModelName
+        modelNameVariants.pascalCasePluralModelName + "Page"
       ),
       { recursive: true }
     );
@@ -104,7 +104,7 @@ function createModelPages(pagesPath: string, modelNames: string[]) {
       path.join(
         pagesPath,
         modelNameVariants.pascalCaseModelName,
-        modelNameVariants.pascalCasePluralModelName,
+        modelNameVariants.pascalCasePluralModelName + "Page",
         modelNameVariants.pascalCasePluralModelName + "Page.tsx"
       ),
       modelListPage
@@ -114,10 +114,20 @@ function createModelPages(pagesPath: string, modelNames: string[]) {
       path.join(
         pagesPath,
         modelNameVariants.pascalCaseModelName,
-        modelNameVariants.pascalCasePluralModelName,
+        modelNameVariants.pascalCasePluralModelName + "Page",
         modelNameVariants.pascalCasePluralModelName + ".tsx"
       ),
       modelListComponent
+    );
+
+    fs.writeFileSync(
+      path.join(
+        pagesPath,
+        modelNameVariants.pascalCaseModelName,
+        modelNameVariants.pascalCasePluralModelName + "Page",
+        modelNameVariants.pascalCasePluralModelName + "Cell.tsx"
+      ),
+      modelListCell
     );
   }
 }
@@ -152,17 +162,33 @@ function generateModelListPage({
   return ejsRender(template, { model: { pascalCasePluralName } });
 }
 
-function generateModelListComponent({
+function generateModelListCell({
   modelName,
-  pascalCaseModelName,
   pluralModelName,
-  pascalCasePluralModelName,
+  camelCasePluralModelName,
 }: ModelNameVariants) {
   const model = {
     name: modelName,
-    pascalCaseName: pascalCaseModelName,
     pluralName: pluralModelName,
-    pascalCasePluralName: pascalCasePluralModelName,
+    camelPluralName: camelCasePluralModelName,
+  };
+
+  const template = fs.readFileSync("./modelListCell.ejs", "utf-8");
+
+  return ejsRender(template, { model });
+}
+
+function generateModelListComponent({
+  modelName,
+  pluralModelName,
+  camelCaseModelName,
+  camelCasePluralModelName,
+}: ModelNameVariants) {
+  const model = {
+    name: modelName,
+    pluralName: pluralModelName,
+    camelName: camelCaseModelName,
+    camelPluralName: camelCasePluralModelName,
   };
 
   // TODO: Make sure the sr-only css class exists
@@ -175,7 +201,10 @@ function updateRoutes(rwRoot: string, modelNames: string[]) {
   let routesPath = path.join(rwRoot, "web", "src", "Routes.tsx");
 
   if (!fs.existsSync(routesPath)) {
-    routesPath = path.join(rwRoot, "web", "src", "Routes.js");
+    console.error("No Routes.tsx file found");
+    process.exit(1);
+    // TODO: For when we support JS projects:
+    // routesPath = path.join(rwRoot, "web", "src", "Routes.js");
   }
 
   console.log("About to update", routesPath);
@@ -206,6 +235,40 @@ function updateRoutes(rwRoot: string, modelNames: string[]) {
     );
   }
 
+  const rwjsRouterImportIndex = routesFileLines.findIndex((line) =>
+    /from '@redwoodjs\/router'/.test(line)
+  );
+  const rwjsRouterImportLine = routesFileLines[rwjsRouterImportIndex];
+
+  if (!rwjsRouterImportLine) {
+    console.error("Couldn't find @redwoodjs/router import");
+    process.exit(1);
+  }
+
+  if (!/\bSet\b/.test(rwjsRouterImportLine)) {
+    const insertIndex = rwjsRouterImportLine.lastIndexOf("}");
+    routesFileLines[rwjsRouterImportIndex] = rwjsRouterImportLine
+      .split("")
+      .splice(insertIndex, 0, ", Set ")
+      .join("");
+  }
+
+  const arwdminLayoutSetStartIndex = routesFileLines.findIndex((line) =>
+    /<Set wrap={ArwdminLayout}>/.test(line)
+  );
+
+  if (arwdminLayoutSetStartIndex >= 0) {
+    const arwdminLayoutSetEndIndex = routesFileLines.findIndex(
+      (line, index) =>
+        index > arwdminLayoutSetStartIndex && /<\/Set>/.test(line)
+    );
+
+    routesFileLines.splice(
+      arwdminLayoutSetStartIndex,
+      arwdminLayoutSetEndIndex - arwdminLayoutSetStartIndex + 1
+    );
+  }
+
   const routerEndIndex = routesFileLines.findIndex((line) =>
     /^\s*<\/Router>/.test(line)
   );
@@ -229,7 +292,7 @@ function updateRoutes(rwRoot: string, modelNames: string[]) {
       const modelNames = getModelNameVariants(name);
       const routeName = modelNames.camelCasePluralModelName;
       const pluralName = modelNames.pluralModelName;
-      return `${indent}  <Route path="/arwdmin/${routeName}" page={Arwdmin${pluralName}Page} name="arwdmin${pluralName}" />`;
+      return `${indent}  <Route path="/arwdmin/${routeName}" page={Arwdmin${name}${pluralName}Page} name="arwdmin${pluralName}" />`;
     }),
     `${indent}</Set>`
   );
@@ -266,6 +329,7 @@ function findLastIndex<T>(
 
 function generateLayout(modelNames: string[]) {
   const template: string = fs.readFileSync("./layout.ejs", "utf-8");
+  console.log("pluralModelNames", modelNames.map(pluralize));
 
   return ejsRender(template, { pluralModelNames: modelNames.map(pluralize) });
 }

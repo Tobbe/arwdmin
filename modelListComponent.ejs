@@ -2,7 +2,7 @@ import { Link, routes } from '@redwoodjs/router'
 
 const MAX_STRING_LENGTH = 150
 
-const <%= model.pascalCasePluralName %> = ({ <%= model.pluralName %> }) => {
+const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
   const truncate = (text) => {
     let output = text
 
@@ -32,27 +32,27 @@ const <%= model.pascalCasePluralName %> = ({ <%= model.pluralName %> }) => {
           </tr>
         </thead>
         <tbody>
-          {<%= model.pluralName %>.map((<%= model.name %>) => (
-            <tr key={<%= model.name %>.id}>
-              <td>{truncate(<%= model.name %>.id)}</td>
+          {<%= model.camelPluralName %>.map((<%= model.camelName %>) => (
+            <tr key={<%= model.camelName %>.id}>
+              <td>{truncate(<%= model.camelName %>.id)}</td>
               <td>
                 <nav className="rw-table-actions">
                   <Link
-                    to={routes.arwdmin<%= model.pascalCaseName %>({ id: <%= model.name %>.id })}
-                    title={'Show <%= model.name %> ' + <%= model.name %>.id + ' details'}
+                    to={routes.arwdmin<%= model.camelName %>({ id: <%= model.camelName %>.id })}
+                    title={'Show <%= model.name %> ' + <%= model.camelName %>.id + ' details'}
                   >
                     Show
                   </Link>
                   <Link
-                    to={routes.arwdminEdit<%= model.pascalCaseName %>({ id: <%= model.name %>.id })}
-                    title={'Edit <%= model.name %> ' + <%= model.name %>.id}
+                    to={routes.arwdminEdit<%= model.camelName %>({ id: <%= model.camelName %>.id })}
+                    title={'Edit <%= model.name %> ' + <%= model.camelName %>.id}
                   >
                     Edit
                   </Link>
                   <button
                     type="button"
-                    title={'Delete <%= model.name %> ' + <%= model.name %>.id}
-                    onClick={() => onDeleteClick(<%= model.name %>.id)}
+                    title={'Delete <%= model.name %> ' + <%= model.camelName %>.id}
+                    onClick={() => onDeleteClick(<%= model.camelName %>.id)}
                   >
                     Delete
                   </button>
@@ -66,4 +66,4 @@ const <%= model.pascalCasePluralName %> = ({ <%= model.pluralName %> }) => {
   )
 }
 
-export default <%= model.pascalCasePluralName %>
+export default <%= model.pluralName %>
