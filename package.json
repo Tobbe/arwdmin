@@ -14,12 +14,14 @@
     "ejs": "^3.1.7",
     "pascalcase": "^2.0.0",
     "pluralize": "^8.0.0",
+    "prettier": "^2.8.0",
     "typescript": "^4.6.4"
   },
   "devDependencies": {
     "@types/ejs": "^3.1.0",
     "@types/pascalcase": "^1.0.1",
     "@types/pluralize": "^0.0.29",
+    "@types/prettier": "^2.7.1",
     "@types/prompts": "^2.0.14"
   },
   "type": "module"

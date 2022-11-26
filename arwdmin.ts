@@ -13,11 +13,12 @@ import {
   getModelNameVariants,
   ModelNameVariants,
 } from "./schema";
+import { prettify } from "./prettier";
 
 function ejsRender(template: string, data: any) {
   // Return type of render depends on opts.async. We're not specifying it, and
-  // it default to `false`, so we know the return type will be `string`
-  return ejs.render(template, data, {}) as string;
+  // it defaults to `false`, so we know the return type will be `string`
+  return prettify(ejs.render(template, data, {}) as string, 'ts');
 }
 
 console.log("aRWdmin v0.1.0");
