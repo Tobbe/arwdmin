@@ -1,28 +1,28 @@
-import plurals from "pluralize";
+import plurals from 'pluralize'
 
 interface Mappings {
-  toSingular: Record<string, string>;
-  toPlural: Record<string, string>;
+  toSingular: Record<string, string>
+  toPlural: Record<string, string>
 }
 
 const mappings: Mappings = {
   toSingular: {},
   toPlural: {},
-};
+}
 
 /**
  * Find Bar in FooBazBar
  */
 function lastWord(str: string) {
-  const capitals = str.match(/[A-Z]/g);
+  const capitals = str.match(/[A-Z]/g)
   let lastIndex = -1
 
   const lastCapital = capitals?.slice(-1)[0]
   if (lastCapital) {
-    lastIndex = str.lastIndexOf(lastCapital);
+    lastIndex = str.lastIndexOf(lastCapital)
   }
 
-  return lastIndex >= 0 ? str.slice(lastIndex) : str;
+  return lastIndex >= 0 ? str.slice(lastIndex) : str
 }
 
 /**
@@ -31,20 +31,20 @@ function lastWord(str: string) {
 export function pluralize(word: string): string {
   const existingMapping = mappings.toPlural[word]
   if (existingMapping) {
-    return existingMapping;
+    return existingMapping
   }
 
   // Sometimes `word` is a PascalCased multi-word, like FarmEquipment
   // In those cases we only want to pass the last word on to the `pluralize`
   // library
-  const singular = lastWord(word);
-  const base = word.slice(0, word.length - singular.length);
+  const singular = lastWord(word)
+  const base = word.slice(0, word.length - singular.length)
 
   if (mappings.toPlural[singular]) {
-    return base + mappings.toPlural[singular];
+    return base + mappings.toPlural[singular]
   }
 
-  return base + plurals.plural(singular);
+  return base + plurals.plural(singular)
 }
 
 /**
@@ -52,25 +52,25 @@ export function pluralize(word: string): string {
  */
 export function singularize(word: string) {
   if (mappings.toSingular[word]) {
-    return mappings.toSingular[word];
+    return mappings.toSingular[word]
   }
 
-  const plural = lastWord(word);
-  const base = word.slice(0, word.length - plural.length);
+  const plural = lastWord(word)
+  const base = word.slice(0, word.length - plural.length)
 
   if (mappings.toSingular[plural]) {
-    return base + mappings.toSingular[plural];
+    return base + mappings.toSingular[plural]
   }
 
-  return base + plurals.singular(plural);
+  return base + plurals.singular(plural)
 }
 
 export function isPlural(word: string) {
-  return plurals.isPlural(lastWord(word));
+  return plurals.isPlural(lastWord(word))
 }
 
 export function isSingular(word: string) {
-  return plurals.isSingular(lastWord(word));
+  return plurals.isSingular(lastWord(word))
 }
 
 /**
@@ -102,15 +102,15 @@ export function isSingular(word: string) {
 export function addSingularPlural(singular: string, plural: string) {
   const existingPlural = Object.keys(mappings.toSingular).find(
     (key) => mappings.toSingular[key] === singular
-  );
+  )
 
   if (existingPlural) {
-    delete mappings.toSingular[existingPlural];
-    delete mappings.toPlural[existingPlural];
+    delete mappings.toSingular[existingPlural]
+    delete mappings.toPlural[existingPlural]
   }
 
-  mappings.toPlural[singular] = plural;
-  mappings.toPlural[plural] = plural;
-  mappings.toSingular[plural] = singular;
-  mappings.toSingular[singular] = singular;
+  mappings.toPlural[singular] = plural
+  mappings.toPlural[plural] = plural
+  mappings.toSingular[plural] = singular
+  mappings.toSingular[singular] = singular
 }

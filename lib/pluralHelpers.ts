@@ -24,9 +24,9 @@ export const validatePlural = (plural: string, singular: string) => {
 }
 
 interface Args {
-  model: string,
-  isDestroyer: boolean,
-  forcePrompt: boolean,
+  model: string
+  isDestroyer: boolean
+  forcePrompt: boolean
 }
 
 // Ask user for plural version, if singular & plural are same for a word. For
