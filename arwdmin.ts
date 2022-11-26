@@ -124,7 +124,10 @@ function generateModelListPage({
 }: {
   pascalCasePluralName: string
 }): string {
-  const template: string = fs.readFileSync('./modelListPage.ejs', 'utf-8')
+  const template: string = fs.readFileSync(
+    './templates/modelListPage.ejs',
+    'utf-8'
+  )
 
   return ejsRender(template, { model: { pascalCasePluralName } })
 }
@@ -139,7 +142,7 @@ function generateModelListCell(
     camelPluralName: camelCasePluralModelName,
   }
 
-  const template = fs.readFileSync('./modelListCell.ejs', 'utf-8')
+  const template = fs.readFileSync('./templates/modelListCell.ejs', 'utf-8')
 
   return ejsRender(template, { model, modelFields })
 }
@@ -160,13 +163,16 @@ function generateModelListComponent({
   }
 
   // TODO: Make sure the sr-only css class exists
-  const template = fs.readFileSync('./modelListComponent.ejs', 'utf-8')
+  const template = fs.readFileSync(
+    './templates/modelListComponent.ejs',
+    'utf-8'
+  )
 
   return ejsRender(template, { model })
 }
 
 function generateLayout(modelNames: string[]) {
-  const template: string = fs.readFileSync('./layout.ejs', 'utf-8')
+  const template: string = fs.readFileSync('./templates/layout.ejs', 'utf-8')
 
   return ejsRender(template, {
     pluralModelNames: modelNames.map(
