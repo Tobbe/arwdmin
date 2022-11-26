@@ -4,11 +4,15 @@
 import fs from "fs";
 import path from "path";
 import ejs from "ejs";
-import prismaSdk from "@prisma/sdk";
-import pascalcase from "pascalcase";
-import camelcase from "camelcase";
+import type { DMMF } from "@prisma/generator-helper";
 
-import { pluralize } from "./lib/rwPluralize";
+import { updateRoutes } from "./routes";
+import {
+  getModelFields,
+  getModelNames,
+  getModelNameVariants,
+  ModelNameVariants,
+} from "./schema";
 
 function ejsRender(template: string, data: any) {
   // Return type of render depends on opts.async. We're not specifying it, and
@@ -16,38 +20,15 @@ function ejsRender(template: string, data: any) {
   return ejs.render(template, data, {}) as string;
 }
 
-const { getDMMF } = prismaSdk;
-
 console.log("aRWdmin v0.1.0");
 
 const rwRoot = findRwRoot(path.join(process.cwd(), "..", "acm-admin"));
 const modelNames = await getModelNames(rwRoot);
 const pagesPath = createArwdminPagesDir(rwRoot);
 const layoutPath = createArwdminLayoutDir(rwRoot);
-await createModelPages(pagesPath, modelNames);
+await createModelPages(rwRoot, pagesPath, modelNames);
 createLayout(layoutPath, modelNames);
 updateRoutes(rwRoot, modelNames);
-
-/*
- * Returns the DMMF defined by `prisma` resolving the relevant `schema.prisma` path.
- */
-function getSchemaDefinitions(rwRoot: string) {
-  // TODO: read 'api' name from redwood.toml
-  const schemaPath = path.join(rwRoot, "api", "db", "schema.prisma");
-
-  return getDMMF({ datamodelPath: schemaPath });
-}
-
-async function getModelNames(rwRoot: string) {
-  const schema = await getSchemaDefinitions(rwRoot);
-  const modelNames: string[] = [];
-
-  for (const model of schema.datamodel.models) {
-    modelNames.push(model.name);
-  }
-
-  return modelNames;
-}
 
 function findRwRoot(dir = process.cwd()): string {
   if (fs.existsSync(path.join(dir, "redwood.toml"))) {
@@ -76,16 +57,21 @@ function createArwdminPagesDir(rwRoot: string) {
 //       Test with DVD (all-caps model).
 //       Test with QRCode (partly all-caps).
 //       Test with single-character model names, both upper- and lowercase
-function createModelPages(pagesPath: string, modelNames: string[]) {
+async function createModelPages(
+  rwRoot: string,
+  pagesPath: string,
+  modelNames: string[]
+) {
   for (const modelName of modelNames) {
     console.log("Creating pages for", modelName);
+    const fields = await getModelFields(rwRoot, modelName);
 
     const modelNameVariants = getModelNameVariants(modelName);
 
     const modelListPage = generateModelListPage({
       pascalCasePluralName: modelNameVariants.pascalCasePluralModelName,
     });
-    const modelListCell = generateModelListCell(modelNameVariants);
+    const modelListCell = generateModelListCell(modelNameVariants, fields);
     const modelListComponent = generateModelListComponent(modelNameVariants);
     // const modelPage = generateModelComponent(modelNameVariants);
     // const modelCell = generateModelComponent(modelNameVariants);
@@ -132,26 +118,6 @@ function createModelPages(pagesPath: string, modelNames: string[]) {
   }
 }
 
-interface ModelNameVariants {
-  modelName: string;
-  pluralModelName: string;
-  camelCaseModelName: string;
-  camelCasePluralModelName: string;
-  pascalCaseModelName: string;
-  pascalCasePluralModelName: string;
-}
-
-function getModelNameVariants(modelName: string): ModelNameVariants {
-  return {
-    modelName,
-    pluralModelName: pluralize(modelName),
-    camelCaseModelName: camelcase(modelName),
-    camelCasePluralModelName: pluralize(camelcase(modelName)),
-    pascalCaseModelName: pascalcase(modelName),
-    pascalCasePluralModelName: pluralize(pascalcase(modelName)),
-  };
-}
-
 function generateModelListPage({
   pascalCasePluralName,
 }: {
@@ -162,11 +128,10 @@ function generateModelListPage({
   return ejsRender(template, { model: { pascalCasePluralName } });
 }
 
-function generateModelListCell({
-  modelName,
-  pluralModelName,
-  camelCasePluralModelName,
-}: ModelNameVariants) {
+function generateModelListCell(
+  { modelName, pluralModelName, camelCasePluralModelName }: ModelNameVariants,
+  modelFields: DMMF.Field[]
+) {
   const model = {
     name: modelName,
     pluralName: pluralModelName,
@@ -175,18 +140,20 @@ function generateModelListCell({
 
   const template = fs.readFileSync("./modelListCell.ejs", "utf-8");
 
-  return ejsRender(template, { model });
+  return ejsRender(template, { model, modelFields });
 }
 
 function generateModelListComponent({
   modelName,
-  pluralModelName,
+  pascalCasePluralModelName,
+  pascalCaseModelName,
   camelCaseModelName,
   camelCasePluralModelName,
 }: ModelNameVariants) {
   const model = {
     name: modelName,
-    pluralName: pluralModelName,
+    pluralName: pascalCasePluralModelName,
+    pascalName: pascalCaseModelName,
     camelName: camelCaseModelName,
     camelPluralName: camelCasePluralModelName,
   };
@@ -197,141 +164,14 @@ function generateModelListComponent({
   return ejsRender(template, { model });
 }
 
-function updateRoutes(rwRoot: string, modelNames: string[]) {
-  let routesPath = path.join(rwRoot, "web", "src", "Routes.tsx");
-
-  if (!fs.existsSync(routesPath)) {
-    console.error("No Routes.tsx file found");
-    process.exit(1);
-    // TODO: For when we support JS projects:
-    // routesPath = path.join(rwRoot, "web", "src", "Routes.js");
-  }
-
-  console.log("About to update", routesPath);
-
-  const routesFileLines = fs.readFileSync(routesPath).toString().split("\n");
-
-  const hasArwdminLayoutImport = !!routesFileLines.find((line) =>
-    /^\s*import ArwdminLayout from/.test(line)
-  );
-
-  if (!hasArwdminLayoutImport) {
-    // First look for Layout imports
-    let existingImportIndex = findLastIndex(routesFileLines, (line) =>
-      /^\s*import .+Layout\b.* from/.test(line)
-    );
-
-    if (existingImportIndex === -1) {
-      // Didn't find any Layout imports. Let's look for any kind of import
-      existingImportIndex = findLastIndex(routesFileLines, (line) =>
-        /^\s*import .+ from/.test(line)
-      );
-    }
-
-    routesFileLines.splice(
-      existingImportIndex + 1,
-      0,
-      "import ArwdminLayout from 'src/layouts/ArwdminLayout'"
-    );
-  }
-
-  const rwjsRouterImportIndex = routesFileLines.findIndex((line) =>
-    /from '@redwoodjs\/router'/.test(line)
-  );
-  const rwjsRouterImportLine = routesFileLines[rwjsRouterImportIndex];
-
-  if (!rwjsRouterImportLine) {
-    console.error("Couldn't find @redwoodjs/router import");
-    process.exit(1);
-  }
-
-  if (!/\bSet\b/.test(rwjsRouterImportLine)) {
-    const insertIndex = rwjsRouterImportLine.lastIndexOf("}");
-    routesFileLines[rwjsRouterImportIndex] = rwjsRouterImportLine
-      .split("")
-      .splice(insertIndex, 0, ", Set ")
-      .join("");
-  }
-
-  const arwdminLayoutSetStartIndex = routesFileLines.findIndex((line) =>
-    /<Set wrap={ArwdminLayout}>/.test(line)
-  );
-
-  if (arwdminLayoutSetStartIndex >= 0) {
-    const arwdminLayoutSetEndIndex = routesFileLines.findIndex(
-      (line, index) =>
-        index > arwdminLayoutSetStartIndex && /<\/Set>/.test(line)
-    );
-
-    routesFileLines.splice(
-      arwdminLayoutSetStartIndex,
-      arwdminLayoutSetEndIndex - arwdminLayoutSetStartIndex + 1
-    );
-  }
-
-  const routerEndIndex = routesFileLines.findIndex((line) =>
-    /^\s*<\/Router>/.test(line)
-  );
-  const indent =
-    "  " + routesFileLines[routerEndIndex]?.match(/^(\s*)/)?.[1] ?? "";
-
-  let arwdminRoutesBeginIndex = routerEndIndex - 1;
-
-  // If the "notfound" page is currently last, let's keep it there
-  if (
-    /^\s*<Route\s.*\snotfound\s/.test(routesFileLines[routerEndIndex - 1] || "")
-  ) {
-    arwdminRoutesBeginIndex--;
-  }
-
-  routesFileLines.splice(
-    arwdminRoutesBeginIndex,
-    0,
-    `${indent}<Set wrap={ArwdminLayout}>`,
-    ...modelNames.map((name) => {
-      const modelNames = getModelNameVariants(name);
-      const routeName = modelNames.camelCasePluralModelName;
-      const pluralName = modelNames.pluralModelName;
-      return `${indent}  <Route path="/arwdmin/${routeName}" page={Arwdmin${name}${pluralName}Page} name="arwdmin${pluralName}" />`;
-    }),
-    `${indent}</Set>`
-  );
-
-  console.log("New routes file", routesFileLines);
-  fs.writeFileSync(routesPath, routesFileLines.join("\n"));
-}
-
-/**
- * Returns the index of the last element in the array where predicate is true, and -1
- * otherwise.
- * @param array The source array to search in
- * @param predicate find calls predicate once for each element of the array, in descending
- * order, until it finds one where predicate returns true. If such an element is found,
- * findLastIndex immediately returns that element index. Otherwise, findLastIndex returns -1.
- *
- * From https://stackoverflow.com/a/53187807/88106
- */
-function findLastIndex<T>(
-  array: Array<T>,
-  predicate: (value: T, index: number, obj: T[]) => boolean
-): number {
-  let l = array.length;
-
-  while (l--) {
-    const arrayElement = array[l];
-    if (arrayElement !== undefined && predicate(arrayElement, l, array)) {
-      return l;
-    }
-  }
-
-  return -1;
-}
-
 function generateLayout(modelNames: string[]) {
   const template: string = fs.readFileSync("./layout.ejs", "utf-8");
-  console.log("pluralModelNames", modelNames.map(pluralize));
 
-  return ejsRender(template, { pluralModelNames: modelNames.map(pluralize) });
+  return ejsRender(template, {
+    pluralModelNames: modelNames.map(
+      (name) => getModelNameVariants(name).pascalCasePluralModelName
+    ),
+  });
 }
 
 function createArwdminLayoutDir(rwRoot: string) {

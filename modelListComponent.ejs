@@ -38,13 +38,13 @@ const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
               <td>
                 <nav className="rw-table-actions">
                   <Link
-                    to={routes.arwdmin<%= model.camelName %>({ id: <%= model.camelName %>.id })}
+                    to={routes.arwdmin<%= model.pascalName %>({ id: <%= model.camelName %>.id })}
                     title={'Show <%= model.name %> ' + <%= model.camelName %>.id + ' details'}
                   >
                     Show
                   </Link>
                   <Link
-                    to={routes.arwdminEdit<%= model.camelName %>({ id: <%= model.camelName %>.id })}
+                    to={routes.arwdminEdit<%= model.pascalName %>({ id: <%= model.camelName %>.id })}
                     title={'Edit <%= model.name %> ' + <%= model.camelName %>.id}
                   >
                     Edit

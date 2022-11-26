@@ -6,12 +6,16 @@ import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import <%= model.pluralName %> from './<%= model.pluralName %>'
 
 export const QUERY = gql`
-  query Find<%= model.pluralName %> {
-    <%= model.camelPluralName %> {
-      id
-      createdAt
-      updatedAt
-      name
+  query FindArwdmin<%= model.pluralName %> {
+    <%= model.camelPluralName -%> {
+      <%_ for (let field of modelFields) { -%>
+        <%= field.name %>
+        <%_ if (field.kind === 'object') { -%>
+          {
+            id
+          }
+        <% } -%>
+      <% } %>
     }
   }
 `

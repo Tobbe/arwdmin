@@ -6,7 +6,7 @@ const ArwdminLayout = ({ children }) => {
       <div>
         <nav>
           <ul>
-            <% for (let name of pluralModelNames) { %>
+            <% for (let name of pluralModelNames) { -%>
               <li>
                 <Link to={routes.arwdmin<%=name%>()}>
                   <%= name %>
