@@ -47,7 +47,7 @@ export async function createModelPages(
     const modelListComponent = generateModelListComponent(modelNameVariants)
     const modelPage = generateModelPage(modelNameVariants)
     const modelCell = generateModelCell(modelNameVariants, fields)
-    // const modelComponent = generateModelComponent(modelNameVariants);
+    const modelComponent = generateModelComponent(modelNameVariants, fields)
 
     // List page + components
     fs.mkdirSync(
@@ -109,15 +109,15 @@ export async function createModelPages(
       modelPage
     )
 
-    // fs.writeFileSync(
-    //   path.join(
-    //     pagesPath,
-    //     modelNameVariants.pascalCaseModelName,
-    //     modelNameVariants.pascalCaseModelName + 'Page',
-    //     modelNameVariants.pascalCaseModelName + 'Cell.tsx'
-    //   ),
-    //   modelComponent
-    // )
+    fs.writeFileSync(
+      path.join(
+        pagesPath,
+        modelNameVariants.pascalCaseModelName,
+        modelNameVariants.pascalCaseModelName + 'Page',
+        modelNameVariants.pascalCaseModelName + '.tsx'
+      ),
+      modelComponent
+    )
 
     fs.writeFileSync(
       path.join(
@@ -203,6 +203,27 @@ function generateModelCell(
   }
 
   const template = fs.readFileSync('./templates/modelCell.ejs', 'utf-8')
+
+  return ejsRender(template, { model, modelFields })
+}
+
+function generateModelComponent(
+  {
+    pascalCaseModelName,
+    pascalCasePluralModelName,
+    camelCaseModelName,
+    capitalModelName,
+  }: ModelNameVariants,
+  modelFields: DMMF.Field[]
+) {
+  const model = {
+    pascalName: pascalCaseModelName,
+    pascalPluralName: pascalCasePluralModelName,
+    camelName: camelCaseModelName,
+    capitalName: capitalModelName,
+  }
+
+  const template = fs.readFileSync('./templates/modelComponent.ejs', 'utf-8')
 
   return ejsRender(template, { model, modelFields })
 }

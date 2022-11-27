@@ -11,6 +11,7 @@
   "dependencies": {
     "@prisma/sdk": "^3.13.0",
     "camelcase": "^7.0.0",
+    "decamelize": "^6.0.0",
     "ejs": "^3.1.7",
     "execa": "^6.1.0",
     "pascalcase": "^2.0.0",

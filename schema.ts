@@ -2,6 +2,7 @@ import path from 'path'
 
 import prismaSdk from '@prisma/sdk'
 import camelcase from 'camelcase'
+import decamelize from 'decamelize'
 import pascalcase from 'pascalcase'
 
 import { pluralize } from './lib/rwPluralize'
@@ -45,19 +46,12 @@ export async function getModelFields(rwRoot: string, modelName: string) {
     process.exit(1)
   }
 
-  if (model.fieldMap) {
-    console.log('---')
-    console.log('fieldMap', model.fieldMap)
-    console.log('---')
-    process.exit(0)
-  }
-
   // const parentProductField = model.fields.find((field) => field.name === 'parentProduct')
   // console.log('parentProductField', parentProductField)
 
   // console.log('fields', model.fields)
   model.fields.forEach((field) => {
-    if (modelName === 'Product' && field.kind !== 'scalar') {
+    if (modelName === 'Cart') {
       console.log('field', field)
     }
   })
@@ -72,6 +66,7 @@ export interface ModelNameVariants {
   camelCasePluralModelName: string
   pascalCaseModelName: string
   pascalCasePluralModelName: string
+  capitalModelName: string
 }
 
 export function getModelNameVariants(modelName: string): ModelNameVariants {
@@ -82,5 +77,6 @@ export function getModelNameVariants(modelName: string): ModelNameVariants {
     camelCasePluralModelName: pluralize(camelcase(modelName)),
     pascalCaseModelName: pascalcase(modelName),
     pascalCasePluralModelName: pluralize(pascalcase(modelName)),
+    capitalModelName: decamelize(modelName).toUpperCase(),
   }
 }

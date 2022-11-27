@@ -1,0 +1,81 @@
+import type {
+  Delete<%= model.pascalName %>MutationVariables,
+  FindArwdmin<%= model.pascalName %>ById,
+} from 'types/graphql'
+
+import { Link, routes, navigate } from '@redwoodjs/router'
+import { useMutation } from '@redwoodjs/web'
+import { toast } from '@redwoodjs/web/toast'
+
+import { checkboxInputTag, formatEnum, timeTag } from 'src/lib/formatters'
+
+const DELETE_<%= model.capitalName %>_MUTATION = gql`
+  mutation Delete<%= model.pascalName %>Mutation($id: String!) {
+    delete<%= model.pascalName %>(id: $id) {
+      id
+    }
+  }
+`
+
+interface Props {
+  <%= model.camelName %>: NonNullable<FindArwdmin<%= model.pascalName %>ById['<%= model.camelName %>']>
+}
+
+const <%= model.pascalName %> = ({ <%= model.camelName %> }: Props) => {
+  const [delete<%= model.pascalName %>] = useMutation(DELETE_<%= model.capitalName %>_MUTATION, {
+    onCompleted: () => {
+      toast.success('<%= model.pascalName %> deleted')
+      navigate(routes.arwdmin<%= model.pascalPluralName %>())
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
+
+  const onDeleteClick = (id: Delete<%= model.pascalName %>MutationVariables['id']) => {
+    if (confirm('Are you sure you want to delete <%= model.camelName %> ' + id + '?')) {
+      delete<%= model.pascalName %>({ variables: { id } })
+    }
+  }
+
+  return (
+    <>
+      <div className="rw-segment">
+        <header className="rw-segment-header">
+          <h2 className="rw-heading rw-heading-secondary">
+            <%= model.pascalName %> {<%= model.camelName %>.id} Detail
+          </h2>
+        </header>
+        <table className="rw-table">
+          <tbody>
+            <tr>
+              <th>Id</th>
+              <td>{<%= model.camelName %>.id}</td>
+            </tr>
+            <tr>
+              <th>Created at</th>
+              <td>{timeTag(<%= model.camelName %>.createdAt)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <nav className="rw-button-group">
+        <Link
+          to={routes.arwdminEdit<%= model.pascalName %>({ id: <%= model.camelName %>.id })}
+          className="rw-button rw-button-blue"
+        >
+          Edit
+        </Link>
+        <button
+          type="button"
+          className="rw-button rw-button-red"
+          onClick={() => onDeleteClick(<%= model.camelName %>.id)}
+        >
+          Delete
+        </button>
+      </nav>
+    </>
+  )
+}
+
+export default <%= model.pascalName %>
