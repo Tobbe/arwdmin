@@ -8,6 +8,12 @@ import { createArwdminPagesDir, createModelPages } from './pages'
 
 import { updateRoutes } from './routes'
 import { getModelNames } from './schema'
+import {
+  generateSdls,
+  moveArwdminSdls,
+  prepareGeneratorDir,
+} from './sdl'
+import { moveArwdminServices } from './services'
 
 console.log('aRWdmin v0.1.0')
 
@@ -29,3 +35,15 @@ const layoutPath = createArwdminLayoutDir(rwRoot)
 createLayout(layoutPath, modelNames)
 
 updateRoutes(rwRoot, modelNames)
+
+const tmpServicesName = prepareGeneratorDir(rwRoot, 'services')
+console.log('tmpName', tmpServicesName)
+
+const tmpGraphqlName = prepareGeneratorDir(rwRoot, 'graphql')
+console.log('tmpName', tmpGraphqlName)
+
+// The sdl generator also generates services
+await generateSdls(rwRoot, modelNames)
+
+moveArwdminServices(rwRoot, tmpServicesName)
+moveArwdminSdls(rwRoot, tmpGraphqlName)
