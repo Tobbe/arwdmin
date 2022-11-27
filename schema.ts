@@ -23,7 +23,11 @@ export async function getModelNames(rwRoot: string) {
   const modelNames: string[] = []
 
   for (const model of schema.datamodel.models) {
-    modelNames.push(model.name)
+    if (model.documentation === '@arwdmin skip') {
+      console.log("Skipping", model.name)
+    } else {
+      modelNames.push(model.name)
+    }
   }
 
   return modelNames
