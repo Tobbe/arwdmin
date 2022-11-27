@@ -1,4 +1,4 @@
-import type { Find<%= model.pluralName %> } from 'types/graphql'
+import type { FindArwdmin<%= model.pluralName %> } from 'types/graphql'
 
 import { Link, routes } from '@redwoodjs/router'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
@@ -39,6 +39,6 @@ export const Failure = ({ error }: CellFailureProps) => {
   return <div className="rw-cell-error">{error?.message}</div>
 }
 
-export const Success = ({ <%= model.camelPluralName %> }: CellSuccessProps<Find<%= model.pluralName %>>) => {
+export const Success = ({ <%= model.camelPluralName %> }: CellSuccessProps<FindArwdmin<%= model.pluralName %>>) => {
   return <<%= model.pluralName %> <%= model.camelPluralName %>={<%= model.camelPluralName %>} />
 }

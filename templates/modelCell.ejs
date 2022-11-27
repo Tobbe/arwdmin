@@ -1,4 +1,4 @@
-import type { Find<%= model.pascalName %>ById } from 'types/graphql'
+import type { FindArwdmin<%= model.pascalName %>ById } from 'types/graphql'
 
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 
@@ -31,7 +31,7 @@ export const Failure = ({ error }: CellFailureProps) => {
   return <div className="rw-cell-error">{error?.message}</div>
 }
 
-export const Success = ({ <%= model.camelName %> }: CellSuccessProps<Find<%= model.pascalName %>ById>) => {
-  return <pre>{JSON.stringify(<%= model.camelName %>), null, 2}</pre>
+export const Success = ({ <%= model.camelName %> }: CellSuccessProps<FindArwdmin<%= model.pascalName %>ById>) => {
+  return <pre>{JSON.stringify(<%= model.camelName %>, null, 2)}</pre>
   // return <<%= model.pascalName %> <%= model.camelName %>={<%= model.camelName %>} />
 }
