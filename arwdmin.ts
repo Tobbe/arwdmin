@@ -37,10 +37,7 @@ createLayout(layoutPath, modelNames)
 updateRoutes(rwRoot, modelNames)
 
 const tmpServicesName = prepareGeneratorDir(rwRoot, 'services')
-console.log('tmpName', tmpServicesName)
-
 const tmpGraphqlName = prepareGeneratorDir(rwRoot, 'graphql')
-console.log('tmpName', tmpGraphqlName)
 
 // The sdl generator also generates services
 await generateSdls(rwRoot, modelNames)

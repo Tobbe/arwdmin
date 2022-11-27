@@ -1,0 +1,11 @@
+import <%= model.pascalName %>Cell from './<%= model.pascalName %>Cell'
+
+type Props = {
+  id: string
+}
+
+const <%= model.pascalName %>Page = ({ id }: Props) => {
+  return <<%= model.pascalName %>Cell id={id} />
+}
+
+export default <%= model.pascalName %>Page

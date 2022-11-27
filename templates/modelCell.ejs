@@ -1,0 +1,37 @@
+import type { Find<%= model.pascalName %>ById } from 'types/graphql'
+
+import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
+
+// import <%= model.pascalName %> from './<%= model.pascalName %>'
+
+export const QUERY = gql`
+  query FindArwdmin<%= model.pascalName %>ById($id: String!) {
+    <%= model.camelName %>: <%= model.camelName %>(id: $id) {
+      <%_ for (let field of modelFields) { -%>
+        <%= field.name %>
+        <%_ if (field.kind === 'object') { -%>
+          {
+            id
+          }
+        <% } -%>
+      <% } %>
+    }
+  }
+`
+
+export const Loading = () => <div>Loading...</div>
+
+export const Empty = () => {
+  return <div><%= model.pascalName %></div>
+}
+
+export const Failure = ({ error }: CellFailureProps) => {
+  console.error('error', error)
+
+  return <div className="rw-cell-error">{error?.message}</div>
+}
+
+export const Success = ({ <%= model.camelName %> }: CellSuccessProps<Find<%= model.pascalName %>ById>) => {
+  return <pre>{JSON.stringify(<%= model.camelName %>), null, 2}</pre>
+  // return <<%= model.pascalName %> <%= model.camelName %>={<%= model.camelName %>} />
+}

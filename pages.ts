@@ -4,7 +4,11 @@ import path from 'path'
 import type { DMMF } from '@prisma/generator-helper'
 
 import { ejsRender } from './ejs'
-import { getModelFields, getModelNameVariants, ModelNameVariants } from './schema'
+import {
+  getModelFields,
+  getModelNameVariants,
+  ModelNameVariants,
+} from './schema'
 
 export function createArwdminPagesDir(rwRoot: string) {
   // TODO: read 'web' name from redwood.toml
@@ -41,10 +45,11 @@ export async function createModelPages(
     })
     const modelListCell = generateModelListCell(modelNameVariants, fields)
     const modelListComponent = generateModelListComponent(modelNameVariants)
-    // const modelPage = generateModelComponent(modelNameVariants);
-    // const modelCell = generateModelComponent(modelNameVariants);
+    const modelPage = generateModelPage(modelNameVariants)
+    const modelCell = generateModelCell(modelNameVariants, fields)
     // const modelComponent = generateModelComponent(modelNameVariants);
 
+    // List page + components
     fs.mkdirSync(
       path.join(
         pagesPath,
@@ -82,6 +87,46 @@ export async function createModelPages(
         modelNameVariants.pascalCasePluralModelName + 'Cell.tsx'
       ),
       modelListCell
+    )
+
+    // Single page + components
+    fs.mkdirSync(
+      path.join(
+        pagesPath,
+        modelNameVariants.pascalCaseModelName,
+        modelNameVariants.pascalCaseModelName + 'Page'
+      ),
+      { recursive: true }
+    )
+
+    fs.writeFileSync(
+      path.join(
+        pagesPath,
+        modelNameVariants.pascalCaseModelName,
+        modelNameVariants.pascalCaseModelName + 'Page',
+        modelNameVariants.pascalCaseModelName + 'Page.tsx'
+      ),
+      modelPage
+    )
+
+    // fs.writeFileSync(
+    //   path.join(
+    //     pagesPath,
+    //     modelNameVariants.pascalCaseModelName,
+    //     modelNameVariants.pascalCaseModelName + 'Page',
+    //     modelNameVariants.pascalCaseModelName + 'Cell.tsx'
+    //   ),
+    //   modelComponent
+    // )
+
+    fs.writeFileSync(
+      path.join(
+        pagesPath,
+        modelNameVariants.pascalCaseModelName,
+        modelNameVariants.pascalCaseModelName + 'Page',
+        modelNameVariants.pascalCaseModelName + 'Cell.tsx'
+      ),
+      modelCell
     )
   }
 }
@@ -136,4 +181,28 @@ function generateModelListComponent({
   )
 
   return ejsRender(template, { model })
+}
+
+function generateModelPage({ pascalCaseModelName }: ModelNameVariants) {
+  const model = {
+    pascalName: pascalCaseModelName,
+  }
+
+  const template = fs.readFileSync('./templates/modelPage.ejs', 'utf-8')
+
+  return ejsRender(template, { model })
+}
+
+function generateModelCell(
+  { pascalCaseModelName, camelCaseModelName }: ModelNameVariants,
+  modelFields: DMMF.Field[]
+) {
+  const model = {
+    pascalName: pascalCaseModelName,
+    camelName: camelCaseModelName,
+  }
+
+  const template = fs.readFileSync('./templates/modelCell.ejs', 'utf-8')
+
+  return ejsRender(template, { model, modelFields })
 }
