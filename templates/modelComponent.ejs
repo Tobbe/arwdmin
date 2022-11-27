@@ -57,6 +57,8 @@ const <%= model.pascalName %> = ({ <%= model.camelName %> }: Props) => {
                   <td>{checkboxInputTag(<%= model.camelName %>.<%= field.name %>)}</td>
                 <%_ } else if (field.kind === 'object') { -%>
                   <td><pre>{JSON.stringify(<%= model.camelName %>.<%= field.name %>, null, 2)}</pre></td>
+                <%_ } else if (field.name.toLowerCase().endsWith('image') || field.name.toLowerCase().endsWith('img')) { -%>
+                  <td><img src={<%= model.camelName %>.<%= field.name %>} width="200" height="200" /></td>
                 <% } else { -%>
                   <td>{<%= model.camelName %>.<%= field.name %>}</td>
                 <% } -%>
