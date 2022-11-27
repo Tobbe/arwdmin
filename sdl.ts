@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 
 import { execaSync } from 'execa'
-import { getModelNameVariants } from './schema'
+import { getModelFields, getModelNameVariants } from './schema'
 import { prettify } from './prettier'
 
 function getGeneratorDir(rwRoot: string, generatorDirName: string) {
@@ -70,6 +70,7 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
       })
 
       const modelNames = getModelNameVariants(name)
+      const modelFields = await getModelFields(rwRoot, name)
 
       const serviceFilename = path.join(
         serviceDir,
@@ -81,24 +82,39 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
 
       fs.writeFileSync(
         serviceFilename,
-        prettify(service
-          .replace(
-            'import { db }',
-            "import { removeNulls } from '@redwoodjs/api'\n\nimport { db }"
-          )
-          .replace(
-            /update\({(.*?)data: input,/gs,
-            'update({$1data: removeNulls(input),'
-          )
-          .replaceAll(': (_obj, { root })', ': async (_obj, { root })')
-          .replace(
-            new RegExp(
-              `return db.${modelNames.camelCaseModelName}.findUnique\\({ where(.*)\\.(\\w+)\\(\\)`
-            , 'g'),
-            `const maybe = await db.${modelNames.camelCaseModelName}.findUnique({ where$1.$2()\n\n` +
-              `if (!maybe) { console.error('Could not resolve $2'); throw new Error('Could not resolve $2') }\n\n` +
-              `return maybe`
-          ), 'ts')
+        prettify(
+          service
+            .replace(
+              'import { db }',
+              "import { removeNulls } from '@redwoodjs/api'\n\nimport { db }"
+            )
+            .replace(
+              /update\({(.*?)data: input,/gs,
+              'update({$1data: removeNulls(input),'
+            )
+            .replaceAll(': (_obj, { root })', ': async (_obj, { root })')
+            .replace(
+              new RegExp(
+                `return db.${modelNames.camelCaseModelName}.findUnique\\({ where(.*)\\.(\\w+)\\(\\)`,
+                'g'
+              ),
+              (_match: string, one: string, two: string) => {
+                const field = modelFields.find((field) => field.name === two)
+                let maybeCheck = ''
+
+                if (field?.isRequired) {
+                  maybeCheck = `if (!maybe) { console.error('Could not resolve ${two}'); throw new Error('Could not resolve ${two}') }\n\n`
+                }
+
+                return (
+                  `const maybe = await db.${modelNames.camelCaseModelName}.findUnique({ where${one}.${two}()\n\n` +
+                  maybeCheck +
+                  'return maybe'
+                )
+              }
+            ),
+          'ts'
+        )
       )
     }
   } catch (e) {
