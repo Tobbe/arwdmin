@@ -48,14 +48,20 @@ const <%= model.pascalName %> = ({ <%= model.camelName %> }: Props) => {
         </header>
         <table className="rw-table">
           <tbody>
-            <tr>
-              <th>Id</th>
-              <td>{<%= model.camelName %>.id}</td>
-            </tr>
-            <tr>
-              <th>Created at</th>
-              <td>{timeTag(<%= model.camelName %>.createdAt)}</td>
-            </tr>
+            <%_ for (let field of modelFields) { -%>
+              <tr>
+                <th><%= field.name %></th>
+                <%_ if (field.type === 'DateTime') { -%>
+                  <td>{timeTag(<%= model.camelName %>.<%= field.name %>)}</td>
+                <%_ } else if (field.type === 'Boolean') { -%>
+                  <td>{checkboxInputTag(<%= model.camelName %>.<%= field.name %>)}</td>
+                <%_ } else if (field.kind === 'object') { -%>
+                  <td><pre>{JSON.stringify(<%= model.camelName %>.<%= field.name %>, null, 2)}</pre></td>
+                <% } else { -%>
+                  <td>{<%= model.camelName %>.<%= field.name %>}</td>
+                <% } -%>
+              </tr>
+            <% } %>
           </tbody>
         </table>
       </div>
