@@ -93,10 +93,10 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
           .replaceAll(': (_obj, { root })', ': async (_obj, { root })')
           .replace(
             new RegExp(
-              `return db.${modelNames.camelCaseModelName}.findUnique\\({ where(.*)`
+              `return db.${modelNames.camelCaseModelName}.findUnique\\({ where(.*)\\.(\\w+)\\(\\)`
             , 'g'),
-            `const maybe = await db.${modelNames.camelCaseModelName}.findUnique({ where$1\n\n` +
-              `if (!maybe) { throw new Error('Could not resolve') }\n\n` +
+            `const maybe = await db.${modelNames.camelCaseModelName}.findUnique({ where$1.$2()\n\n` +
+              `if (!maybe) { console.error('Could not resolve $2'); throw new Error('Could not resolve $2') }\n\n` +
               `return maybe`
           ), 'ts')
       )
