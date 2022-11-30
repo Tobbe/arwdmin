@@ -1,0 +1,47 @@
+import { navigate, routes } from '@redwoodjs/router'
+import { useMutation } from '@redwoodjs/web'
+import { toast } from '@redwoodjs/web/toast'
+
+import <%= model.pascalName %>Form from 'src/pages/Arwdmin/<%= model.pascalName %>/New<%= model.pascalName %>Page/<%= model.pascalName %>Form'
+
+import type { Create<%= model.pascalName %>Input } from 'types/graphql'
+
+const CREATE_<%= model.capitalName %>_MUTATION = gql`
+  mutation Create<%= model.pascalName %>Mutation($input: Create<%= model.pascalName %>Input!) {
+    create<%= model.pascalName %>(input: $input) {
+      id
+    }
+  }
+`
+
+const New<%= model.pascalName %> = () => {
+  const [create<%= model.pascalName %>, { loading, error }] = useMutation(
+    CREATE_<%= model.capitalName %>_MUTATION,
+    {
+      onCompleted: () => {
+        toast.success('<%= model.pascalName %> created')
+        navigate(routes.<%= model.camelPluralName %>())
+      },
+      onError: (error) => {
+        toast.error(error.message)
+      },
+    }
+  )
+
+  const onSave = (input: Create<%= model.pascalName %>Input) => {
+    create<%= model.pascalName %>({ variables: { input } })
+  }
+
+  return (
+    <div className="rw-segment">
+      <header className="rw-segment-header">
+        <h2 className="rw-heading rw-heading-secondary">New <%= model.pascalName %></h2>
+      </header>
+      <div className="rw-segment-main">
+        <<%= model.pascalName %>Form onSave={onSave} loading={loading} error={error} />
+      </div>
+    </div>
+  )
+}
+
+export default New<%= model.pascalName %>

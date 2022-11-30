@@ -74,6 +74,10 @@ export async function createModelPages(
     const modelCell = generateModelCell(modelNameVariants, fields)
     const modelComponent = generateModelComponent(modelNameVariants, fields)
 
+    const newModelPage = generateNewModelPage(modelNameVariants)
+    const newModelComponent = generateNewModelComponent(modelNameVariants)
+    const modelForm = generateModelForm(modelNameVariants, fields)
+
     // List page + components
     fs.mkdirSync(
       path.join(
@@ -152,6 +156,45 @@ export async function createModelPages(
         modelNameVariants.pascalCaseModelName + 'Cell.tsx'
       ),
       modelCell
+    )
+
+    // New Model page + components
+    fs.mkdirSync(
+      path.join(pagesPath,
+        modelNameVariants.pascalCaseModelName,
+        'New' + modelNameVariants.pascalCaseModelName + 'Page'
+      ),
+      { recursive: true }
+    )
+
+    fs.writeFileSync(
+      path.join(
+        pagesPath,
+        modelNameVariants.pascalCaseModelName,
+        'New' + modelNameVariants.pascalCaseModelName + 'Page',
+        'New' + modelNameVariants.pascalCaseModelName + 'Page.tsx'
+      ),
+      newModelPage
+    )
+
+    fs.writeFileSync(
+      path.join(
+        pagesPath,
+        modelNameVariants.pascalCaseModelName,
+        'New' + modelNameVariants.pascalCaseModelName + 'Page',
+        'New' + modelNameVariants.pascalCaseModelName + '.tsx'
+      ),
+      newModelComponent
+    )
+
+    fs.writeFileSync(
+      path.join(
+        pagesPath,
+        modelNameVariants.pascalCaseModelName,
+        'New' + modelNameVariants.pascalCaseModelName + 'Page',
+        modelNameVariants.pascalCaseModelName + 'Form.tsx'
+      ),
+      modelForm
     )
   }
 }
@@ -269,4 +312,55 @@ function generatePaginatorComponent() {
   )
 
   return ejsRender(template, {})
+}
+
+function generateNewModelPage({ pascalCaseModelName }: ModelNameVariants) {
+  const model = {
+    pascalName: pascalCaseModelName,
+  }
+
+  const template = fs.readFileSync('./templates/newModelPage.ejs', 'utf-8')
+
+  return ejsRender(template, { model })
+}
+
+function generateNewModelComponent(
+  {
+    pascalCaseModelName,
+    camelCaseModelName,
+    camelCasePluralModelName,
+    capitalModelName,
+  }: ModelNameVariants,
+) {
+  const model = {
+    pascalName: pascalCaseModelName,
+    camelName: camelCaseModelName,
+    camelPluralName: camelCasePluralModelName,
+    capitalName: capitalModelName,
+  }
+
+  const template = fs.readFileSync('./templates/newModelComponent.ejs', 'utf-8')
+
+  return ejsRender(template, { model })
+}
+
+function generateModelForm(
+  {
+    pascalCaseModelName,
+    camelCaseModelName,
+    camelCasePluralModelName,
+    capitalModelName,
+  }: ModelNameVariants,
+  modelFields: DMMF.Field[]
+) {
+  const model = {
+    pascalName: pascalCaseModelName,
+    camelName: camelCaseModelName,
+    camelPluralName: camelCasePluralModelName,
+    capitalName: capitalModelName,
+  }
+
+  const template = fs.readFileSync('./templates/modelForm.ejs', 'utf-8')
+
+  return ejsRender(template, { model, modelFields })
 }

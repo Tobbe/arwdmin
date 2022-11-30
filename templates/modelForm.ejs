@@ -1,0 +1,76 @@
+import type { Edit<%= model.pascalName %>ById, Update<%= model.pascalName %>Input } from 'types/graphql'
+
+import {
+  Form,
+  FormError,
+  FieldError,
+  Label,
+  NumberField,
+  RadioField,
+  TextField,
+  DatetimeLocalField,
+  CheckboxField,
+  Submit,
+} from '@redwoodjs/forms'
+import type { RWGqlError } from '@redwoodjs/forms'
+
+const formatDatetime = (value) => {
+  if (value) {
+    return value.replace(/:\d{2}\.\d{3}\w/, '')
+  }
+}
+
+type Form<%= model.pascalName %> = NonNullable<Edit<%= model.pascalName %>ById['<%= model.camelName %>']>
+
+interface Props {
+  <%= model.camelName %>?: Edit<%= model.pascalName %>ById['<%= model.camelName %>']
+  onSave: (data: Update<%= model.pascalName %>Input, id?: Form<%= model.pascalName %>['id']) => void
+  error: RWGqlError
+  loading: boolean
+}
+
+const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, onSave, error, loading }) => {
+  const onSubmit = (data: Form<%= model.pascalName %>) => {
+    onSave(data, <%= model.camelName %>?.id)
+  }
+
+  return (
+    <div className="rw-form-wrapper">
+      <Form<Form<%= model.pascalName %>> onSubmit={onSubmit} error={error}>
+        <FormError
+          error={error}
+          wrapperClassName="rw-form-error-wrapper"
+          titleClassName="rw-form-error-title"
+          listClassName="rw-form-error-list"
+        />
+
+        <%_ for (const field of modelFields) { -%>
+          <Label
+            name="<%= field.name %>"
+            className="rw-label"
+            errorClassName="rw-label rw-label-error"
+          >
+            <%= field.name %>
+          </Label>
+
+          <TextField
+            name="<%= field.name %>"
+            defaultValue={<%= model.camelName %>?.<%= field.name %>}
+            className="rw-input"
+            errorClassName="rw-input rw-input-error"
+          />
+
+          <FieldError name="<%= field.name %>" className="rw-field-error" />
+        <% } -%>
+
+        <div className="rw-button-group">
+          <Submit disabled={loading} className="rw-button rw-button-blue">
+            Save
+          </Submit>
+        </div>
+      </Form>
+    </div>
+  )
+}
+
+export default <%= model.pascalName %>Form

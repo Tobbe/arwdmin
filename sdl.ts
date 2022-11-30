@@ -116,14 +116,21 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
               `export const ${modelNames.camelCaseModelName}Page = ({ page = 1 }) => {\n` +
               `  const offset = (page - 1) * ${modelNames.capitalModelName}_PER_PAGE\n` +
               '\n' +
-              '  return {\n' +
-              `    ${modelNames.camelCasePluralModelName}: db.${modelNames.camelCaseModelName}.findMany({\n` +
-              `      take: ${modelNames.capitalModelName}_PER_PAGE,\n` +
-              '      skip: offset,\n' +
-              "      orderBy: { createdAt: 'desc' },\n" +
-              '    }),\n' +
-              `    count: db.${modelNames.camelCaseModelName}.count(),\n` +
-              '  }\n' +
+              `  const ${modelNames.camelCasePluralModelName}Promise = db.${modelNames.camelCaseModelName}.findMany({\n` +
+              `    take: ${modelNames.capitalModelName}_PER_PAGE,\n` +
+              '    skip: offset,\n' +
+              "    orderBy: { createdAt: 'desc' },\n" +
+              '  })\n' +
+              `  const countPromise = db.${modelNames.camelCaseModelName}.count()\n` +
+              '\n' +
+              `  return Promise.all([${modelNames.camelCasePluralModelName}Promise, countPromise]).then(\n` +
+              `    ([${modelNames.camelCasePluralModelName}, count]) => {` +
+              '      return {\n' +
+              `        ${modelNames.camelCasePluralModelName},\n` +
+              '        count,\n' +
+              '      }\n' +
+              '    }\n' +
+              '  )\n' +
               '}\n'
             )
             .replace(
