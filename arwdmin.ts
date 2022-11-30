@@ -29,8 +29,8 @@ const rwRoot = findRwRoot(path.join(process.cwd(), '..', 'acm-admin'))
 const modelNames = await getModelNames(rwRoot)
 
 const pagesPath = createArwdminPagesDir(rwRoot)
-const componentsPath = getComponentsDir(rwRoot)
-await createModelPages(rwRoot, pagesPath, componentsPath, modelNames)
+const componentsDir = getComponentsDir(rwRoot)
+await createModelPages(rwRoot, pagesPath, componentsDir, modelNames)
 
 const layoutPath = createArwdminLayoutDir(rwRoot)
 createLayout(layoutPath, modelNames)

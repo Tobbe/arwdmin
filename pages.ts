@@ -41,15 +41,15 @@ export function getComponentsDir(rwRoot: string) {
 export async function createModelPages(
   rwRoot: string,
   pagesPath: string,
-  componentsPath: string,
+  componentsDir: string,
   modelNames: string[]
 ) {
-  const paginatorPath = path.join(componentsPath, 'Paginator', 'Paginator.tsx')
+  const paginatorPath = path.join(componentsDir, 'Paginator', 'Paginator.tsx')
   const paginatorComponent = generatePaginatorComponent()
 
   fs.mkdirSync(
     path.join(
-      componentsPath,
+      componentsDir,
       'Paginator'
     ),
     { recursive: true }
