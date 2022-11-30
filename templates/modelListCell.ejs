@@ -1,21 +1,32 @@
-import type { FindArwdmin<%= model.pluralName %> } from 'types/graphql'
+import type { FindArwdmin<%= model.pascalPluralName %> } from 'types/graphql'
 
 import { Link, routes } from '@redwoodjs/router'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 
-import <%= model.pluralName %> from './<%= model.pluralName %>'
+import Paginator from 'src/components/arwdmin/Paginator'
+
+import <%= model.pascalPluralName %> from './<%= model.pascalPluralName %>'
+
+export const beforeQuery = ({ page }) => {
+  page = page ? parseInt(page, 10) : 1
+
+  return { variables: { page } }
+}
 
 export const QUERY = gql`
-  query FindArwdmin<%= model.pluralName %> {
-    <%= model.camelPluralName -%> {
-      <%_ for (let field of modelFields) { -%>
-        <%= field.name %>
-        <%_ if (field.kind === 'object') { -%>
-          {
-            id
-          }
-        <% } -%>
-      <% } %>
+  query FindArwdmin<%= model.pascalPluralName %>($page: Int) {
+    <%= model.camelName %>Page(page: $page) {
+      <%= model.camelPluralName %> {
+        <%_ for (let field of modelFields) { -%>
+          <%= field.name %>
+          <%_ if (field.kind === 'object') { -%>
+            {
+              id
+            }
+          <% } -%>
+        <% } %>
+      }
+      count
     }
   }
 `
@@ -39,6 +50,12 @@ export const Failure = ({ error }: CellFailureProps) => {
   return <div className="rw-cell-error">{error?.message}</div>
 }
 
-export const Success = ({ <%= model.camelPluralName %> }: CellSuccessProps<FindArwdmin<%= model.pluralName %>>) => {
-  return <<%= model.pluralName %> <%= model.camelPluralName %>={<%= model.camelPluralName %>} />
+
+export const Success = ({ <%= model.camelName %>Page }: CellSuccessProps<FindArwdmin<%= model.pascalPluralName %>>) => {
+  return (
+    <>
+      <<%= model.pascalPluralName %> <%= model.camelPluralName %>={<%= model.camelName %>Page.<%= model.camelPluralName %>} />
+      <Paginator count={<%= model.camelName %>Page.count} pageName="arwdmin<%= model.pascalPluralName %>" />
+    </>
+  )
 }

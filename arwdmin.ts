@@ -4,7 +4,7 @@
 import fs from 'fs'
 import path from 'path'
 import { createArwdminLayoutDir, createLayout } from './layout'
-import { createArwdminPagesDir, createModelPages } from './pages'
+import { createArwdminPagesDir, createModelPages, getComponentsDir } from './pages'
 
 import { updateRoutes } from './routes'
 import { getModelNames } from './schema'
@@ -29,7 +29,8 @@ const rwRoot = findRwRoot(path.join(process.cwd(), '..', 'acm-admin'))
 const modelNames = await getModelNames(rwRoot)
 
 const pagesPath = createArwdminPagesDir(rwRoot)
-await createModelPages(rwRoot, pagesPath, modelNames)
+const componentsPath = getComponentsDir(rwRoot)
+await createModelPages(rwRoot, pagesPath, componentsPath, modelNames)
 
 const layoutPath = createArwdminLayoutDir(rwRoot)
 createLayout(layoutPath, modelNames)

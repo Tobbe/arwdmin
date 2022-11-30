@@ -1,18 +1,8 @@
 import { Link, routes } from '@redwoodjs/router'
 
-const MAX_STRING_LENGTH = 150
+import { truncate, checkboxInputTag, formatEnum, timeTag } from 'src/lib/formatters'
 
 const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
-  const truncate = (text) => {
-    let output = text
-
-    if (text && text.length > MAX_STRING_LENGTH) {
-      output = output.substring(0, MAX_STRING_LENGTH) + '...'
-    }
-
-    return output
-  }
-
   const onDeleteClick = (id) => {
     if (confirm('Are you sure you want to delete <%= model.name %> ' + id + '?')) {
       // TODO: Implement
@@ -25,7 +15,9 @@ const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
       <table>
         <thead>
           <tr>
-            <th>Id</th>
+            <%_ for (let field of modelFields) { -%>
+              <th><%= field.name %></th>
+            <% } %>
             <th>
               <span className="sr-only">Actions</span>
             </th>
@@ -34,7 +26,19 @@ const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
         <tbody>
           {<%= model.camelPluralName %>.map((<%= model.camelName %>) => (
             <tr key={<%= model.camelName %>.id}>
-              <td>{truncate(<%= model.camelName %>.id)}</td>
+              <%_ for (let field of modelFields) { -%>
+                <%_ if (field.type === 'DateTime') { -%>
+                  <td>{timeTag(<%= model.camelName %>.<%= field.name %>)}</td>
+                <%_ } else if (field.type === 'Boolean') { -%>
+                  <td>{checkboxInputTag(<%= model.camelName %>.<%= field.name %>)}</td>
+                <%_ } else if (field.kind === 'object') { -%>
+                  <td><pre>{truncate(JSON.stringify(<%= model.camelName %>.<%= field.name %>))}</pre></td>
+                <%_ } else if (field.name.toLowerCase().endsWith('image') || field.name.toLowerCase().endsWith('img')) { -%>
+                  <td><img src={<%= model.camelName %>.<%= field.name %>} width="128" height="128" /></td>
+                <% } else { -%>
+                  <td>{truncate(<%= model.camelName %>.<%= field.name %>)}</td>
+                <% } -%>
+              <% } %>
               <td>
                 <nav className="rw-table-actions">
                   <Link

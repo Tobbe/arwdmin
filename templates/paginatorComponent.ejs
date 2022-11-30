@@ -1,0 +1,31 @@
+import { Link, routes } from '@redwoodjs/router'
+
+const ITEMS_PER_PAGE = 5
+
+interface Props {
+  count: number
+  pageName: string
+}
+
+const Pagination: React.FC<Props> = ({ count, pageName }) => {
+  const items = []
+
+  for (let i = 0; i < Math.ceil(count / ITEMS_PER_PAGE); i++) {
+    items.push(
+      <li key={i}>
+        <Link to={routes[pageName]({ page: i + 1 })}>
+          {i + 1}
+        </Link>
+      </li>
+    )
+  }
+
+  return (
+    <>
+      <h2>Pagination</h2>
+      <ul>{items}</ul>
+    </>
+  )
+}
+
+export default Pagination

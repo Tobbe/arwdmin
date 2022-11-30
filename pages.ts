@@ -24,6 +24,15 @@ export function createArwdminPagesDir(rwRoot: string) {
   return pagesPath
 }
 
+export function getComponentsDir(rwRoot: string) {
+  const componentsDir = path.join(rwRoot, 'web', 'src', 'components', 'arwdmin')
+
+  fs.rmSync(componentsDir, { recursive: true, force: true })
+  fs.mkdirSync(componentsDir)
+
+  return componentsDir
+}
+
 // TODO: Skip (and warn) models that don't have an id column
 // TODO: Test with pokemon.
 //       Test with DVD (all-caps model).
@@ -32,8 +41,21 @@ export function createArwdminPagesDir(rwRoot: string) {
 export async function createModelPages(
   rwRoot: string,
   pagesPath: string,
+  componentsPath: string,
   modelNames: string[]
 ) {
+  const paginatorPath = path.join(componentsPath, 'Paginator', 'Paginator.tsx')
+  const paginatorComponent = generatePaginatorComponent()
+
+  fs.mkdirSync(
+    path.join(
+      componentsPath,
+      'Paginator'
+    ),
+    { recursive: true }
+  )
+  fs.writeFileSync(paginatorPath, paginatorComponent)
+
   for (const modelName of modelNames) {
     console.log('Creating pages for', modelName)
     const fields = await getModelFields(rwRoot, modelName)
@@ -44,7 +66,10 @@ export async function createModelPages(
       pascalCasePluralName: modelNameVariants.pascalCasePluralModelName,
     })
     const modelListCell = generateModelListCell(modelNameVariants, fields)
-    const modelListComponent = generateModelListComponent(modelNameVariants)
+    const modelListComponent = generateModelListComponent(
+      modelNameVariants,
+      fields
+    )
     const modelPage = generateModelPage(modelNameVariants)
     const modelCell = generateModelCell(modelNameVariants, fields)
     const modelComponent = generateModelComponent(modelNameVariants, fields)
@@ -145,12 +170,18 @@ function generateModelListPage({
 }
 
 function generateModelListCell(
-  { modelName, pluralModelName, camelCasePluralModelName }: ModelNameVariants,
+  {
+    modelName,
+    pascalCasePluralModelName,
+    camelCaseModelName,
+    camelCasePluralModelName,
+  }: ModelNameVariants,
   modelFields: DMMF.Field[]
 ) {
   const model = {
     name: modelName,
-    pluralName: pluralModelName,
+    pascalPluralName: pascalCasePluralModelName,
+    camelName: camelCaseModelName,
     camelPluralName: camelCasePluralModelName,
   }
 
@@ -159,13 +190,16 @@ function generateModelListCell(
   return ejsRender(template, { model, modelFields })
 }
 
-function generateModelListComponent({
-  modelName,
-  pascalCasePluralModelName,
-  pascalCaseModelName,
-  camelCaseModelName,
-  camelCasePluralModelName,
-}: ModelNameVariants) {
+function generateModelListComponent(
+  {
+    modelName,
+    pascalCasePluralModelName,
+    pascalCaseModelName,
+    camelCaseModelName,
+    camelCasePluralModelName,
+  }: ModelNameVariants,
+  modelFields: DMMF.Field[]
+) {
   const model = {
     name: modelName,
     pluralName: pascalCasePluralModelName,
@@ -180,7 +214,7 @@ function generateModelListComponent({
     'utf-8'
   )
 
-  return ejsRender(template, { model })
+  return ejsRender(template, { model, modelFields })
 }
 
 function generateModelPage({ pascalCaseModelName }: ModelNameVariants) {
@@ -226,4 +260,13 @@ function generateModelComponent(
   const template = fs.readFileSync('./templates/modelComponent.ejs', 'utf-8')
 
   return ejsRender(template, { model, modelFields })
+}
+
+function generatePaginatorComponent() {
+  const template = fs.readFileSync(
+    './templates/paginatorComponent.ejs',
+    'utf-8'
+  )
+
+  return ejsRender(template, {})
 }

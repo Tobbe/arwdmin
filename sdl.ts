@@ -59,6 +59,7 @@ export function prepareGeneratorDir(rwRoot: string, generatorDirName: string) {
 
 export async function generateSdls(rwRoot: string, modelNames: string[]) {
   const serviceDir = getGeneratorDir(rwRoot, 'services')
+  const graphqlDir = getGeneratorDir(rwRoot, 'graphql')
 
   console.log('generating sdls for', modelNames)
 
@@ -72,21 +73,58 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
       const modelNames = getModelNameVariants(name)
       const modelFields = await getModelFields(rwRoot, name)
 
+      const sdlFilename = path.join(
+        graphqlDir,
+        modelNames.camelCasePluralModelName + '.sdl.ts'
+      )
+
+      const sdl = fs.readFileSync(sdlFilename, 'utf-8')
+
+      fs.writeFileSync(
+        sdlFilename,
+        prettify(
+          sdl.replace(
+            'type Query {',
+            `type ${modelNames.pascalCaseModelName}Page {\n` +
+              `  ${modelNames.camelCasePluralModelName}: [${modelNames.pascalCaseModelName}!]!\n` +
+              `  count: Int!\n` +
+              '}\n\n' +
+              'type Query {\n' +
+              ` ${modelNames.camelCaseModelName}Page(page: Int): ${modelNames.pascalCaseModelName}Page @requireAuth`
+          ),
+          'ts'
+        )
+      )
+
       const serviceFilename = path.join(
         serviceDir,
         modelNames.camelCasePluralModelName,
         modelNames.camelCasePluralModelName + '.ts'
       )
 
-      const service = fs.readFileSync(serviceFilename, 'utf8')
+      const service = fs.readFileSync(serviceFilename, 'utf-8')
 
       fs.writeFileSync(
         serviceFilename,
         prettify(
           service
             .replace(
-              'import { db }',
-              "import { removeNulls } from '@redwoodjs/api'\n\nimport { db }"
+              "import { db } from 'src/lib/db'",
+              "import { removeNulls } from '@redwoodjs/api'\n\n" +
+              "import { db } from 'src/lib/db'\n\n" +
+              `const ${modelNames.capitalModelName}_PER_PAGE = 5\n\n` +
+              `export const ${modelNames.camelCaseModelName}Page = ({ page = 1 }) => {\n` +
+              `  const offset = (page - 1) * ${modelNames.capitalModelName}_PER_PAGE\n` +
+              '\n' +
+              '  return {\n' +
+              `    ${modelNames.camelCasePluralModelName}: db.${modelNames.camelCaseModelName}.findMany({\n` +
+              `      take: ${modelNames.capitalModelName}_PER_PAGE,\n` +
+              '      skip: offset,\n' +
+              "      orderBy: { createdAt: 'desc' },\n" +
+              '    }),\n' +
+              `    count: db.${modelNames.camelCaseModelName}.count(),\n` +
+              '  }\n' +
+              '}\n'
             )
             .replace(
               /update\({(.*?)data: input,/gs,
