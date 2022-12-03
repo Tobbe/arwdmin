@@ -25,7 +25,7 @@ export async function getModelNames(rwRoot: string) {
 
   for (const model of schema.datamodel.models) {
     if (model.documentation === '@arwdmin skip') {
-      console.log("Skipping", model.name)
+      console.log('Skipping', model.name)
     } else {
       modelNames.push(model.name)
     }
@@ -36,6 +36,8 @@ export async function getModelNames(rwRoot: string) {
 
 export async function getModelFields(rwRoot: string, modelName: string) {
   const schema = await getSchemaDefinitions(rwRoot)
+
+  // console.log('schema', schema)
 
   const model = schema.datamodel.models.find(
     (model) => model.name === modelName
@@ -50,13 +52,20 @@ export async function getModelFields(rwRoot: string, modelName: string) {
   // console.log('parentProductField', parentProductField)
 
   // console.log('fields', model.fields)
-  model.fields.forEach((field) => {
-    if (modelName === 'Cart') {
-      console.log('field', field)
-    }
-  })
+  if (modelName === 'Payment') {
+    // console.log('model', model)
+    // model.fields.forEach((field) => {
+    //   console.log('field', field)
+    // })
+  }
 
   return model.fields
+}
+
+export async function getEnums(rwRoot: string) {
+  const schema = await getSchemaDefinitions(rwRoot)
+
+  return schema.datamodel.enums
 }
 
 export interface ModelNameVariants {
@@ -67,9 +76,12 @@ export interface ModelNameVariants {
   pascalCaseModelName: string
   pascalCasePluralModelName: string
   capitalModelName: string
+  kebabModelName: string
 }
 
 export function getModelNameVariants(modelName: string): ModelNameVariants {
+  const kebabModelName = camelcase(modelName).replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
+
   return {
     modelName,
     pluralModelName: pluralize(modelName),
@@ -78,5 +90,6 @@ export function getModelNameVariants(modelName: string): ModelNameVariants {
     pascalCaseModelName: pascalcase(modelName),
     pascalCasePluralModelName: pluralize(pascalcase(modelName)),
     capitalModelName: decamelize(modelName).toUpperCase(),
+    kebabModelName,
   }
 }

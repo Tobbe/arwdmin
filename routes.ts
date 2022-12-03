@@ -101,7 +101,7 @@ export function updateRoutes(rwRoot: string, modelNames: string[]) {
       const pascalName = modelNames.pascalCaseModelName
       const pascalPluralName = modelNames.pascalCasePluralModelName
       return `${indent}  <Route path="/arwdmin/${routeName}/new" page={Arwdmin${pascalName}New${pascalName}Page} name="arwdminNew${pascalName}" />\n` +
-        `${indent}  <Route path="/arwdmin/${routeName}/{id}/edit" page={Arwdmin${pascalName}${pascalName}Page} name="arwdminEdit${pascalName}" />\n` +
+        `${indent}  <Route path="/arwdmin/${routeName}/{id}/edit" page={Arwdmin${pascalName}Edit${pascalName}Page} name="arwdminEdit${pascalName}" />\n` +
         `${indent}  <Route path="/arwdmin/${routeName}/{id}" page={Arwdmin${pascalName}${pascalName}Page} name="arwdmin${pascalName}" />\n` +
         `${indent}  <Route path="/arwdmin/${routeName}" page={Arwdmin${pascalName}${pascalPluralName}Page} name="arwdmin${pascalPluralName}" />`
     }),

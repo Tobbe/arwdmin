@@ -1,0 +1,12 @@
+// import Edit<%= model.pascalName %>Cell from 'src/components/<%= model.pascalName %>/Edit<%= model.pascalName %>Cell'
+import Edit<%= model.pascalName %>Cell from './Edit<%= model.pascalName %>Cell'
+
+interface Props {
+  id: string
+}
+
+const Edit<%= model.pascalName %>Page: React.FC<Props> = ({ id }) => {
+  return <Edit<%= model.pascalName %>Cell id={id} />
+}
+
+export default Edit<%= model.pascalName %>Page

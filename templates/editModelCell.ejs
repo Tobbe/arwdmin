@@ -1,0 +1,80 @@
+import type { EditArwdmin<%= model.pascalName %>ById, Update<%= model.pascalName %>Input } from 'types/graphql'
+
+import { navigate, routes } from '@redwoodjs/router'
+import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
+import { useMutation } from '@redwoodjs/web'
+import { toast } from '@redwoodjs/web/toast'
+
+import <%= model.pascalName %>Form from 'src/components/arwdmin/<%= model.pascalName %>/<%= model.pascalName %>Form'
+
+export const QUERY = gql`
+  query EditArwdmin<%= model.pascalName %>ById($id: String!) {
+    <%= model.camelName %>: <%= model.camelName %>(id: $id) {
+      <%_ for (let field of modelFields) { -%>
+        <%= field.name %>
+        <%_ if (field.kind === 'object') { -%>
+          {
+            id
+          }
+        <% } -%>
+      <% } %>
+    }
+  }
+`
+const UPDATE_<%= model.capitalName %>_MUTATION = gql`
+  mutation UpdateArwdmin<%= model.pascalName %>Mutation($id: String!, $input: Update<%= model.pascalName %>Input!) {
+    update<%= model.pascalName %>(id: $id, input: $input) {
+      <%_ for (let field of modelFields) { -%>
+        <%= field.name %>
+        <%_ if (field.kind === 'object') { -%>
+          {
+            id
+          }
+        <% } -%>
+      <% } %>
+    }
+  }
+`
+
+export const Loading = () => <div>Loading...</div>
+
+export const Failure = ({ error }: CellFailureProps) => {
+  console.error('Edit<%= model.pascalName %>Cell error', error)
+
+  return (
+    <div className="rw-cell-error">{error?.message}</div>
+  )
+}
+
+export const Success = ({ <%= model.camelName %> }: CellSuccessProps<EditArwdmin<%= model.pascalName %>ById>) => {
+  const [update<%= model.pascalName %>, { loading, error }] = useMutation(
+    UPDATE_<%= model.capitalName %>_MUTATION,
+    {
+      onCompleted: () => {
+        toast.success('<%= model.pascalName %> updated')
+        navigate(routes.arwdmin<%= model.pascalPluralName %>())
+      },
+      onError: (error) => {
+        toast.error(error.message)
+      },
+    }
+  )
+
+  const onSave = (
+    input: Update<%= model.pascalName %>Input,
+    id: EditArwdmin<%= model.pascalName %>ById['<%= model.camelName %>']['id']
+  ) => {
+    update<%= model.pascalName %>({ variables: { id, input } })
+  }
+
+  return (
+    <div className="rw-segment">
+      <header className="rw-segment-header">
+        <h2 className="rw-heading rw-heading-secondary">Edit <%= model.pascalName %> {<%= model.camelName %>?.id}</h2>
+      </header>
+      <div className="rw-segment-main">
+        <<%= model.pascalName %>Form <%= model.camelName %>={<%= model.camelName %>} onSave={onSave} error={error} loading={loading} />
+      </div>
+    </div>
+  )
+}

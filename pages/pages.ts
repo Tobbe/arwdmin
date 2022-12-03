@@ -3,12 +3,16 @@ import path from 'path'
 
 import type { DMMF } from '@prisma/generator-helper'
 
-import { ejsRender } from './ejs'
+import { ejsRender } from '../ejs'
 import {
+  getEnums,
   getModelFields,
   getModelNameVariants,
   ModelNameVariants,
-} from './schema'
+} from '../schema'
+import { createEditPage } from './edit'
+import { createNewPage } from './new'
+import { getRenderDataFunction } from './schemaRender'
 
 export function createArwdminPagesDir(rwRoot: string) {
   // TODO: read 'web' name from redwood.toml
@@ -24,13 +28,22 @@ export function createArwdminPagesDir(rwRoot: string) {
   return pagesPath
 }
 
-export function getComponentsDir(rwRoot: string) {
-  const componentsDir = path.join(rwRoot, 'web', 'src', 'components', 'arwdmin')
+// I was struggling with "path" vs "dir". Ultimately I decided that "dir" is
+// the actual directory or folder. "path" is the path to the dir. "path" is
+// always a string
+export function createComponentsDir(rwRoot: string) {
+  const componentsPath = path.join(
+    rwRoot,
+    'web',
+    'src',
+    'components',
+    'arwdmin'
+  )
 
-  fs.rmSync(componentsDir, { recursive: true, force: true })
-  fs.mkdirSync(componentsDir)
+  fs.rmSync(componentsPath, { recursive: true, force: true })
+  fs.mkdirSync(componentsPath)
 
-  return componentsDir
+  return componentsPath
 }
 
 // TODO: Skip (and warn) models that don't have an id column
@@ -41,42 +54,48 @@ export function getComponentsDir(rwRoot: string) {
 export async function createModelPages(
   rwRoot: string,
   pagesPath: string,
-  componentsDir: string,
+  componentsPath: string,
   modelNames: string[]
 ) {
-  const paginatorPath = path.join(componentsDir, 'Paginator', 'Paginator.tsx')
+  const paginatorPath = path.join(componentsPath, 'Paginator', 'Paginator.tsx')
   const paginatorComponent = generatePaginatorComponent()
 
-  fs.mkdirSync(
-    path.join(
-      componentsDir,
-      'Paginator'
-    ),
-    { recursive: true }
-  )
+  fs.mkdirSync(path.join(componentsPath, 'Paginator'), { recursive: true })
   fs.writeFileSync(paginatorPath, paginatorComponent)
 
   for (const modelName of modelNames) {
     console.log('Creating pages for', modelName)
-    const fields = await getModelFields(rwRoot, modelName)
+    const modelFields = await getModelFields(rwRoot, modelName)
+    const enums = await getEnums(rwRoot)
+    const renderDataFunction = getRenderDataFunction(modelFields, enums)
 
     const modelNameVariants = getModelNameVariants(modelName)
 
     const modelListPage = generateModelListPage({
       pascalCasePluralName: modelNameVariants.pascalCasePluralModelName,
     })
-    const modelListCell = generateModelListCell(modelNameVariants, fields)
+    const modelListCell = generateModelListCell(modelNameVariants, modelFields)
     const modelListComponent = generateModelListComponent(
       modelNameVariants,
-      fields
+      modelFields
     )
     const modelPage = generateModelPage(modelNameVariants)
-    const modelCell = generateModelCell(modelNameVariants, fields)
-    const modelComponent = generateModelComponent(modelNameVariants, fields)
+    const modelCell = generateModelCell(modelNameVariants, modelFields)
+    const modelComponent = generateModelComponent(
+      modelNameVariants,
+      modelFields
+    )
 
-    const newModelPage = generateNewModelPage(modelNameVariants)
-    const newModelComponent = generateNewModelComponent(modelNameVariants)
-    const modelForm = generateModelForm(modelNameVariants, fields)
+    const modelForm = generateModelForm(
+      modelNameVariants,
+      modelFields,
+      renderDataFunction
+    )
+
+    // TODO: Extract createListPage and createDetailsPage (or createSinglePage)
+    // similar to crateNewPage and createEditPage below
+    createNewPage(pagesPath, modelName)
+    createEditPage(pagesPath, modelName, modelFields)
 
     // List page + components
     fs.mkdirSync(
@@ -158,40 +177,16 @@ export async function createModelPages(
       modelCell
     )
 
-    // New Model page + components
+    // ModelForm
     fs.mkdirSync(
-      path.join(pagesPath,
-        modelNameVariants.pascalCaseModelName,
-        'New' + modelNameVariants.pascalCaseModelName + 'Page'
-      ),
+      path.join(componentsPath, modelNameVariants.pascalCaseModelName),
       { recursive: true }
     )
 
     fs.writeFileSync(
       path.join(
-        pagesPath,
+        componentsPath,
         modelNameVariants.pascalCaseModelName,
-        'New' + modelNameVariants.pascalCaseModelName + 'Page',
-        'New' + modelNameVariants.pascalCaseModelName + 'Page.tsx'
-      ),
-      newModelPage
-    )
-
-    fs.writeFileSync(
-      path.join(
-        pagesPath,
-        modelNameVariants.pascalCaseModelName,
-        'New' + modelNameVariants.pascalCaseModelName + 'Page',
-        'New' + modelNameVariants.pascalCaseModelName + '.tsx'
-      ),
-      newModelComponent
-    )
-
-    fs.writeFileSync(
-      path.join(
-        pagesPath,
-        modelNameVariants.pascalCaseModelName,
-        'New' + modelNameVariants.pascalCaseModelName + 'Page',
         modelNameVariants.pascalCaseModelName + 'Form.tsx'
       ),
       modelForm
@@ -314,53 +309,49 @@ function generatePaginatorComponent() {
   return ejsRender(template, {})
 }
 
-function generateNewModelPage({ pascalCaseModelName }: ModelNameVariants) {
-  const model = {
-    pascalName: pascalCaseModelName,
-  }
-
-  const template = fs.readFileSync('./templates/newModelPage.ejs', 'utf-8')
-
-  return ejsRender(template, { model })
-}
-
-function generateNewModelComponent(
-  {
-    pascalCaseModelName,
-    camelCaseModelName,
-    camelCasePluralModelName,
-    capitalModelName,
-  }: ModelNameVariants,
-) {
-  const model = {
-    pascalName: pascalCaseModelName,
-    camelName: camelCaseModelName,
-    camelPluralName: camelCasePluralModelName,
-    capitalName: capitalModelName,
-  }
-
-  const template = fs.readFileSync('./templates/newModelComponent.ejs', 'utf-8')
-
-  return ejsRender(template, { model })
-}
-
 function generateModelForm(
   {
     pascalCaseModelName,
     camelCaseModelName,
     camelCasePluralModelName,
     capitalModelName,
+    kebabModelName,
   }: ModelNameVariants,
-  modelFields: DMMF.Field[]
+  modelFields: DMMF.Field[],
+  // TODO: Fix return type
+  getRenderData: (fieldName: string) => any
 ) {
   const model = {
     pascalName: pascalCaseModelName,
     camelName: camelCaseModelName,
     camelPluralName: camelCasePluralModelName,
     capitalName: capitalModelName,
+    kebabName: kebabModelName,
   }
 
   const template = fs.readFileSync('./templates/modelForm.ejs', 'utf-8')
 
-  return ejsRender(template, { model, modelFields })
+  // Skip all relation fields (but we still keep relation ids)
+  // So if the model has `authorId: Int` and `author: Author` we'll only
+  // include `authorId`
+  function isRelation(field: DMMF.Field) {
+    return field.kind === 'object'
+  }
+
+  // Don't include id fields with default values, or `updatedAt` fields, or
+  // fields with default `now()` or `autoincrement()` functions
+  function isAutoGenerated(field: DMMF.Field) {
+    return (
+      (field.isId && field.hasDefaultValue) ||
+      field.isUpdatedAt ||
+      (field.default as DMMF.FieldDefault | undefined)?.name === 'now' ||
+      (field.default as DMMF.FieldDefault | undefined)?.name === 'autoincrement'
+    )
+  }
+
+  const fields = modelFields.filter(
+    (field) => !isRelation(field) && !isAutoGenerated(field)
+  )
+
+  return ejsRender(template, { model, modelFields: fields, getRenderData })
 }

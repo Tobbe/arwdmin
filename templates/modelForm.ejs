@@ -1,4 +1,4 @@
-import type { Edit<%= model.pascalName %>ById, Update<%= model.pascalName %>Input } from 'types/graphql'
+import type { EditArwdmin<%= model.pascalName %>ById, Update<%= model.pascalName %>Input } from 'types/graphql'
 
 import {
   Form,
@@ -20,10 +20,10 @@ const formatDatetime = (value) => {
   }
 }
 
-type Form<%= model.pascalName %> = NonNullable<Edit<%= model.pascalName %>ById['<%= model.camelName %>']>
+type Form<%= model.pascalName %> = NonNullable<EditArwdmin<%= model.pascalName %>ById['<%= model.camelName %>']>
 
 interface Props {
-  <%= model.camelName %>?: Edit<%= model.pascalName %>ById['<%= model.camelName %>']
+  <%= model.camelName %>?: EditArwdmin<%= model.pascalName %>ById['<%= model.camelName %>']
   onSave: (data: Update<%= model.pascalName %>Input, id?: Form<%= model.pascalName %>['id']) => void
   error: RWGqlError
   loading: boolean
@@ -45,6 +45,7 @@ const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, 
         />
 
         <%_ for (const field of modelFields) { -%>
+          <% const renderData = getRenderData(field.name) %>
           <Label
             name="<%= field.name %>"
             className="rw-label"
@@ -53,12 +54,30 @@ const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, 
             <%= field.name %>
           </Label>
 
-          <TextField
-            name="<%= field.name %>"
-            defaultValue={<%= model.camelName %>?.<%= field.name %>}
-            className="rw-input"
-            errorClassName="rw-input rw-input-error"
-          />
+          <%_ if (renderData.values) { %>
+            <%_ for (const value of renderData.values) { %>
+              <div className="arwdmin-check-radio-item">
+                <<%= renderData.component %>
+                  id="<%= model.kebabName %>-<%= field.name %>-<%= value %>"
+                  name="<%= field.name %>"
+                  defaultValue="<%= value %>"
+                  defaultChecked={<%= model.camelName %>?.<%= field.name %> === '<%= value %>'}
+                  className="rw-input"
+                  errorClassName="rw-input rw-input-error"
+                  <%= renderData.validation ? `validation=${renderData.validation}` : '' -%>
+                />
+                <div><%= value %></div>
+              </div>
+            <% } %>
+          <% } else { %>
+            <<%= renderData.component %>
+              name="<%= field.name %>"
+              <%= renderData.defaultProp %>={<%= model.camelName %>?.<%= field.name %>}
+              className="rw-input"
+              errorClassName="rw-input rw-input-error"
+              <%= renderData.validation ? `validation=${renderData.validation}` : '' -%>
+            />
+          <% } %>
 
           <FieldError name="<%= field.name %>" className="rw-field-error" />
         <% } -%>

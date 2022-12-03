@@ -1,10 +1,10 @@
 import <%= model.pascalName %>Cell from './<%= model.pascalName %>Cell'
 
-type Props = {
+interface Props {
   id: string
 }
 
-const <%= model.pascalName %>Page = ({ id }: Props) => {
+const <%= model.pascalName %>Page: React.FC<Props> = ({ id }) => {
   return <<%= model.pascalName %>Cell id={id} />
 }
 
