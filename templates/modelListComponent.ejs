@@ -50,12 +50,14 @@ const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
                     <Link
                       to={routes.arwdmin<%= model.pascalName %>({ id: <%= model.camelName %>.id })}
                       title={'Show <%= model.name %> ' + <%= model.camelName %>.id + ' details'}
+                      className="arwdmin-button"
                     >
                       Show
                     </Link>
                     <Link
                       to={routes.arwdminEdit<%= model.pascalName %>({ id: <%= model.camelName %>.id })}
                       title={'Edit <%= model.name %> ' + <%= model.camelName %>.id}
+                      className="arwdmin-button"
                     >
                       Edit
                     </Link>
@@ -63,6 +65,7 @@ const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
                       type="button"
                       title={'Delete <%= model.name %> ' + <%= model.camelName %>.id}
                       onClick={() => onDeleteClick(<%= model.camelName %>.id)}
+                      className="arwdmin-button"
                     >
                       Delete
                     </button>

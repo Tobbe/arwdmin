@@ -79,13 +79,19 @@ body, html {
   color: var(--color-primary);
   padding-inline: var(--size-3);
   padding-block: var(--size-2);
+  margin-left: var(--size-1);
   border-radius: var(--radius-2);
   text-decoration: none;
   font-weight: var(--font-weight-6);
   outline-offset: 3px;
+  cursor: pointer;
   transition:
     background-color .2s var(--ease-3),
     color .2s var(--ease-3);
+}
+
+.arwdmin-button:first-of-type {
+  margin-left: 0;
 }
 
 .arwdmin-button:is(.current, :hover, :focus-visible) {

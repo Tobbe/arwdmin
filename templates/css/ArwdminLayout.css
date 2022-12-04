@@ -9,10 +9,6 @@
   font-size: var(--font-size-0);
 }
 
-.arwdmin-layout a {
-  color: var(--color-highlight);
-}
-
 .arwdmin-layout > nav {
   --_link-bg: var(--color-bg-dark);
   --_link-text: var(--color-primary);
