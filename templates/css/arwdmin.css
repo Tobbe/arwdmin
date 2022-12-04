@@ -46,6 +46,11 @@ body, html {
   --_link-text: var(--color-bg);
 }
 
+.arwdmin-model-list th {
+  color: var(--color-spare);
+  min-width: var(--size-11);
+}
+
 .arwdmin-model-list-table-wrapper {
   overflow-x: auto;
   /*                  nav bar width         nav bar margin  to give some spacing on the right side */
