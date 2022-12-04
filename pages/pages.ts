@@ -62,6 +62,10 @@ export async function createModelPages(
 
   fs.mkdirSync(path.join(componentsPath, 'Paginator'), { recursive: true })
   fs.writeFileSync(paginatorPath, paginatorComponent)
+  fs.copyFileSync(
+    './templates/css/Paginator.css',
+    path.join(componentsPath, 'Paginator', 'Paginator.css')
+  )
 
   for (const modelName of modelNames) {
     console.log('Creating pages for', modelName)

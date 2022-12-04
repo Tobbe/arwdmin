@@ -1,0 +1,36 @@
+.arwdmin-paginator ul {
+  all: unset;
+  --_link-bg: var(--color-bg-dark);
+  --_link-text: var(--color-primary);
+
+  display: flex;
+  justify-content: center;
+  gap: var(--size-2);
+}
+
+.arwdmin-paginator li {
+  all: unset;
+}
+
+.arwdmin-paginator a {
+  background-color: var(--_link-bg);
+  color: var(--_link-text);
+  padding-inline: var(--size-3);
+  padding-block: var(--size-2);
+  border-radius: var(--radius-2);
+  text-decoration: none;
+  outline-offset: 3px;
+  transition:
+    background-color .2s var(--ease-3),
+    color .2s var(--ease-3);
+}
+
+.arwdmin-paginator a[href]:is(.current, :hover, :focus-visible) {
+  --_link-bg: var(--color-muted);
+  --_link-text: var(--color-bg);
+}
+
+.arwdmin-paginator a:not([href]) {
+  cursor: not-allowed;
+  --_link-bg: transparent;
+}

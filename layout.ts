@@ -4,13 +4,18 @@ import { ejsRender } from './ejs'
 import { getModelNameVariants } from './schema'
 
 function generateLayout(modelNames: string[]) {
+  const models = modelNames.map((modelName) => {
+    const modelNameVariants = getModelNameVariants(modelName)
+
+    return {
+      pascalPluralName: modelNameVariants.pascalCasePluralModelName,
+      humanizedPlural: modelNameVariants.humanizedPlural,
+    }
+  })
+
   const template: string = fs.readFileSync('./templates/layout.ejs', 'utf-8')
 
-  return ejsRender(template, {
-    pluralModelNames: modelNames.map(
-      (name) => getModelNameVariants(name).pascalCasePluralModelName
-    ),
-  })
+  return ejsRender(template, { models })
 }
 
 export function createArwdminLayoutDir(rwRoot: string) {
@@ -26,9 +31,12 @@ export function createArwdminLayoutDir(rwRoot: string) {
   return layoutPath
 }
 
-// TODO: Filter models first, then pass the same list here and to `createModelPages`
 export function createLayout(layoutPath: string, modelNames: string[]) {
   const layout = generateLayout(modelNames)
 
   fs.writeFileSync(path.join(layoutPath, 'ArwdminLayout.tsx'), layout)
+  fs.copyFileSync(
+    './templates/css/ArwdminLayout.css',
+    path.join(layoutPath, 'ArwdminLayout.css')
+  )
 }

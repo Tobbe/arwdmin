@@ -1,0 +1,52 @@
+.arwdmin-layout {
+  color: var(--color-primary);
+  background-color: var(--color-bg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+
+  display: flex;
+  min-height: 100vh;
+  font-size: var(--font-size-0);
+}
+
+.arwdmin-layout a {
+  color: var(--color-highlight);
+}
+
+.arwdmin-layout > nav {
+  --_link-bg: var(--color-bg-dark);
+  --_link-text: var(--color-primary);
+
+  font-size: var(--font-size-1);
+  flex-basis: var(--size-fluid-8);
+  flex-grow: 0;
+  flex-shrink: 0;
+  padding: var(--size-3);
+  background-color: var(--color-bg-dark);
+  margin-right: var(--size-5);
+}
+
+.arwdmin-layout > nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.arwdmin-layout > nav li a {
+  display: block;
+  background-color: var(--_link-bg);
+  color: var(--_link-text);
+  padding: var(--size-3);
+  margin-bottom: var(--size-2);
+  border-radius: var(--radius-2);
+  text-decoration: none;
+  outline-offset: 3px;
+  transition:
+    background-color .2s var(--ease-3),
+    color .2s var(--ease-3);
+}
+
+.arwdmin-layout > nav li a:is(.current, :hover) {
+  --_link-bg: var(--color-muted);
+  --_link-text: var(--color-bg);
+}

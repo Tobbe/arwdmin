@@ -1,5 +1,7 @@
 import { Link, routes } from '@redwoodjs/router'
 
+import './Paginator.css'
+
 const ITEMS_PER_PAGE = 5
 
 interface Props {
@@ -21,10 +23,9 @@ const Pagination: React.FC<Props> = ({ count, pageName }) => {
   }
 
   return (
-    <>
-      <h2>Pagination</h2>
+    <nav className="arwdmin-paginator">
       <ul>{items}</ul>
-    </>
+    </nav>
   )
 }
 

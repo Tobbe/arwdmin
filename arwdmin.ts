@@ -14,6 +14,7 @@ import {
   prepareGeneratorDir,
 } from './sdl'
 import { moveArwdminServices } from './services'
+import { addMainStyles } from './styling'
 
 console.log('aRWdmin v0.1.0')
 console.log()
@@ -35,6 +36,8 @@ await createModelPages(rwRoot, pagesPath, componentsPath, modelNames)
 
 const layoutPath = createArwdminLayoutDir(rwRoot)
 createLayout(layoutPath, modelNames)
+
+addMainStyles(rwRoot)
 
 updateRoutes(rwRoot, modelNames)
 
