@@ -35,7 +35,7 @@ const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, 
   }
 
   return (
-    <div className="rw-form-wrapper">
+    <div>
       <Form<Form<%= model.pascalName %>> onSubmit={onSubmit} error={error}>
         <FormError
           error={error}
@@ -48,33 +48,32 @@ const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, 
           <% const renderData = getRenderData(field.name) %>
           <Label
             name="<%= field.name %>"
-            className="rw-label"
+            className="arwdmin-label"
             errorClassName="rw-label rw-label-error"
           >
-            <%= field.name %>
+            <%= renderData.displayName %>
           </Label>
 
-          <%_ if (renderData.values) { %>
-            <%_ for (const value of renderData.values) { %>
+          <%_ if (renderData.subData) { %>
+            <%_ for (const subData of renderData.subData) { %>
               <div className="arwdmin-check-radio-item">
                 <<%= renderData.component %>
-                  id="<%= model.kebabName %>-<%= field.name %>-<%= value %>"
+                  id="<%= model.kebabName %>-<%= field.name %>-<%= subData.value %>"
                   name="<%= field.name %>"
-                  defaultValue="<%= value %>"
-                  defaultChecked={<%= model.camelName %>?.<%= field.name %> === '<%= value %>'}
-                  className="rw-input"
-                  errorClassName="rw-input rw-input-error"
+                  defaultValue="<%= subData.value %>"
+                  defaultChecked={<%= model.camelName %>?.<%= field.name %> === '<%= subData.value %>'}
+                  errorClassName="rw-input-error"
                   <%= renderData.validation ? `validation=${renderData.validation}` : '' -%>
                 />
-                <div><%= value %></div>
+                <div><%= subData.displayName %></div>
               </div>
             <% } %>
           <% } else { %>
             <<%= renderData.component %>
               name="<%= field.name %>"
               <%= renderData.defaultProp %>={<%= model.camelName %>?.<%= field.name %>}
-              className="rw-input"
-              errorClassName="rw-input rw-input-error"
+              className="arwdmin-input"
+              errorClassName="arwdmin-input rw-input-error"
               <%= renderData.validation ? `validation=${renderData.validation}` : '' -%>
             />
           <% } %>
@@ -83,7 +82,7 @@ const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, 
         <% } -%>
 
         <div className="rw-button-group">
-          <Submit disabled={loading} className="rw-button rw-button-blue">
+          <Submit disabled={loading} className="arwdmin-button">
             Save
           </Submit>
         </div>

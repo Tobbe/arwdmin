@@ -20,8 +20,6 @@ body, html {
 .arwdmin-model-list {
   --_link-bg: var(--color-bg-dark);
   --_link-text: var(--color-primary);
-
-  margin-bottom: var(--size-7);
 }
 
 .arwdmin-model-list header {
@@ -52,6 +50,61 @@ body, html {
   overflow-x: auto;
   /*                  nav bar width         nav bar margin  to give some spacing on the right side */
   width: calc(100vw - var(--size-fluid-8) - var(--size-5) - var(--size-5));
+}
+
+.arwdmin-check-radio-item {
+  display: flex;
+  margin-top: var(--size-2);
+}
+
+.arwdmin-check-radio-item input {
+  margin: 0;
+  margin-right: var(--size-2);
+  background-color: var(--color-bg-light);
+  accent-color: var(--color-muted);
+}
+
+.arwdmin-label {
+  display: block;
+  margin-top: var(--size-5);
+  font-weight: var(--font-weight-6);
+  color: var(--color-spare);
+}
+
+.arwdmin-button {
+  /* background-color: var(--_link-bg);
+  color: var(--_link-text); */
+  all: unset;
+  background-color: var(--color-bg-dark);
+  color: var(--color-primary);
+  padding-inline: var(--size-3);
+  padding-block: var(--size-2);
+  border-radius: var(--radius-2);
+  text-decoration: none;
+  font-weight: var(--font-weight-6);
+  outline-offset: 3px;
+  transition:
+    background-color .2s var(--ease-3),
+    color .2s var(--ease-3);
+}
+
+.arwdmin-button:is(.current, :hover, :focus-visible) {
+  background-color: var(--color-muted);
+  color: var(--color-bg);
+}
+
+.arwdmin-input {
+  display: block;
+  margin-top: var(--size-2);
+  width: 100%;
+  padding: var(--size-2);
+  border-width: var(--border-size-1);
+  border-style: solid;
+  border-color: var(--color-bg-dark);
+  color: var(--color-primary);
+  background-color: var(--color-bg-light);
+  border-radius: var(--radius-2);
+  outline: none;
 }
 
 :where(html) {
@@ -165,4 +218,42 @@ body, html {
   --radius-conditional-4: clamp(0px, calc(100vw - 100%) * 1e5, var(--radius-4));
   --radius-conditional-5: clamp(0px, calc(100vw - 100%) * 1e5, var(--radius-5));
   --radius-conditional-6: clamp(0px, calc(100vw - 100%) * 1e5, var(--radius-6));
+}
+
+:where(html) {
+  --ease-1: cubic-bezier(.25, 0, .5, 1);
+  --ease-2: cubic-bezier(.25, 0, .4, 1);
+  --ease-3: cubic-bezier(.25, 0, .3, 1);
+  --ease-4: cubic-bezier(.25, 0, .2, 1);
+  --ease-5: cubic-bezier(.25, 0, .1, 1);
+  --ease-in-1: cubic-bezier(.25, 0, 1, 1);
+  --ease-in-2: cubic-bezier(.50, 0, 1, 1);
+  --ease-in-3: cubic-bezier(.70, 0, 1, 1);
+  --ease-in-4: cubic-bezier(.90, 0, 1, 1);
+  --ease-in-5: cubic-bezier(1, 0, 1, 1);
+  --ease-out-1: cubic-bezier(0, 0, .75, 1);
+  --ease-out-2: cubic-bezier(0, 0, .50, 1);
+  --ease-out-3: cubic-bezier(0, 0, .3, 1);
+  --ease-out-4: cubic-bezier(0, 0, .1, 1);
+  --ease-out-5: cubic-bezier(0, 0, 0, 1);
+  --ease-in-out-1: cubic-bezier(.1, 0, .9, 1);
+  --ease-in-out-2: cubic-bezier(.3, 0, .7, 1);
+  --ease-in-out-3: cubic-bezier(.5, 0, .5, 1);
+  --ease-in-out-4: cubic-bezier(.7, 0, .3, 1);
+  --ease-in-out-5: cubic-bezier(.9, 0, .1, 1);
+  --ease-elastic-1: cubic-bezier(.5, .75, .75, 1.25);
+  --ease-elastic-2: cubic-bezier(.5, 1, .75, 1.25);
+  --ease-elastic-3: cubic-bezier(.5, 1.25, .75, 1.25);
+  --ease-elastic-4: cubic-bezier(.5, 1.5, .75, 1.25);
+  --ease-elastic-5: cubic-bezier(.5, 1.75, .75, 1.25);
+  --ease-squish-1: cubic-bezier(.5, -.1, .1, 1.5);
+  --ease-squish-2: cubic-bezier(.5, -.3, .1, 1.5);
+  --ease-squish-3: cubic-bezier(.5, -.5, .1, 1.5);
+  --ease-squish-4: cubic-bezier(.5, -.7, .1, 1.5);
+  --ease-squish-5: cubic-bezier(.5, -.9, .1, 1.5);
+  --ease-step-1: steps(2);
+  --ease-step-2: steps(3);
+  --ease-step-3: steps(4);
+  --ease-step-4: steps(7);
+  --ease-step-5: steps(10);
 }

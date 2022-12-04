@@ -50,3 +50,8 @@
   --_link-bg: var(--color-muted);
   --_link-text: var(--color-bg);
 }
+
+.arwdmin-layout > main {
+  width: 100%;
+  margin-right: var(--size-5);
+}

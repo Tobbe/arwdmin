@@ -104,7 +104,7 @@ function getListDisplayFunction(type: string) {
   }
 }
 
-function getValues(
+function getSubData(
   type: string,
   field: DMMF.Field,
   enums: DMMF.DatamodelEnum[]
@@ -117,7 +117,10 @@ function getValues(
       process.exit(1)
     }
 
-    return enumValues.map((enumValue) => enumValue.name)
+    return enumValues.map((enumValue) => ({
+      value: enumValue.name,
+      displayName: humanize(enumValue.name),
+    }))
   }
 
   return undefined
@@ -151,7 +154,7 @@ export function getRenderDataFunction(
       deserializeFunction: getDeserializationFunction(type),
       displayFunction: getDisplayFunction(type),
       listDisplayFunction: getListDisplayFunction(type),
-      values: getValues(type, field, enums),
+      subData: getSubData(type, field, enums),
     }
   }
 }

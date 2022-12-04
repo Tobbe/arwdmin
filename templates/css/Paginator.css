@@ -6,6 +6,8 @@
   display: flex;
   justify-content: center;
   gap: var(--size-2);
+
+  margin-top: var(--size-7);
 }
 
 .arwdmin-paginator li {
