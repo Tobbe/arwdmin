@@ -1,4 +1,5 @@
 import type { DMMF } from '@prisma/generator-helper'
+import humanize from 'humanize-string'
 
 function getComponent(
   type: string,
@@ -143,6 +144,7 @@ export function getRenderDataFunction(
     const type = isEnumList ? 'EnumList' : isEnum ? 'Enum' : field.type
 
     return {
+      displayName: humanize(fieldName),
       component: getComponent(type, field, enums),
       defaultProp: getDefaultProp(type),
       validation: getValidation(type, field),

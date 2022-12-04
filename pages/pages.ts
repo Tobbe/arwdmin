@@ -81,7 +81,8 @@ export async function createModelPages(
     const modelListCell = generateModelListCell(modelNameVariants, modelFields)
     const modelListComponent = generateModelListComponent(
       modelNameVariants,
-      modelFields
+      modelFields,
+      renderDataFunction
     )
     const modelPage = generateModelPage(modelNameVariants)
     const modelCell = generateModelCell(modelNameVariants, modelFields)
@@ -239,8 +240,11 @@ function generateModelListComponent(
     pascalCaseModelName,
     camelCaseModelName,
     camelCasePluralModelName,
+    humanizedPlural,
+    humanizedName,
   }: ModelNameVariants,
-  modelFields: DMMF.Field[]
+  modelFields: DMMF.Field[],
+  getRenderData: (fieldName: string) => any
 ) {
   const model = {
     name: modelName,
@@ -248,6 +252,8 @@ function generateModelListComponent(
     pascalName: pascalCaseModelName,
     camelName: camelCaseModelName,
     camelPluralName: camelCasePluralModelName,
+    humanizedPluralName: humanizedPlural,
+    humanizedName: humanizedName,
   }
 
   // TODO: Make sure the sr-only css class exists
@@ -256,7 +262,7 @@ function generateModelListComponent(
     'utf-8'
   )
 
-  return ejsRender(template, { model, modelFields })
+  return ejsRender(template, { model, modelFields, getRenderData })
 }
 
 function generateModelPage({ pascalCaseModelName }: ModelNameVariants) {

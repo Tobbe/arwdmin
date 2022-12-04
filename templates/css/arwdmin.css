@@ -18,7 +18,37 @@ body, html {
 }
 
 .arwdmin-model-list {
+  --_link-bg: var(--color-bg-dark);
+  --_link-text: var(--color-primary);
+
   margin-bottom: var(--size-7);
+}
+
+.arwdmin-model-list header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.arwdmin-model-list header a {
+  background-color: var(--_link-bg);
+  color: var(--_link-text);
+  padding-inline: var(--size-3);
+  padding-block: var(--size-2);
+  border-radius: var(--radius-2);
+  text-decoration: none;
+  outline-offset: 3px;
+  transition:
+    background-color .2s var(--ease-3),
+    color .2s var(--ease-3);
+}
+
+.arwdmin-model-list header a[href]:is(.current, :hover, :focus-visible) {
+  --_link-bg: var(--color-muted);
+  --_link-text: var(--color-bg);
+}
+
+.arwdmin-model-list-table-wrapper {
   overflow-x: auto;
   /*                  nav bar width         nav bar margin  to give some spacing on the right side */
   width: calc(100vw - var(--size-fluid-8) - var(--size-5) - var(--size-5));

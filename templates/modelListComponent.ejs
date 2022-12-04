@@ -12,60 +12,67 @@ const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
 
   return (
     <div className="arwdmin-model-list">
-      <table>
-        <thead>
-          <tr>
-            <%_ for (let field of modelFields) { -%>
-              <th><%= field.name %></th>
-            <% } %>
-            <th>
-              <span className="sr-only">Actions</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {<%= model.camelPluralName %>.map((<%= model.camelName %>) => (
-            <tr key={<%= model.camelName %>.id}>
+      <header>
+        <h2><%= model.humanizedPluralName %></h2>
+        <Link to={routes.arwdminNew<%= model.pascalName %>()} className="add-button">Add <%= model.humanizedName %></Link>
+      </header>
+      <div className="arwdmin-model-list-table-wrapper">
+        <table>
+          <thead>
+            <tr>
               <%_ for (let field of modelFields) { -%>
-                <%_ if (field.type === 'DateTime') { -%>
-                  <td>{timeTag(<%= model.camelName %>.<%= field.name %>)}</td>
-                <%_ } else if (field.type === 'Boolean') { -%>
-                  <td>{checkboxInputTag(<%= model.camelName %>.<%= field.name %>)}</td>
-                <%_ } else if (field.kind === 'object') { -%>
-                  <td><pre>{truncate(JSON.stringify(<%= model.camelName %>.<%= field.name %>))}</pre></td>
-                <%_ } else if (field.name.toLowerCase().endsWith('image') || field.name.toLowerCase().endsWith('img')) { -%>
-                  <td><img src={<%= model.camelName %>.<%= field.name %>} width="128" height="128" /></td>
-                <% } else { -%>
-                  <td>{truncate(<%= model.camelName %>.<%= field.name %>)}</td>
-                <% } -%>
+                <% const renderData = getRenderData(field.name) %>
+                <th><%= renderData.displayName %></th>
               <% } %>
-              <td>
-                <nav className="rw-table-actions">
-                  <Link
-                    to={routes.arwdmin<%= model.pascalName %>({ id: <%= model.camelName %>.id })}
-                    title={'Show <%= model.name %> ' + <%= model.camelName %>.id + ' details'}
-                  >
-                    Show
-                  </Link>
-                  <Link
-                    to={routes.arwdminEdit<%= model.pascalName %>({ id: <%= model.camelName %>.id })}
-                    title={'Edit <%= model.name %> ' + <%= model.camelName %>.id}
-                  >
-                    Edit
-                  </Link>
-                  <button
-                    type="button"
-                    title={'Delete <%= model.name %> ' + <%= model.camelName %>.id}
-                    onClick={() => onDeleteClick(<%= model.camelName %>.id)}
-                  >
-                    Delete
-                  </button>
-                </nav>
-              </td>
+              <th>
+                <span className="sr-only">Actions</span>
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {<%= model.camelPluralName %>.map((<%= model.camelName %>) => (
+              <tr key={<%= model.camelName %>.id}>
+                <%_ for (let field of modelFields) { -%>
+                  <%_ if (field.type === 'DateTime') { -%>
+                    <td>{timeTag(<%= model.camelName %>.<%= field.name %>)}</td>
+                  <%_ } else if (field.type === 'Boolean') { -%>
+                    <td>{checkboxInputTag(<%= model.camelName %>.<%= field.name %>)}</td>
+                  <%_ } else if (field.kind === 'object') { -%>
+                    <td><pre>{truncate(JSON.stringify(<%= model.camelName %>.<%= field.name %>))}</pre></td>
+                  <%_ } else if (field.name.toLowerCase().endsWith('image') || field.name.toLowerCase().endsWith('img')) { -%>
+                    <td><img src={<%= model.camelName %>.<%= field.name %>} width="128" height="128" /></td>
+                  <% } else { -%>
+                    <td>{truncate(<%= model.camelName %>.<%= field.name %>)}</td>
+                  <% } -%>
+                <% } %>
+                <td>
+                  <nav className="rw-table-actions">
+                    <Link
+                      to={routes.arwdmin<%= model.pascalName %>({ id: <%= model.camelName %>.id })}
+                      title={'Show <%= model.name %> ' + <%= model.camelName %>.id + ' details'}
+                    >
+                      Show
+                    </Link>
+                    <Link
+                      to={routes.arwdminEdit<%= model.pascalName %>({ id: <%= model.camelName %>.id })}
+                      title={'Edit <%= model.name %> ' + <%= model.camelName %>.id}
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      type="button"
+                      title={'Delete <%= model.name %> ' + <%= model.camelName %>.id}
+                      onClick={() => onDeleteClick(<%= model.camelName %>.id)}
+                    >
+                      Delete
+                    </button>
+                  </nav>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
