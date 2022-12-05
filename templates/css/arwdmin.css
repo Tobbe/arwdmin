@@ -77,8 +77,6 @@ body, html {
 }
 
 .arwdmin-button {
-  /* background-color: var(--_link-bg);
-  color: var(--_link-text); */
   all: unset;
   background-color: var(--color-bg-dark);
   color: var(--color-primary);
