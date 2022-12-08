@@ -20,6 +20,13 @@ import { addMainStyles } from './styling'
 console.log('aRWdmin v0.1.0')
 console.log()
 
+if (process.argv.includes('--css')) {
+  const rwRoot = findRwRoot(path.join(process.cwd(), '..', 'acm-admin'))
+  addMainStyles(rwRoot)
+
+  process.exit(0)
+}
+
 function findRwRoot(dir = process.cwd()): string {
   if (fs.existsSync(path.join(dir, 'redwood.toml'))) {
     return dir
@@ -29,6 +36,7 @@ function findRwRoot(dir = process.cwd()): string {
 }
 
 const rwRoot = findRwRoot(path.join(process.cwd(), '..', 'acm-admin'))
+
 const modelNames = await getModelNames(rwRoot)
 
 const pagesPath = createArwdminPagesDir(rwRoot)

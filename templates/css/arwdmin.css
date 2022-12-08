@@ -23,15 +23,32 @@ body, html {
   align-items: center;
 }
 
+.arwdmin-model-list table {
+  border-spacing: 0px;
+  width: 100%;
+}
+
 .arwdmin-model-list th {
   color: var(--color-spare);
+  background-color: var(--color-bg-dark);
   min-width: var(--size-10);
+  padding: var(--size-2);
+  overflow: hidden;
+}
+
+.arwdmin-model-list td {
+  border-width: 1px 0 0 0;
+  border-style: solid;
+  border-color: var(--color-spare);
+  padding: var(--size-2);
 }
 
 .arwdmin-model-list-table-wrapper {
   overflow-x: auto;
   /*                  nav bar width         nav bar margin  to give some spacing on the right side */
   width: calc(100vw - var(--size-fluid-8) - var(--size-5) - var(--size-5));
+  border: var(--border-size-1) solid var(--color-spare);
+  border-radius: var(--radius-2);
 }
 
 .arwdmin-check-radio-item {
