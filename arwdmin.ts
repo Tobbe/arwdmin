@@ -3,6 +3,7 @@
 
 import fs from 'fs'
 import path from 'path'
+import { addArwdminFormatters } from './formatters'
 import { createArwdminLayoutDir, createLayout } from './layout'
 import { createArwdminPagesDir, createModelPages, createComponentsDir } from './pages/pages'
 
@@ -38,6 +39,8 @@ const layoutPath = createArwdminLayoutDir(rwRoot)
 createLayout(layoutPath, modelNames)
 
 addMainStyles(rwRoot)
+
+addArwdminFormatters(rwRoot)
 
 updateRoutes(rwRoot, modelNames)
 

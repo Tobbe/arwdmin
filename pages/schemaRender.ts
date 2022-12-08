@@ -88,7 +88,7 @@ function getDisplayFunction(type: string) {
   }
 }
 
-function getListDisplayFunction(type: string) {
+function getListDisplayFunction(type: string, field: DMMF.Field) {
   switch (type) {
     case 'Enum':
     case 'EnumList':
@@ -100,6 +100,12 @@ function getListDisplayFunction(type: string) {
     case 'Json':
       return 'jsonTruncate'
     default:
+      if (field.isId) {
+        return 'truncateId'
+      } else if (field.name.endsWith('Id')) {
+        return 'truncateMaybeId'
+      }
+
       return 'truncate'
   }
 }
@@ -153,7 +159,7 @@ export function getRenderDataFunction(
       validation: getValidation(type, field),
       deserializeFunction: getDeserializationFunction(type),
       displayFunction: getDisplayFunction(type),
-      listDisplayFunction: getListDisplayFunction(type),
+      listDisplayFunction: getListDisplayFunction(type, field),
       subData: getSubData(type, field, enums),
     }
   }

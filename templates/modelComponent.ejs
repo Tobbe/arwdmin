@@ -7,7 +7,7 @@ import { Link, routes, navigate } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 
-import { checkboxInputTag, formatEnum, timeTag } from 'src/lib/formatters'
+import { checkboxInputTag, formatEnum, timeTag } from 'src/lib/arwdminFormatters'
 
 const DELETE_<%= model.capitalName %>_MUTATION = gql`
   mutation Delete<%= model.pascalName %>Mutation($id: String!) {
@@ -49,19 +49,10 @@ const <%= model.pascalName %> = ({ <%= model.camelName %> }: Props) => {
         <table>
           <tbody>
             <%_ for (let field of modelFields) { -%>
+              <% const renderData = getRenderData(field.name) %>
               <tr>
                 <th><%= field.name %></th>
-                <%_ if (field.type === 'DateTime') { -%>
-                  <td>{timeTag(<%= model.camelName %>.<%= field.name %>)}</td>
-                <%_ } else if (field.type === 'Boolean') { -%>
-                  <td>{checkboxInputTag(<%= model.camelName %>.<%= field.name %>)}</td>
-                <%_ } else if (field.kind === 'object') { -%>
-                  <td><pre>{JSON.stringify(<%= model.camelName %>.<%= field.name %>, null, 2)}</pre></td>
-                <%_ } else if (field.name.toLowerCase().endsWith('image') || field.name.toLowerCase().endsWith('img')) { -%>
-                  <td><img src={<%= model.camelName %>.<%= field.name %>} width="200" height="200" /></td>
-                <% } else { -%>
-                  <td>{<%= model.camelName %>.<%= field.name %>}</td>
-                <% } -%>
+                <td>{<%= renderData.displayFunction %>(<%= model.camelName %>.<%= field.name %>)}</td>
               </tr>
             <% } %>
           </tbody>

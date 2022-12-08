@@ -88,7 +88,8 @@ export async function createModelPages(
     const modelCell = generateModelCell(modelNameVariants, modelFields)
     const modelComponent = generateModelComponent(
       modelNameVariants,
-      modelFields
+      modelFields,
+      renderDataFunction
     )
 
     const modelForm = generateModelForm(
@@ -305,7 +306,9 @@ function generateModelComponent(
     camelCaseModelName,
     capitalModelName,
   }: ModelNameVariants,
-  modelFields: DMMF.Field[]
+  modelFields: DMMF.Field[],
+  // TODO: Fix return type
+  getRenderData: (fieldName: string) => any
 ) {
   const model = {
     pascalName: pascalCaseModelName,
@@ -316,7 +319,7 @@ function generateModelComponent(
 
   const template = fs.readFileSync('./templates/modelComponent.ejs', 'utf-8')
 
-  return ejsRender(template, { model, modelFields })
+  return ejsRender(template, { model, modelFields, getRenderData })
 }
 
 function generatePaginatorComponent() {
