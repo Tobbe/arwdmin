@@ -42,7 +42,7 @@ const <%= model.pascalName %> = ({ <%= model.camelName %> }: Props) => {
     <div className="arwdmin-model">
       <header>
         <h2>
-          <%= model.pascalName %> {<%= model.camelName %>.id} Detail
+          <%= model.pascalName %> {<%= model.camelName %>.id} Details
         </h2>
       </header>
       <div className="arwdmin-table-wrapper">
@@ -60,11 +60,13 @@ const <%= model.pascalName %> = ({ <%= model.camelName %> }: Props) => {
       </div>
       <nav>
         <Link
+          className="arwdmin-button"
           to={routes.arwdminEdit<%= model.pascalName %>({ id: <%= model.camelName %>.id })}
         >
           Edit
         </Link>
         <button
+          className="arwdmin-button"
           type="button"
           onClick={() => onDeleteClick(<%= model.camelName %>.id)}
         >
