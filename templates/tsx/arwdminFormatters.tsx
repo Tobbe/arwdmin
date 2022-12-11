@@ -34,7 +34,7 @@ export const truncate = (
   value: string | number,
   { isId, checkForId }: { isId?: boolean; checkForId?: boolean } = {}
 ) => {
-  const output = stripHtml(value?.toString() ?? '')
+  const output = stripHtml(value?.toString() ?? '').result
 
   let maxLength = 45
   let substrLength = 45
