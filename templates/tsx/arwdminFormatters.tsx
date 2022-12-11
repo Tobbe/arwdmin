@@ -1,6 +1,8 @@
 import React from 'react'
 
 import humanize from 'humanize-string'
+// TODO: Make sure we install this in the user's project
+import { stripHtml } from 'string-strip-html'
 
 export const formatEnum = (values: string | string[] | null | undefined) => {
   let output = ''
@@ -32,10 +34,10 @@ export const truncate = (
   value: string | number,
   { isId, checkForId }: { isId?: boolean; checkForId?: boolean } = {}
 ) => {
-  const output = value?.toString() ?? ''
+  const output = stripHtml(value?.toString() ?? '')
 
-  let maxLength = 50
-  let substrLength = 50
+  let maxLength = 45
+  let substrLength = 45
 
   if (isId || (checkForId && output.length > 20 && !/\s/.test(output))) {
     maxLength = 6
