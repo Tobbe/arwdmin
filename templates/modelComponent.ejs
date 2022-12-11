@@ -39,14 +39,14 @@ const <%= model.pascalName %> = ({ <%= model.camelName %> }: Props) => {
   }
 
   return (
-    <>
-      <div>
-        <header>
-          <h2>
-            <%= model.pascalName %> {<%= model.camelName %>.id} Detail
-          </h2>
-        </header>
-        <table>
+    <div className="arwdmin-model">
+      <header>
+        <h2>
+          <%= model.pascalName %> {<%= model.camelName %>.id} Detail
+        </h2>
+      </header>
+      <div className="arwdmin-table-wrapper">
+        <table className="arwdmin-table">
           <tbody>
             <%_ for (let field of modelFields) { -%>
               <% const renderData = getRenderData(field.name) %>
@@ -71,7 +71,7 @@ const <%= model.pascalName %> = ({ <%= model.camelName %> }: Props) => {
           Delete
         </button>
       </nav>
-    </>
+    </div>
   )
 }
 

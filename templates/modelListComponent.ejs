@@ -21,8 +21,8 @@ const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
           Add <%= model.humanizedName %>
         </Link>
       </header>
-      <div className="arwdmin-model-list-table-wrapper">
-        <table>
+      <div className="arwdmin-table-wrapper">
+        <table className="arwdmin-table">
           <thead>
             <tr>
               <%_ for (let field of modelFields) { -%>
