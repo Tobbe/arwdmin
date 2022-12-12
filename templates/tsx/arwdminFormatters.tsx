@@ -34,6 +34,9 @@ export const truncate = (
   value: string | number,
   { isId, checkForId }: { isId?: boolean; checkForId?: boolean } = {}
 ) => {
+  // stripHtml isn't any kind of security measure. React is already doing
+  // that for us. stripHtml is just a way to remove text that doesn't
+  // provide any valuable information when reading the truncated value
   const output = stripHtml(value?.toString() ?? '').result
 
   let maxLength = 45
