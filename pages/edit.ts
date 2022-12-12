@@ -52,7 +52,10 @@ function generateEditModelCell(
 
   const template = fs.readFileSync('./templates/editModelCell.ejs', 'utf-8')
 
-  return ejsRender(template, { model, modelFields })
+  const idField = modelFields.find((field) => field.isId)
+  const idFieldType = idField?.type || "String"
+
+  return ejsRender(template, { model, modelFields, idFieldType })
 }
 
 function createEditPageDir(pagesPath: string, pascalName: string) {

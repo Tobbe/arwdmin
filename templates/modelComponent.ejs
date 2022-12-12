@@ -10,7 +10,7 @@ import { toast } from '@redwoodjs/web/toast'
 import { checkboxInputTag, formatEnum, timeTag } from 'src/lib/arwdminFormatters'
 
 const DELETE_<%= model.capitalName %>_MUTATION = gql`
-  mutation Delete<%= model.pascalName %>Mutation($id: String!) {
+  mutation Delete<%= model.pascalName %>Mutation($id: <%= idFieldType %>!) {
     delete<%= model.pascalName %>(id: $id) {
       id
     }

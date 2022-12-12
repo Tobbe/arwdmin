@@ -8,7 +8,7 @@ import { toast } from '@redwoodjs/web/toast'
 import <%= model.pascalName %>Form from 'src/components/arwdmin/<%= model.pascalName %>/<%= model.pascalName %>Form'
 
 export const QUERY = gql`
-  query EditArwdmin<%= model.pascalName %>ById($id: String!) {
+  query EditArwdmin<%= model.pascalName %>ById($id: <%= idFieldType %>!) {
     <%= model.camelName %>: <%= model.camelName %>(id: $id) {
       <%_ for (let field of modelFields) { -%>
         <%= field.name %>
@@ -22,7 +22,7 @@ export const QUERY = gql`
   }
 `
 const UPDATE_<%= model.capitalName %>_MUTATION = gql`
-  mutation UpdateArwdmin<%= model.pascalName %>Mutation($id: String!, $input: Update<%= model.pascalName %>Input!) {
+  mutation UpdateArwdmin<%= model.pascalName %>Mutation($id: <%= idFieldType %>!, $input: Update<%= model.pascalName %>Input!) {
     update<%= model.pascalName %>(id: $id, input: $input) {
       <%_ for (let field of modelFields) { -%>
         <%= field.name %>

@@ -305,7 +305,10 @@ function generateModelCell(
 
   const fields = modelFields.filter((field) => !isRelation(field))
 
-  return ejsRender(template, { model, modelFields: fields })
+  const idField = modelFields.find((field) => field.isId)
+  const idFieldType = idField?.type || "String"
+
+  return ejsRender(template, { model, modelFields: fields, idFieldType })
 }
 
 function generateModelComponent(
@@ -328,7 +331,10 @@ function generateModelComponent(
 
   const template = fs.readFileSync('./templates/modelComponent.ejs', 'utf-8')
 
-  return ejsRender(template, { model, modelFields, getRenderData })
+  const idField = modelFields.find((field) => field.isId)
+  const idFieldType = idField?.type || "String"
+
+  return ejsRender(template, { model, modelFields, getRenderData, idFieldType })
 }
 
 function generatePaginatorComponent() {
