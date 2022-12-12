@@ -104,6 +104,22 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
 
       const service = fs.readFileSync(serviceFilename, 'utf-8')
 
+      const hasCreatedAtField = modelFields.find(
+        (field) => field.name === 'createdAt'
+      )
+      const hasUpdatedAtField = modelFields.find(
+        (field) => field.name === 'updatedAt'
+      )
+
+      // TODO: Extract this to a method.
+      // Also look at "timestamp", "dateTime", "date", "time", "sort", "order", "name", "lastName", "fullName", "firstName"
+      // In that order. Case insensitive
+      const orderBy = hasCreatedAtField
+        ? "orderBy: { createdAt: 'desc' },\n"
+        : hasUpdatedAtField
+        ? "orderBy: { updatedAt: 'desc' },\n"
+        : ''
+
       fs.writeFileSync(
         serviceFilename,
         prettify(
@@ -111,27 +127,27 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
             .replace(
               "import { db } from 'src/lib/db'",
               "import { removeNulls } from '@redwoodjs/api'\n\n" +
-              "import { db } from 'src/lib/db'\n\n" +
-              `const ${modelNames.capitalModelName}_PER_PAGE = 5\n\n` +
-              `export const ${modelNames.camelCaseModelName}Page = ({ page = 1 }) => {\n` +
-              `  const offset = (page - 1) * ${modelNames.capitalModelName}_PER_PAGE\n` +
-              '\n' +
-              `  const ${modelNames.camelCasePluralModelName}Promise = db.${modelNames.camelCaseModelName}.findMany({\n` +
-              `    take: ${modelNames.capitalModelName}_PER_PAGE,\n` +
-              '    skip: offset,\n' +
-              "    orderBy: { createdAt: 'desc' },\n" +
-              '  })\n' +
-              `  const countPromise = db.${modelNames.camelCaseModelName}.count()\n` +
-              '\n' +
-              `  return Promise.all([${modelNames.camelCasePluralModelName}Promise, countPromise]).then(\n` +
-              `    ([${modelNames.camelCasePluralModelName}, count]) => {` +
-              '      return {\n' +
-              `        ${modelNames.camelCasePluralModelName},\n` +
-              '        count,\n' +
-              '      }\n' +
-              '    }\n' +
-              '  )\n' +
-              '}\n'
+                "import { db } from 'src/lib/db'\n\n" +
+                `const ${modelNames.capitalModelName}_PER_PAGE = 5\n\n` +
+                `export const ${modelNames.camelCaseModelName}Page = ({ page = 1 }) => {\n` +
+                `  const offset = (page - 1) * ${modelNames.capitalModelName}_PER_PAGE\n` +
+                '\n' +
+                `  const ${modelNames.camelCasePluralModelName}Promise = db.${modelNames.camelCaseModelName}.findMany({\n` +
+                `    take: ${modelNames.capitalModelName}_PER_PAGE,\n` +
+                '    skip: offset,\n' +
+                orderBy +
+                '  })\n' +
+                `  const countPromise = db.${modelNames.camelCaseModelName}.count()\n` +
+                '\n' +
+                `  return Promise.all([${modelNames.camelCasePluralModelName}Promise, countPromise]).then(\n` +
+                `    ([${modelNames.camelCasePluralModelName}, count]) => {` +
+                '      return {\n' +
+                `        ${modelNames.camelCasePluralModelName},\n` +
+                '        count,\n' +
+                '      }\n' +
+                '    }\n' +
+                '  )\n' +
+                '}\n'
             )
             .replace(
               /update\({(.*?)data: input,/gs,

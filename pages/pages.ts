@@ -296,7 +296,16 @@ function generateModelCell(
 
   const template = fs.readFileSync('./templates/modelCell.ejs', 'utf-8')
 
-  return ejsRender(template, { model, modelFields })
+  // Skip all relation fields (but we still keep relation ids)
+  // So if the model has `authorId: Int` and `author: Author` we'll only
+  // include `authorId`
+  function isRelation(field: DMMF.Field) {
+    return field.kind === 'object'
+  }
+
+  const fields = modelFields.filter((field) => !isRelation(field))
+
+  return ejsRender(template, { model, modelFields: fields })
 }
 
 function generateModelComponent(
