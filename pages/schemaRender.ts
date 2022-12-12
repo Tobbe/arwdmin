@@ -6,6 +6,34 @@ function getComponent(
   field: DMMF.Field,
   enums: DMMF.DatamodelEnum[]
 ) {
+  if (type === 'String') {
+    const name = humanize(field.name).toLowerCase()
+
+    if (field.documentation?.includes('@arwdmin-multiline')) {
+      return 'TextAreaField'
+    }
+
+    if (field.documentation?.includes('@arwdmin-singleline') || /\bshort\b/.test(name)) {
+      return 'TextField'
+    }
+
+    if (
+      /\bdescription\b/.test(name) ||
+      /\bdesc\b/.test(name) ||
+      name === 'text' ||
+      name === 'body' ||
+      name === 'post' ||
+      /\breply\b/.test(name) ||
+      /\bmessage\b/.test(name) ||
+      /\bcomment\b/.test(name) ||
+      name === 'bio'
+    ) {
+      return 'TextAreaField'
+    }
+
+    return 'TextField'
+  }
+
   switch (type) {
     case 'Enum':
       const enumValues = enums.find((e) => e.name === field.type)?.values

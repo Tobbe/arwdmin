@@ -7,6 +7,7 @@ import pascalcase from 'pascalcase'
 import humanize from 'humanize-string'
 
 import { pluralize } from './lib/rwPluralize'
+import { kebabCase } from './lib/kebabCase'
 
 const { getDMMF } = prismaSdk
 
@@ -84,8 +85,6 @@ export interface ModelNameVariants {
 }
 
 export function getModelNameVariants(modelName: string): ModelNameVariants {
-  const kebabModelName = camelcase(modelName).replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
-
   return {
     modelName,
     pluralModelName: pluralize(modelName),
@@ -95,7 +94,7 @@ export function getModelNameVariants(modelName: string): ModelNameVariants {
     pascalCasePluralModelName: pluralize(pascalcase(modelName)),
     capitalModelName: decamelize(modelName).toUpperCase(),
     capitalPluralModelName: decamelize(pluralize(modelName)).toUpperCase(),
-    kebabModelName,
+    kebabModelName: kebabCase(modelName),
     humanizedPlural: humanize(pluralize(modelName)),
     humanizedName: humanize(modelName)
   }
