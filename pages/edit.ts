@@ -52,10 +52,19 @@ function generateEditModelCell(
 
   const template = fs.readFileSync('./templates/editModelCell.ejs', 'utf-8')
 
+  // Skip all relation fields (but we still keep relation ids)
+  // So if the model has `authorId: Int` and `author: Author` we'll only
+  // include `authorId`
+  function isRelation(field: DMMF.Field) {
+    return field.kind === 'object'
+  }
+
+  const fields = modelFields.filter((field) => !isRelation(field))
+
   const idField = modelFields.find((field) => field.isId)
   const idFieldType = idField?.type || "String"
 
-  return ejsRender(template, { model, modelFields, idFieldType })
+  return ejsRender(template, { model, modelFields: fields, idFieldType })
 }
 
 function createEditPageDir(pagesPath: string, pascalName: string) {
