@@ -1,5 +1,4 @@
-import { Link, routes } from '@redwoodjs/router'
-
+import { Link, routes, useParams } from '@redwoodjs/router'
 import './Paginator.css'
 
 const ITEMS_PER_PAGE = 5
@@ -10,21 +9,67 @@ interface Props {
 }
 
 const Pagination: React.FC<Props> = ({ count, pageName }) => {
+  const params = useParams()
+  const page = parseInt(params.page || '1', 10)
+  const numberOfPages = Math.ceil(count / ITEMS_PER_PAGE)
   const items = []
 
-  for (let i = 0; i < Math.ceil(count / ITEMS_PER_PAGE); i++) {
+  let startPage = page - 3
+  let endPage = page + 3
+  if (startPage <= 1) {
+    startPage = 1
+    endPage = Math.min(8, numberOfPages)
+  } else if (endPage >= numberOfPages) {
+    endPage = numberOfPages
+    startPage = Math.max(endPage - 7, 1)
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
     items.push(
       <li key={i}>
-        <Link to={routes[pageName]({ page: i + 1 })}>
-          {i + 1}
+        <Link
+          className={page === i ? 'current' : ''}
+          to={routes[pageName]({ ...params, page: i })}
+        >
+          {i}
         </Link>
+      </li>
+    )
+  }
+
+  let firstPage = null
+  if (startPage > 1 && numberOfPages > 6) {
+    firstPage = (
+      <li>
+        <Link to={routes[pageName]({ ...params, page: 1 })}>1</Link>
+      </li>
+    )
+  }
+
+  let lastPage = null
+  if (endPage < numberOfPages && numberOfPages > 6) {
+    lastPage = (
+      <li>
+        <Link to={routes[pageName]({ ...params, page: numberOfPages })}>{numberOfPages}</Link>
       </li>
     )
   }
 
   return (
     <nav className="arwdmin-paginator">
-      <ul>{items}</ul>
+      <ul>
+        <li>
+          {page > 1 ? <Link to={routes[pageName]({ ...params, page: page - 1 })}>Previous</Link> : <>Previous</>}
+        </li>
+        {firstPage}
+        {firstPage && startPage > 2 && <>...</>}
+        {items}
+        {lastPage && endPage < numberOfPages - 1 && <>...</>}
+        {lastPage}
+        <li>
+          {page < numberOfPages ? <Link to={routes[pageName]({ ...params, page: page + 1 })}>Next</Link> : <>Next</>}
+        </li>
+      </ul>
     </nav>
   )
 }
