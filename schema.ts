@@ -77,6 +77,7 @@ export interface ModelNameVariants {
   pascalCaseModelName: string
   pascalCasePluralModelName: string
   capitalModelName: string
+  capitalPluralModelName: string
   kebabModelName: string
   humanizedPlural: string
   humanizedName: string
@@ -93,6 +94,7 @@ export function getModelNameVariants(modelName: string): ModelNameVariants {
     pascalCaseModelName: pascalcase(modelName),
     pascalCasePluralModelName: pluralize(pascalcase(modelName)),
     capitalModelName: decamelize(modelName).toUpperCase(),
+    capitalPluralModelName: decamelize(pluralize(modelName)).toUpperCase(),
     kebabModelName,
     humanizedPlural: humanize(pluralize(modelName)),
     humanizedName: humanize(modelName)

@@ -128,12 +128,12 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
               "import { db } from 'src/lib/db'",
               "import { removeNulls } from '@redwoodjs/api'\n\n" +
                 "import { db } from 'src/lib/db'\n\n" +
-                `const ${modelNames.capitalModelName}_PER_PAGE = 5\n\n` +
+                `const ${modelNames.capitalPluralModelName}_PER_PAGE = 10\n\n` +
                 `export const ${modelNames.camelCaseModelName}Page = ({ page = 1 }) => {\n` +
-                `  const offset = (page - 1) * ${modelNames.capitalModelName}_PER_PAGE\n` +
+                `  const offset = (page - 1) * ${modelNames.capitalPluralModelName}_PER_PAGE\n` +
                 '\n' +
                 `  const ${modelNames.camelCasePluralModelName}Promise = db.${modelNames.camelCaseModelName}.findMany({\n` +
-                `    take: ${modelNames.capitalModelName}_PER_PAGE,\n` +
+                `    take: ${modelNames.capitalPluralModelName}_PER_PAGE,\n` +
                 '    skip: offset,\n' +
                 orderBy +
                 '  })\n' +
