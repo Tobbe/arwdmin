@@ -43,6 +43,10 @@ html {
   margin-top: var(--size-7);
 }
 
+.arwdmin-model [type=checkbox] {
+  margin: 0;
+}
+
 .arwdmin-table {
   border-spacing: 0px;
   width: 100%;
