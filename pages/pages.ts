@@ -67,6 +67,16 @@ export async function createModelPages(
     path.join(componentsPath, 'Paginator', 'Paginator.css')
   )
 
+  const searchWidgetPath = path.join(componentsPath, 'SearchWidget', 'SearchWidget.tsx')
+  const searchWidgetComponent = generateSearchWidgetComponent()
+
+  fs.mkdirSync(path.join(componentsPath, 'SearchWidget'), { recursive: true })
+  fs.writeFileSync(searchWidgetPath, searchWidgetComponent)
+  fs.copyFileSync(
+    './templates/css/SearchWidget.css',
+    path.join(componentsPath, 'SearchWidget', 'SearchWidget.css')
+  )
+
   for (const modelName of modelNames) {
     console.log('Creating pages for', modelName)
     const modelFields = await getModelFields(rwRoot, modelName)
@@ -340,6 +350,15 @@ function generateModelComponent(
 function generatePaginatorComponent() {
   const template = fs.readFileSync(
     './templates/paginatorComponent.ejs',
+    'utf-8'
+  )
+
+  return ejsRender(template, {})
+}
+
+function generateSearchWidgetComponent() {
+  const template = fs.readFileSync(
+    './templates/searchWidgetComponent.ejs',
     'utf-8'
   )
 

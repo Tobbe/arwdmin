@@ -1,0 +1,13 @@
+.arwdmin-search-widget {
+  width: 100%;
+}
+
+.arwdmin-search-widget form {
+  display: flex;
+  padding-block: var(--size-2);
+}
+
+.arwdmin-search-widget .arwdmin-input {
+  margin-block-start: 0;
+  margin-inline-end: var(--size-2);
+}

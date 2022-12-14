@@ -1,5 +1,6 @@
 import { Link, routes } from '@redwoodjs/router'
 
+import SearchWidget from 'src/components/arwdmin/SearchWidget'
 import { truncate, truncateId, truncateMaybeId, checkboxInputTag, formatEnum, timeTag } from 'src/lib/arwdminFormatters'
 
 const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
@@ -18,9 +19,10 @@ const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
           to={routes.arwdminNew<%= model.pascalName %>()}
           className="arwdmin-button"
         >
-          Add <%= model.humanizedName %>
+          New <%= model.humanizedName %>
         </Link>
       </header>
+      <SearchWidget routesFn={routes.arwdmin<%= model.pluralName %>} />
       <div className="arwdmin-table-wrapper">
         <table className="arwdmin-table">
           <thead>

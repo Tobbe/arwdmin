@@ -1,0 +1,30 @@
+import { Form, TextField, Submit } from '@redwoodjs/forms'
+import { useParams, navigate } from '@redwoodjs/router'
+
+import './SearchWidget.css'
+
+interface Props {
+  routesFn: (args: unknown) => string
+}
+
+const SearchWidget: React.FC<Props> = ({ routesFn }) => {
+  const params = useParams()
+
+  const onSubmit = (data) => {
+    console.log('search data', data)
+    // Go back to first page for new searches
+    delete params.page
+    navigate(routesFn({ ...params, q: data.search}))
+  }
+
+  return (
+    <div className="arwdmin-search-widget">
+      <Form onSubmit={onSubmit}>
+        <TextField name="search" className="arwdmin-input" />
+        <Submit className="arwdmin-button">Search</Submit>
+      </Form>
+    </div>
+  )
+}
+
+export default SearchWidget
