@@ -119,8 +119,17 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
         : hasUpdatedAtField
         ? "orderBy: { updatedAt: 'desc' },\n"
         : ''
-      
-      const searchField = 'sku'
+
+      const searchField =
+        modelFields.find((field) => !field.isId && field.type === 'String')?.name ||
+        modelFields[0]?.name
+
+      if (!searchField) {
+        console.error('Could not find a field to use for searches')
+        process.exit(1)
+      }
+
+      console.log('searchField for', name, searchField)
 
       fs.writeFileSync(
         serviceFilename,
