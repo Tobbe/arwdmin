@@ -172,8 +172,6 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
         process.exit(1)
       }
 
-      console.log('searchField for', name, searchField)
-
       fs.writeFileSync(
         serviceFilename,
         prettify(

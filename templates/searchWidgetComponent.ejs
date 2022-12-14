@@ -11,7 +11,6 @@ const SearchWidget: React.FC<Props> = ({ routesFn }) => {
   const params = useParams()
 
   const onSubmit = (data) => {
-    console.log('search data', data)
     // Go back to first page for new searches
     delete params.page
     navigate(routesFn({ ...params, q: data.search}))

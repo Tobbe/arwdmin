@@ -31,6 +31,12 @@ html {
   width: 7rem;
 }
 
+.arwdmin-model-list td nav {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
 .arwdmin-model .arwdmin-table tr:first-of-type td,
 .arwdmin-model .arwdmin-table tr:first-of-type th {
   border-top: 0;
@@ -45,8 +51,6 @@ html {
 .arwdmin-model nav {
   display: flex;
   justify-content: center;
-  gap: var(--size-2);
-
   margin-top: var(--size-7);
 }
 
@@ -117,7 +121,7 @@ html {
 }
 
 .arwdmin-button ~ .arwdmin-button {
-  margin-left: var(--size-1);
+  margin-left: var(--size-2);
 }
 
 .arwdmin-button:is(.current, :hover, :focus-visible) {

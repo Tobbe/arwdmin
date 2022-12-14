@@ -44,7 +44,7 @@ const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
                   <td>{<%= renderData.listDisplayFunction %>(<%= model.camelName %>.<%= field.name %>)}</td>
                 <% } %>
                 <td>
-                  <nav className="rw-table-actions">
+                  <nav>
                     <Link
                       to={routes.arwdmin<%= model.pascalName %>({ id: <%= model.camelName %>.id })}
                       title={'Show <%= model.name %> ' + <%= model.camelName %>.id + ' details'}
