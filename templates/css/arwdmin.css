@@ -24,6 +24,13 @@ html {
   align-items: center;
 }
 
+/* I want the Actions column to only be as wide as the buttons are. I do this
+ * by giving the header a smaller width than the buttons, so that they control
+ * the actual width of the entire column */
+.arwdmin-model-list thead th:last-of-type {
+  width: 7rem;
+}
+
 .arwdmin-model .arwdmin-table tr:first-of-type td,
 .arwdmin-model .arwdmin-table tr:first-of-type th {
   border-top: 0;
