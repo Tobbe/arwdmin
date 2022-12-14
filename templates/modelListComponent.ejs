@@ -1,9 +1,13 @@
+import { useState } from 'react'
+
 import { Link, routes } from '@redwoodjs/router'
 
 import SearchWidget from 'src/components/arwdmin/SearchWidget'
 import { truncate, truncateId, truncateMaybeId, checkboxInputTag, formatEnum, timeTag } from 'src/lib/arwdminFormatters'
 
 const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
+  const [highlightedRow, setHighlightedRow] = useState(-1)
+
   const onDeleteClick = (id) => {
     if (confirm('Are you sure you want to delete <%= model.name %> ' + id + '?')) {
       // TODO: Implement
@@ -28,9 +32,9 @@ const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
           <thead>
             <tr>
               <%_ for (let field of modelFields) { -%>
-                <% const renderData = getRenderData(field.name) %>
+                <%_ const renderData = getRenderData(field.name) -%>
                 <th><%= renderData.displayName %></th>
-              <% } %>
+              <%_ } -%>
               <th>
                 <span className="sr-only">Actions</span>
               </th>
@@ -38,11 +42,17 @@ const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
           </thead>
           <tbody>
             {<%= model.camelPluralName %>.map((<%= model.camelName %>) => (
-              <tr key={<%= model.camelName %>.id}>
+              <tr
+                key={<%= model.camelName %>.id}
+                onClick={() => {
+                  setHighlightedRow(<%= model.camelName %>.id)
+                }}
+                className={highlightedRow === <%= model.camelName %>.id ? 'arwdmin-row-highlight' : ''}
+              >
                 <%_ for (let field of modelFields) { -%>
-                  <% const renderData = getRenderData(field.name) %>
+                  <%_ const renderData = getRenderData(field.name) -%>
                   <td>{<%= renderData.listDisplayFunction %>(<%= model.camelName %>.<%= field.name %>)}</td>
-                <% } %>
+                <%_ } -%>
                 <td>
                   <nav>
                     <Link

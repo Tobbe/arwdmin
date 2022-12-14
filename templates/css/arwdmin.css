@@ -31,6 +31,10 @@ html {
   width: 7rem;
 }
 
+.arwdmin-model-list .arwdmin-row-highlight {
+  background-color: var(--color-bg-light);
+}
+
 .arwdmin-model-list td nav {
   display: flex;
   justify-content: flex-end;
