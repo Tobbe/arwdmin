@@ -9,9 +9,14 @@ interface Props {
 }
 
 const Pagination: React.FC<Props> = ({ count, pageName }) => {
+  const numberOfPages = Math.ceil(count / ITEMS_PER_PAGE)
+
+  if (numberOfPages <= 1) {
+    return null
+  }
+
   const params = useParams()
   const page = parseInt(params.page || '1', 10)
-  const numberOfPages = Math.ceil(count / ITEMS_PER_PAGE)
   const items = []
 
   let startPage = page - 3
