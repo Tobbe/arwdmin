@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 
 import { execaSync } from 'execa'
+import type { DMMF } from '@prisma/generator-helper'
 import { getModelFields, getModelNameVariants } from './schema'
 import { prettify } from './prettier'
 
@@ -55,6 +56,45 @@ export function prepareGeneratorDir(rwRoot: string, generatorDirName: string) {
   fs.mkdirSync(generatorDir, { recursive: true })
 
   return tmpName
+}
+
+function findSearchField(fields: DMMF.Field[]) {
+  let fieldNameFromMetaComment
+  let fieldNameFromNonIdNoneUniqueString
+  let fieldNameFromNonIdString
+  let fieldNameFromString
+  const fieldNameFromFirstField = fields[0]?.name
+
+  for (let field of fields) {
+    if (
+      field.documentation?.includes('@arwdmin-search') &&
+      !fieldNameFromMetaComment
+    ) {
+      fieldNameFromMetaComment = field.name
+    }
+
+    if (field.type === 'String') {
+      if (
+        !field.isId &&
+        !field.isUnique &&
+        !fieldNameFromNonIdNoneUniqueString
+      ) {
+        fieldNameFromNonIdNoneUniqueString = field.name
+      } else if (!field.isId && !fieldNameFromNonIdString) {
+        fieldNameFromNonIdString = field.name
+      } else if (!fieldNameFromString) {
+        fieldNameFromString = field.name
+      }
+    }
+  }
+
+  return (
+    fieldNameFromMetaComment ||
+    fieldNameFromNonIdNoneUniqueString ||
+    fieldNameFromNonIdString ||
+    fieldNameFromString ||
+    fieldNameFromFirstField
+  )
 }
 
 export async function generateSdls(rwRoot: string, modelNames: string[]) {
@@ -120,14 +160,12 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
         ? "orderBy: { updatedAt: 'desc' },\n"
         : ''
       const orderByRaw = hasCreatedAtField
-        ? 'ORDER BY "createdAt"\n'
+        ? '      ORDER BY "createdAt"\n'
         : hasUpdatedAtField
-        ? 'ORDER BY "updatedAt"\n'
+        ? '      ORDER BY "updatedAt"\n'
         : ''
 
-      const searchField =
-        modelFields.find((field) => !field.isId && field.type === 'String')?.name ||
-        modelFields[0]?.name
+      const searchField = findSearchField(modelFields)
 
       if (!searchField) {
         console.error('Could not find a field to use for searches')
