@@ -1,11 +1,12 @@
 import <%= model.pascalCasePluralName %>Cell from './<%= model.pascalCasePluralName %>Cell'
 
 interface Props {
-  page: number
+  page?: number
+  q?: string
 }
 
-const <%= model.pascalCasePluralName %>Page: React.FC<Props> = ({ page = 1 }) => {
-  return <<%= model.pascalCasePluralName %>Cell page={page} />
+const <%= model.pascalCasePluralName %>Page: React.FC<Props> = ({ page = 1, q }) => {
+  return <<%= model.pascalCasePluralName %>Cell page={page} q={q} />
 }
 
 export default <%= model.pascalCasePluralName %>Page

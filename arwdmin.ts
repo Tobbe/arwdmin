@@ -37,6 +37,8 @@ function findRwRoot(dir = process.cwd()): string {
 
 const rwRoot = findRwRoot(path.join(process.cwd(), '..', 'acm-admin'))
 
+// TODO: Copy over schema.prisma from base RW project
+
 const modelNames = await getModelNames(rwRoot)
 
 const pagesPath = createArwdminPagesDir(rwRoot)

@@ -87,10 +87,10 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
             'type Query {',
             `type ${modelNames.pascalCaseModelName}Page {\n` +
               `  ${modelNames.camelCasePluralModelName}: [${modelNames.pascalCaseModelName}!]!\n` +
-              `  count: Int!\n` +
+              `  count: BigInt!\n` +
               '}\n\n' +
               'type Query {\n' +
-              ` ${modelNames.camelCaseModelName}Page(page: Int): ${modelNames.pascalCaseModelName}Page @requireAuth`
+              ` ${modelNames.camelCaseModelName}Page(page: Int, q: String): ${modelNames.pascalCaseModelName}Page @requireAuth`
           ),
           'ts'
         )
@@ -119,6 +119,8 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
         : hasUpdatedAtField
         ? "orderBy: { updatedAt: 'desc' },\n"
         : ''
+      
+      const searchField = 'sku'
 
       fs.writeFileSync(
         serviceFilename,
@@ -129,15 +131,44 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
               "import { removeNulls } from '@redwoodjs/api'\n\n" +
                 "import { db } from 'src/lib/db'\n\n" +
                 `const ${modelNames.capitalPluralModelName}_PER_PAGE = 10\n\n` +
-                `export const ${modelNames.camelCaseModelName}Page = ({ page = 1 }) => {\n` +
-                `  const offset = (page - 1) * ${modelNames.capitalPluralModelName}_PER_PAGE\n` +
                 '\n' +
-                `  const ${modelNames.camelCasePluralModelName}Promise = db.${modelNames.camelCaseModelName}.findMany({\n` +
-                `    take: ${modelNames.capitalPluralModelName}_PER_PAGE,\n` +
-                '    skip: offset,\n' +
+                'interface Args {\n' +
+                '  page?: number\n' +
+                '  q: string\n' +
+                '}\n' +
+                '\n' +
+                'async function countRaw(q: string) {\n' +
+                '  const result = await db.$queryRaw<{ count: bigint }[]>`\n' +
+                '    SELECT COUNT(*)\n' +
+                `    FROM "${modelNames.pascalCaseModelName}"\n` +
+                `    WHERE ${searchField} ILIKE \${'%' + q + '%'};\`\n` +
+                '\n' +
+                '  return result[0].count\n' +
+                '}\n' +
+                '\n' +
+                `export const ${modelNames.camelCaseModelName}Page = ({ page = 1, q }: Args) => {\n` +
+                `  const offset = (page - 1) * ${modelNames.capitalPluralModelName}_PER_PAGE\n` +
+                `  let ${modelNames.camelCasePluralModelName}Promise\n` +
+                '  let countPromise\n' +
+                '\n' +
+                '  if (q) {\n' +
+                '    productsPromise = db.$queryRaw`\n' +
+                '      SELECT *\n' +
+                `      FROM "${modelNames.pascalCaseModelName}"\n` +
+                "      WHERE sku ILIKE ${'%' + q + '%'}\n" +
+                `      ORDER BY ${searchField}\n` +
+                `      LIMIT \${${modelNames.capitalPluralModelName}_PER_PAGE}\n` +
+                '      OFFSET ${offset};`\n' +
+                '\n' +
+                '      countPromise = countRaw(q)\n' +
+                '  } else {\n' +
+                `    ${modelNames.camelCasePluralModelName}Promise = db.${modelNames.camelCaseModelName}.findMany({\n` +
+                `      take: ${modelNames.capitalPluralModelName}_PER_PAGE,\n` +
+                '      skip: offset,\n' +
                 orderBy +
-                '  })\n' +
-                `  const countPromise = db.${modelNames.camelCaseModelName}.count()\n` +
+                '    })\n' +
+                `    countPromise = db.${modelNames.camelCaseModelName}.count()\n` +
+                '  }\n' +
                 '\n' +
                 `  return Promise.all([${modelNames.camelCasePluralModelName}Promise, countPromise]).then(\n` +
                 `    ([${modelNames.camelCasePluralModelName}, count]) => {` +

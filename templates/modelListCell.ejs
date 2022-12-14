@@ -7,15 +7,15 @@ import Paginator from 'src/components/arwdmin/Paginator'
 
 import <%= model.pascalPluralName %> from './<%= model.pascalPluralName %>'
 
-export const beforeQuery = ({ page }) => {
+export const beforeQuery = ({ page, q }) => {
   page = page ? parseInt(page, 10) : 1
 
-  return { variables: { page } }
+  return { variables: { page, q } }
 }
 
 export const QUERY = gql`
-  query FindArwdmin<%= model.pascalPluralName %>($page: Int) {
-    <%= model.camelName %>Page(page: $page) {
+  query FindArwdmin<%= model.pascalPluralName %>($page: Int, $q: String) {
+    <%= model.camelName %>Page(page: $page, q: $q) {
       <%= model.camelPluralName %> {
         <%_ for (let field of modelFields) { -%>
           <%= field.name %>
