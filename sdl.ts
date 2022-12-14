@@ -119,6 +119,11 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
         : hasUpdatedAtField
         ? "orderBy: { updatedAt: 'desc' },\n"
         : ''
+      const orderByRaw = hasCreatedAtField
+        ? 'ORDER BY "createdAt"\n'
+        : hasUpdatedAtField
+        ? 'ORDER BY "updatedAt"\n'
+        : ''
 
       const searchField =
         modelFields.find((field) => !field.isId && field.type === 'String')?.name ||
@@ -150,7 +155,7 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
                 '  const result = await db.$queryRaw<{ count: bigint }[]>`\n' +
                 '    SELECT COUNT(*)\n' +
                 `    FROM "${modelNames.pascalCaseModelName}"\n` +
-                `    WHERE ${searchField} ILIKE \${'%' + q + '%'};\`\n` +
+                `    WHERE "${searchField}" ILIKE \${'%' + q + '%'};\`\n` +
                 '\n' +
                 '  return result[0].count\n' +
                 '}\n' +
@@ -161,11 +166,11 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
                 '  let countPromise\n' +
                 '\n' +
                 '  if (q) {\n' +
-                '    productsPromise = db.$queryRaw`\n' +
+                `    ${modelNames.camelCasePluralModelName}Promise = db.$queryRaw\`\n` +
                 '      SELECT *\n' +
                 `      FROM "${modelNames.pascalCaseModelName}"\n` +
-                "      WHERE sku ILIKE ${'%' + q + '%'}\n" +
-                `      ORDER BY ${searchField}\n` +
+                `      WHERE "${searchField}" ILIKE \${'%' + q + '%'}\n` +
+                orderByRaw +
                 `      LIMIT \${${modelNames.capitalPluralModelName}_PER_PAGE}\n` +
                 '      OFFSET ${offset};`\n' +
                 '\n' +
