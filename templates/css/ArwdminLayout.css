@@ -13,6 +13,9 @@
   --_link-bg: var(--color-bg-dark);
   --_link-text: var(--color-primary);
 
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   font-size: var(--font-size-1);
   flex-basis: var(--size-fluid-8);
   flex-grow: 0;

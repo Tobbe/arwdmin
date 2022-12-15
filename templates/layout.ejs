@@ -1,8 +1,12 @@
 import { NavLink, routes } from '@redwoodjs/router'
 
+import { useAuth } from 'src/auth'
+
 import './ArwdminLayout.css'
 
 const ArwdminLayout = ({ children }) => {
+  const { logOut } = useAuth()
+
   return (
     <div className="arwdmin-layout">
       <nav>
@@ -19,6 +23,12 @@ const ArwdminLayout = ({ children }) => {
             </li>
           <% } %>
         </ul>
+        <button
+          onClick={logOut}
+          className="arwdmin-button"
+        >
+          Log out
+        </button>
       </nav>
       <main>{children}</main>
     </div>
