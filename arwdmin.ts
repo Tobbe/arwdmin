@@ -1,8 +1,11 @@
 // Run me with
 // npx @digitak/esrun arwdmin.ts
+// npx tsx arwdmin
 
 import fs from 'fs'
 import path from 'path'
+import { addAuthModel, setupAuth } from './auth'
+import { copyPrismaSchema } from './schema'
 import { addArwdminFormatters } from './formatters'
 import { createArwdminLayoutDir, createLayout } from './layout'
 import { createArwdminPagesDir, createModelPages, createComponentsDir } from './pages/pages'
@@ -20,14 +23,23 @@ import { addMainStyles } from './styling'
 console.log('aRWdmin v0.1.0')
 console.log()
 
+// TODO: This should just be findRwRoot() when this is an npx command you run
+// inside your project
+const baseProjectRoot = findRwRoot(path.join(process.cwd(), '..', 'acm-store-rw'))
+const rwRoot = path.join(baseProjectRoot, '..', 'acm-admin')
+
 if (process.argv.includes('--css')) {
-  const rwRoot = findRwRoot(path.join(process.cwd(), '..', 'acm-admin'))
   addMainStyles(rwRoot)
 
   process.exit(0)
 }
 
 function findRwRoot(dir = process.cwd()): string {
+  if (!dir) {
+    console.error('Could not find Redwood root dir')
+    process.exit(1)
+  }
+
   if (fs.existsSync(path.join(dir, 'redwood.toml'))) {
     return dir
   }
@@ -35,9 +47,9 @@ function findRwRoot(dir = process.cwd()): string {
   return findRwRoot(dir.split(path.sep).slice(0, -1).join(path.sep))
 }
 
-const rwRoot = findRwRoot(path.join(process.cwd(), '..', 'acm-admin'))
-
-// TODO: Copy over schema.prisma from base RW project
+addAuthModel(baseProjectRoot)
+copyPrismaSchema(baseProjectRoot, rwRoot)
+setupAuth(rwRoot)
 
 const modelNames = await getModelNames(rwRoot)
 

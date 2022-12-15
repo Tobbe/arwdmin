@@ -1,4 +1,7 @@
+import fs from 'fs'
 import path from 'path'
+
+import { execaSync } from 'execa'
 
 import prismaSdk from '@prisma/sdk'
 import camelcase from 'camelcase'
@@ -11,7 +14,19 @@ import { kebabCase } from './lib/kebabCase'
 
 const { getDMMF } = prismaSdk
 
-/*
+export function copyPrismaSchema(baseProjectRoot: string, rwRoot: string) {
+  const schemaPath = path.join(baseProjectRoot, 'api', 'db', 'schema.prisma')
+  const schemaDestPath = path.join(rwRoot, 'api', 'db', 'schema.prisma')
+
+  // copyFileSync will overwrite by default
+  fs.copyFileSync(schemaPath, schemaDestPath)
+
+  execaSync('yarn', ['rw', 'prisma', 'generate'], {
+    cwd: rwRoot,
+  })
+}
+
+/**
  * Returns the DMMF defined by `prisma` resolving the relevant `schema.prisma` path.
  */
 function getSchemaDefinitions(rwRoot: string) {
