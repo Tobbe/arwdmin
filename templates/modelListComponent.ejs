@@ -45,7 +45,12 @@ const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
               <tr
                 key={<%= model.camelName %>.id}
                 onClick={() => {
-                  setHighlightedRow(<%= model.camelName %>.id)
+                  // Toggle highlight if clicking on the same row again
+                  if (highlightedRow === <%= model.camelName %>.id) {
+                    setHighlightedRow(-1)
+                  } else {
+                    setHighlightedRow(<%= model.camelName %>.id)
+                  }
                 }}
                 className={highlightedRow === <%= model.camelName %>.id ? 'arwdmin-row-highlight' : ''}
               >
