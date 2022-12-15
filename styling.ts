@@ -11,6 +11,7 @@ export function addMainStyles(rwRoot: string) {
   const appPath = path.join(rwRoot, 'web', 'src', 'App.tsx')
   const app = fs
     .readFileSync(appPath, 'utf-8')
+    .replace("import './arwdmin.css'\n", '')
     .replace(
       "import './index.css'",
       "import './arwdmin.css'\nimport './index.css'"

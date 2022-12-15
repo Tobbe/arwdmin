@@ -6,6 +6,7 @@
   --color-spare: #b07946;
   --color-bg-light: #36383e;
   --color-bg-dark: #06080e;
+  --color-bad: #801f0c;
 }
 
 body,
@@ -16,6 +17,16 @@ html {
 
 * {
   box-sizing: border-box;
+}
+
+.arwdmin-cell-error {
+  color: var(--color-bg-dark);
+  background-color: var(--color-bad);
+  border: var(--border-size-1) solid var(--color-bg-dark);
+  border-radius: var(--radius-2);
+  font-size: var(--font-size-2);
+  padding: var(--size-3);
+  margin-block: var(--size-3);
 }
 
 .arwdmin-model-list header {
