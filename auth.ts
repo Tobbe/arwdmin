@@ -106,6 +106,37 @@ export async function setupAuth(rwRoot: string) {
     )
   }
 
+  const signupHandlerStart = authLines.findIndex((line) =>
+    /handler: async \(\{ username, hashedPassword, salt }\) => \{/.test(line)
+  )
+  const signupHandlerEnd = authLines.findIndex(
+    (line, index) => line === '  },' && index > signupHandlerStart
+  )
+
+  if (
+    signupHandlerStart >= 0 &&
+    !authLines.some((line) => line.includes('nbrOfUsers = await'))
+  ) {
+    authLines.splice(
+      signupHandlerStart,
+      signupHandlerEnd - signupHandlerStart,
+      '  handler: async ({ username, hashedPassword, salt }) => {',
+      '    const nbrOfUsers = await db.arwdminUser.count()',
+      '',
+      '    return db.arwdminUser.create({',
+      '      data: {',
+      '        email: username,',
+      '        hashedPassword: hashedPassword,',
+      '        salt: salt,',
+      '        // First user is automatically approved. Other users have to be',
+      '        // manually approved by an existing user',
+      '        approved: nbrOfUsers === 0,',
+      '      },',
+      '    })',
+      '  },'
+    )
+  }
+
   fs.writeFileSync(apiFunctionsAuthPath, authLines.join('\n'))
 
   // TODO: auth.js
