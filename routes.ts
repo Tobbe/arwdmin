@@ -2,9 +2,9 @@ import fs from 'fs'
 import path from 'path'
 
 import { findLastIndex } from './lib/array'
-import { getModelNameVariants } from './schema'
+import { getModelFields, getModelNameVariants } from './schema'
 
-export function updateRoutes(rwRoot: string, modelNames: string[]) {
+export async function updateRoutes(rwRoot: string, modelNames: string[]) {
   let routesPath = path.join(rwRoot, 'web', 'src', 'Routes.tsx')
 
   if (!fs.existsSync(routesPath)) {
@@ -61,7 +61,7 @@ export function updateRoutes(rwRoot: string, modelNames: string[]) {
   }
 
   const arwdminLayoutSetStartIndex = routesFileLines.findIndex((line) =>
-    /<Set wrap={ArwdminLayout}>/.test(line)
+    /<Set private unauthenticated="login" wrap={ArwdminLayout}>/.test(line)
   )
 
   if (arwdminLayoutSetStartIndex >= 0) {
@@ -91,18 +91,33 @@ export function updateRoutes(rwRoot: string, modelNames: string[]) {
     arwdminRoutesBeginIndex--
   }
 
+  const idTypes: Record<string, string> = {}
+  for (const name of modelNames) {
+    const fields = await getModelFields(rwRoot, name)
+    const idField = fields.find(field => field.isId)
+
+    if (!idField?.type) {
+      console.error("Counldn't find the id field type for", name)
+      process.exit(1)
+    }
+
+    idTypes[name] = idField?.type
+  }
+
   routesFileLines.splice(
     arwdminRoutesBeginIndex,
     0,
-    `${indent}<Set wrap={ArwdminLayout}>`,
+    `${indent}<Set private unauthenticated="login" wrap={ArwdminLayout}>`,
     ...modelNames.map((name) => {
       const modelNames = getModelNameVariants(name)
       const routeName = modelNames.camelCasePluralModelName
       const pascalName = modelNames.pascalCaseModelName
       const pascalPluralName = modelNames.pascalCasePluralModelName
+      const idParamType = idTypes[name] !== 'String' ? ':' + idTypes[name] : ''
+
       return `${indent}  <Route path="/arwdmin/${routeName}/new" page={Arwdmin${pascalName}New${pascalName}Page} name="arwdminNew${pascalName}" />\n` +
-        `${indent}  <Route path="/arwdmin/${routeName}/{id}/edit" page={Arwdmin${pascalName}Edit${pascalName}Page} name="arwdminEdit${pascalName}" />\n` +
-        `${indent}  <Route path="/arwdmin/${routeName}/{id}" page={Arwdmin${pascalName}${pascalName}Page} name="arwdmin${pascalName}" />\n` +
+        `${indent}  <Route path="/arwdmin/${routeName}/{id${idParamType}}/edit" page={Arwdmin${pascalName}Edit${pascalName}Page} name="arwdminEdit${pascalName}" />\n` +
+        `${indent}  <Route path="/arwdmin/${routeName}/{id${idParamType}}" page={Arwdmin${pascalName}${pascalName}Page} name="arwdmin${pascalName}" />\n` +
         `${indent}  <Route path="/arwdmin/${routeName}" page={Arwdmin${pascalName}${pascalPluralName}Page} name="arwdmin${pascalPluralName}" />`
     }),
     `${indent}</Set>`

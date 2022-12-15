@@ -64,7 +64,7 @@ addMainStyles(rwRoot)
 
 addArwdminFormatters(rwRoot)
 
-updateRoutes(rwRoot, modelNames)
+await updateRoutes(rwRoot, modelNames)
 
 const tmpServicesName = prepareGeneratorDir(rwRoot, 'services')
 const tmpGraphqlName = prepareGeneratorDir(rwRoot, 'graphql')
