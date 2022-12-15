@@ -144,6 +144,11 @@ html {
   color: var(--color-bg);
 }
 
+.arwdmin-button-delete {
+  background-color: var(--color-bad);
+  color: var(--color-bg-dark)
+}
+
 .arwdmin-input {
   display: block;
   margin-top: var(--size-2);
