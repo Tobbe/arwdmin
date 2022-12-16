@@ -5,11 +5,11 @@ import { useAuth } from 'src/auth'
 import './ArwdminLayout.css'
 
 const ArwdminLayout = ({ children }) => {
-  const { logOut } = useAuth()
+  const { logOut, isAuthenticated } = useAuth()
 
   return (
     <div className="arwdmin-layout">
-      <nav>
+      {isAuthenticated && (<nav>
         <ul>
           <% for (let nameVariants of models) { -%>
             <li>
@@ -29,7 +29,7 @@ const ArwdminLayout = ({ children }) => {
         >
           Log out
         </button>
-      </nav>
+      </nav>)}
       <main>{children}</main>
     </div>
   )

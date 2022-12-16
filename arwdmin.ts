@@ -4,7 +4,7 @@
 
 import fs from 'fs'
 import path from 'path'
-import { addAuthModel, setupAuth } from './auth'
+import { addAuthModel, createAuthPages, setupAuth } from './auth'
 import { copyPrismaSchema } from './schema'
 import { addArwdminFormatters } from './formatters'
 import { createArwdminLayoutDir, createLayout } from './layout'
@@ -47,13 +47,15 @@ function findRwRoot(dir = process.cwd()): string {
   return findRwRoot(dir.split(path.sep).slice(0, -1).join(path.sep))
 }
 
+const pagesPath = createArwdminPagesDir(rwRoot)
+
 addAuthModel(baseProjectRoot)
 copyPrismaSchema(baseProjectRoot, rwRoot)
 setupAuth(rwRoot)
+createAuthPages(pagesPath)
 
 const modelNames = await getModelNames(rwRoot)
 
-const pagesPath = createArwdminPagesDir(rwRoot)
 const componentsPath = createComponentsDir(rwRoot)
 await createModelPages(rwRoot, pagesPath, componentsPath, modelNames)
 createArwdminPage(pagesPath)

@@ -3,6 +3,8 @@ import path from 'path'
 
 import { execaSync } from 'execa'
 
+import { ejsRender } from './ejs'
+
 export async function addAuthModel(baseProjectRoot: string) {
   // Add dbAuth model
   const schemaPath = path.join(baseProjectRoot, 'api', 'db', 'schema.prisma')
@@ -145,4 +147,35 @@ export async function setupAuth(rwRoot: string) {
     .readFileSync(apiLibAuthPath, 'utf-8')
     .replace('db.user.findUnique', 'db.arwdminUser.findUnique')
   fs.writeFileSync(apiLibAuthPath, libAuth)
+}
+
+export function createAuthPages(pagesPath: string) {
+  createLoginPage(pagesPath)
+  createSignupPage(pagesPath)
+}
+
+function createLoginPage(pagesPath: string) {
+  const template = fs.readFileSync('./templates/arwdminLogin.ejs', 'utf-8')
+
+  const loginPage = ejsRender(template)
+
+  fs.mkdirSync(path.join(pagesPath, 'ArwdminLoginPage'), { recursive: true })
+
+  fs.writeFileSync(
+    path.join(pagesPath, 'ArwdminLoginPage', 'ArwdminLoginPage.tsx'),
+    loginPage
+  )
+}
+
+function createSignupPage(pagesPath: string) {
+  const template = fs.readFileSync('./templates/arwdminSignup.ejs', 'utf-8')
+
+  const signupPage = ejsRender(template)
+
+  fs.mkdirSync(path.join(pagesPath, 'ArwdminSignupPage'), { recursive: true })
+
+  fs.writeFileSync(
+    path.join(pagesPath, 'ArwdminSignupPage', 'ArwdminSignupPage.tsx'),
+    signupPage
+  )
 }

@@ -18,12 +18,13 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
 
   const routesFileLines = fs
     .readFileSync(routesPath, 'utf-8')
-    // Remove existing arwdmin page route. We will add a new one later
-    .replace(
-      /\s*<Route path="\/arwdmin" page=\{ArwdminArwdminPage} name="arwdmin" \/>/,
-      ''
-    )
     .split('\n')
+    // Remove existing arwdmin page routes. We will add them back later
+    .filter((line) => {
+      return !line.includes('path="/arwdmin"') &&
+        !line.includes('path="/arwdminLogin"') &&
+        !line.includes('path="/arwdminSignup"')
+    })
 
   const hasArwdminLayoutImport = !!routesFileLines.find((line) =>
     /^\s*import ArwdminLayout from/.test(line)
@@ -52,7 +53,7 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
   const rwjsRouterImportIndex = routesFileLines.findIndex((line) =>
     /from '@redwoodjs\/router'/.test(line)
   )
-  const rwjsRouterImportLine = routesFileLines[rwjsRouterImportIndex]
+  let rwjsRouterImportLine = routesFileLines[rwjsRouterImportIndex]
 
   if (!rwjsRouterImportLine) {
     console.error("Couldn't find @redwoodjs/router import")
@@ -65,13 +66,23 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
       .split('')
       .splice(insertIndex, 0, ', Set ')
       .join('')
+    rwjsRouterImportLine = routesFileLines[rwjsRouterImportIndex] || ''
+  }
+
+  if (!/\bPrivate\b/.test(rwjsRouterImportLine)) {
+    const insertIndex = rwjsRouterImportLine.lastIndexOf('}')
+    routesFileLines[rwjsRouterImportIndex] = rwjsRouterImportLine
+      .split('')
+      .splice(insertIndex, 0, ', Private ')
+      .join('')
+    rwjsRouterImportLine = routesFileLines[rwjsRouterImportIndex]
   }
 
   // Look for existing model pages and remove all of them. Don't want to have
   // routes to models that might have been removed/renamed. And we don't want
   // duplicate routes for models that still exist when we regenerate all routes
   const arwdminLayoutSetStartIndex = routesFileLines.findIndex((line) =>
-    /<Set private unauthenticated="login" wrap={ArwdminLayout}>/.test(line)
+    /<Set wrap={ArwdminLayout}>/.test(line)
   )
 
   if (arwdminLayoutSetStartIndex >= 0) {
@@ -86,10 +97,12 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
     )
   }
 
-  if (!routesFileLines.some(line => line.includes('path="/"'))) {
+  if (!routesFileLines.some((line) => line.includes('path="/"'))) {
     // No "home" route.
     // Let's just add a redirect to /arwdmin
-    const routerStartIndex = routesFileLines.findIndex((line) => /^\s*<Router.*>\s*$/.test(line))
+    const routerStartIndex = routesFileLines.findIndex((line) =>
+      /^\s*<Router.*>\s*$/.test(line)
+    )
 
     if (routerStartIndex === -1) {
       console.error("Couldn't find where your routes start")
@@ -97,7 +110,11 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
     }
 
     // TODO: Dynamic indent instead of hardcoded spaces
-    routesFileLines.splice(routerStartIndex + 1, 0, '      <Route path="/" redirect="/arwdmin" />')
+    routesFileLines.splice(
+      routerStartIndex + 1,
+      0,
+      '      <Route path="/" redirect="/arwdmin" />'
+    )
   }
 
   const routerEndIndex = routesFileLines.findIndex((line) =>
@@ -131,8 +148,11 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
   routesFileLines.splice(
     arwdminRoutesBeginIndex,
     0,
-    `${indent}<Route path="/arwdmin" page={ArwdminArwdminPage} name="arwdmin" />`,
-    `${indent}<Set private unauthenticated="login" wrap={ArwdminLayout}>`,
+    `${indent}<Route path="/arwdminLogin" page={ArwdminArwdminLoginPage} name="arwdminLogin" />`,
+    `${indent}<Route path="/arwdminSignup" page={ArwdminArwdminSignupPage} name="arwdminSignup" />`,
+    `${indent}<Set wrap={ArwdminLayout}>`,
+    `${indent}  <Route path="/arwdmin" page={ArwdminArwdminPage} name="arwdmin" />`,
+    `${indent}  <Private unauthenticated="arwdminLogin">`,
     ...modelNames.map((name) => {
       const modelNames = getModelNameVariants(name)
       const routeName = modelNames.camelCasePluralModelName
@@ -141,12 +161,13 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
       const idParamType = idTypes[name] !== 'String' ? ':' + idTypes[name] : ''
 
       return (
-        `${indent}  <Route path="/arwdmin/${routeName}/new" page={Arwdmin${pascalName}New${pascalName}Page} name="arwdminNew${pascalName}" />\n` +
-        `${indent}  <Route path="/arwdmin/${routeName}/{id${idParamType}}/edit" page={Arwdmin${pascalName}Edit${pascalName}Page} name="arwdminEdit${pascalName}" />\n` +
-        `${indent}  <Route path="/arwdmin/${routeName}/{id${idParamType}}" page={Arwdmin${pascalName}${pascalName}Page} name="arwdmin${pascalName}" />\n` +
-        `${indent}  <Route path="/arwdmin/${routeName}" page={Arwdmin${pascalName}${pascalPluralName}Page} name="arwdmin${pascalPluralName}" />`
+        `${indent}    <Route path="/arwdmin/${routeName}/new" page={Arwdmin${pascalName}New${pascalName}Page} name="arwdminNew${pascalName}" />\n` +
+        `${indent}    <Route path="/arwdmin/${routeName}/{id${idParamType}}/edit" page={Arwdmin${pascalName}Edit${pascalName}Page} name="arwdminEdit${pascalName}" />\n` +
+        `${indent}    <Route path="/arwdmin/${routeName}/{id${idParamType}}" page={Arwdmin${pascalName}${pascalName}Page} name="arwdmin${pascalName}" />\n` +
+        `${indent}    <Route path="/arwdmin/${routeName}" page={Arwdmin${pascalName}${pascalPluralName}Page} name="arwdmin${pascalPluralName}" />`
       )
     }),
+    `${indent}  </Private>`,
     `${indent}</Set>`
   )
 
