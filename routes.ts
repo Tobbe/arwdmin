@@ -21,9 +21,11 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
     .split('\n')
     // Remove existing arwdmin page routes. We will add them back later
     .filter((line) => {
-      return !line.includes('path="/arwdmin"') &&
+      return (
+        !line.includes('path="/arwdmin"') &&
         !line.includes('path="/arwdminLogin"') &&
         !line.includes('path="/arwdminSignup"')
+      )
     })
 
   const hasArwdminLayoutImport = !!routesFileLines.find((line) =>
@@ -61,21 +63,33 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
   }
 
   if (!/\bSet\b/.test(rwjsRouterImportLine)) {
-    const insertIndex = rwjsRouterImportLine.lastIndexOf('}')
-    routesFileLines[rwjsRouterImportIndex] = rwjsRouterImportLine
-      .split('')
-      .splice(insertIndex, 0, ', Set ')
-      .join('')
+    let insertIndex = rwjsRouterImportLine.lastIndexOf('}')
+    let space = false
+    if (rwjsRouterImportLine[insertIndex - 1] === ' ') {
+      space = true
+      insertIndex -= 1
+    }
+
+    routesFileLines[rwjsRouterImportIndex] =
+      rwjsRouterImportLine.slice(0, insertIndex) +
+      ', Set' +
+      (space ? '' : ' ') +
+      rwjsRouterImportLine.slice(insertIndex)
     rwjsRouterImportLine = routesFileLines[rwjsRouterImportIndex] || ''
   }
 
   if (!/\bPrivate\b/.test(rwjsRouterImportLine)) {
-    const insertIndex = rwjsRouterImportLine.lastIndexOf('}')
-    routesFileLines[rwjsRouterImportIndex] = rwjsRouterImportLine
-      .split('')
-      .splice(insertIndex, 0, ', Private ')
-      .join('')
-    rwjsRouterImportLine = routesFileLines[rwjsRouterImportIndex]
+    let insertIndex = rwjsRouterImportLine.lastIndexOf('}')
+    let space = false
+    if (rwjsRouterImportLine[insertIndex - 1] === ' ') {
+      space = true
+      insertIndex -= 1
+    }
+    routesFileLines[rwjsRouterImportIndex] =
+      rwjsRouterImportLine.slice(0, insertIndex) +
+      ', Private' +
+      (space ? '' : ' ') +
+      rwjsRouterImportLine.slice(insertIndex)
   }
 
   // Look for existing model pages and remove all of them. Don't want to have

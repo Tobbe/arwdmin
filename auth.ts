@@ -44,17 +44,29 @@ model ArwdminUser {
 export async function setupAuth(rwRoot: string) {
   console.log('running setup command for dbAuth')
 
-  // TODO: Replace by manual setup to not interfere with existing auth
-  // execaSync('yarn', ['add', '@redwoodjs/auth-dbauth-setup@canary'], {
-  //   cwd: rwRoot,
-  // })
-  // execaSync(
-  //   'yarn',
-  //   ['rw', 'setup', 'auth', 'dbAuth', '--no-warn', '--no-webauthn', '-f'],
-  //   {
-  //     cwd: rwRoot,
-  //   }
-  // )
+  const rwRootWeb = path.join(rwRoot, 'web')
+
+  const webDeps = JSON.parse(
+    fs.readFileSync(path.join(rwRootWeb, 'package.json'), 'utf-8')
+  ).dependencies
+
+  if (
+    !Object.keys(webDeps).some((dep) =>
+      dep.includes('@redwoodjs/auth-dbauth-web')
+    )
+  ) {
+    // TODO: Replace by manual setup to not interfere with existing auth
+    execaSync('yarn', ['add', '@redwoodjs/auth-dbauth-setup@canary'], {
+      cwd: rwRoot,
+    })
+    execaSync(
+      'yarn',
+      ['rw', 'setup', 'auth', 'dbAuth', '--no-warn', '--no-webauthn', '-f'],
+      {
+        cwd: rwRoot,
+      }
+    )
+  }
 
   // Update api/functions/auth.ts
   // TODO: Support auth.js
