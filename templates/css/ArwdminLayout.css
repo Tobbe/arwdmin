@@ -11,7 +11,7 @@
 
 .arwdmin-layout > nav {
   --_link-bg: var(--color-bg-dark);
-  --_link-text: var(--color-primary);
+  --_link-text: var(--color-spare);
 
   display: flex;
   flex-direction: column;
