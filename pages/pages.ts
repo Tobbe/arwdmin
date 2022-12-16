@@ -28,6 +28,19 @@ export function createArwdminPagesDir(rwRoot: string) {
   return pagesPath
 }
 
+export function createArwdminPage(pagesPath: string) {
+  const template = fs.readFileSync('./templates/arwdmin.ejs', 'utf-8')
+
+  const arwdminPage = ejsRender(template)
+
+  fs.mkdirSync(path.join(pagesPath, 'ArwdminPage'), { recursive: true })
+
+  fs.writeFileSync(
+    path.join(pagesPath, 'ArwdminPage', 'ArwdminPage.tsx'),
+    arwdminPage
+  )
+}
+
 // I was struggling with "path" vs "dir". Ultimately I decided that "dir" is
 // the actual directory or folder. "path" is the path to the dir. "path" is
 // always a string
@@ -67,7 +80,11 @@ export async function createModelPages(
     path.join(componentsPath, 'Paginator', 'Paginator.css')
   )
 
-  const searchWidgetPath = path.join(componentsPath, 'SearchWidget', 'SearchWidget.tsx')
+  const searchWidgetPath = path.join(
+    componentsPath,
+    'SearchWidget',
+    'SearchWidget.tsx'
+  )
   const searchWidgetComponent = generateSearchWidgetComponent()
 
   fs.mkdirSync(path.join(componentsPath, 'SearchWidget'), { recursive: true })
@@ -316,7 +333,7 @@ function generateModelCell(
   const fields = modelFields.filter((field) => !isRelation(field))
 
   const idField = modelFields.find((field) => field.isId)
-  const idFieldType = idField?.type || "String"
+  const idFieldType = idField?.type || 'String'
 
   return ejsRender(template, { model, modelFields: fields, idFieldType })
 }
@@ -342,7 +359,7 @@ function generateModelComponent(
   const template = fs.readFileSync('./templates/modelComponent.ejs', 'utf-8')
 
   const idField = modelFields.find((field) => field.isId)
-  const idFieldType = idField?.type || "String"
+  const idFieldType = idField?.type || 'String'
 
   return ejsRender(template, { model, modelFields, getRenderData, idFieldType })
 }

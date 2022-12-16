@@ -16,7 +16,14 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
 
   console.log('About to update', routesPath)
 
-  const routesFileLines = fs.readFileSync(routesPath).toString().split('\n')
+  const routesFileLines = fs
+    .readFileSync(routesPath, 'utf-8')
+    // Remove existing arwdmin page route. We will add a new one later
+    .replace(
+      /\s*<Route path="\/arwdmin" page=\{ArwdminArwdminPage} name="arwdmin" \/>/,
+      ''
+    )
+    .split('\n')
 
   const hasArwdminLayoutImport = !!routesFileLines.find((line) =>
     /^\s*import ArwdminLayout from/.test(line)
@@ -60,6 +67,9 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
       .join('')
   }
 
+  // Look for existing model pages and remove all of them. Don't want to have
+  // routes to models that might have been removed/renamed. And we don't want
+  // duplicate routes for models that still exist when we regenerate all routes
   const arwdminLayoutSetStartIndex = routesFileLines.findIndex((line) =>
     /<Set private unauthenticated="login" wrap={ArwdminLayout}>/.test(line)
   )
@@ -74,6 +84,20 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
       arwdminLayoutSetStartIndex,
       arwdminLayoutSetEndIndex - arwdminLayoutSetStartIndex + 1
     )
+  }
+
+  if (!routesFileLines.some(line => line.includes('path="/"'))) {
+    // No "home" route.
+    // Let's just add a redirect to /arwdmin
+    const routerStartIndex = routesFileLines.findIndex((line) => /^\s*<Router.*>\s*$/.test(line))
+
+    if (routerStartIndex === -1) {
+      console.error("Couldn't find where your routes start")
+      process.exit(1)
+    }
+
+    // TODO: Dynamic indent instead of hardcoded spaces
+    routesFileLines.splice(routerStartIndex + 1, 0, '      <Route path="/" redirect="/arwdmin" />')
   }
 
   const routerEndIndex = routesFileLines.findIndex((line) =>
@@ -94,7 +118,7 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
   const idTypes: Record<string, string> = {}
   for (const name of modelNames) {
     const fields = await getModelFields(rwRoot, name)
-    const idField = fields.find(field => field.isId)
+    const idField = fields.find((field) => field.isId)
 
     if (!idField?.type) {
       console.error("Counldn't find the id field type for", name)
@@ -107,6 +131,7 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
   routesFileLines.splice(
     arwdminRoutesBeginIndex,
     0,
+    `${indent}<Route path="/arwdmin" page={ArwdminArwdminPage} name="arwdmin" />`,
     `${indent}<Set private unauthenticated="login" wrap={ArwdminLayout}>`,
     ...modelNames.map((name) => {
       const modelNames = getModelNameVariants(name)
@@ -115,10 +140,12 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
       const pascalPluralName = modelNames.pascalCasePluralModelName
       const idParamType = idTypes[name] !== 'String' ? ':' + idTypes[name] : ''
 
-      return `${indent}  <Route path="/arwdmin/${routeName}/new" page={Arwdmin${pascalName}New${pascalName}Page} name="arwdminNew${pascalName}" />\n` +
+      return (
+        `${indent}  <Route path="/arwdmin/${routeName}/new" page={Arwdmin${pascalName}New${pascalName}Page} name="arwdminNew${pascalName}" />\n` +
         `${indent}  <Route path="/arwdmin/${routeName}/{id${idParamType}}/edit" page={Arwdmin${pascalName}Edit${pascalName}Page} name="arwdminEdit${pascalName}" />\n` +
         `${indent}  <Route path="/arwdmin/${routeName}/{id${idParamType}}" page={Arwdmin${pascalName}${pascalName}Page} name="arwdmin${pascalName}" />\n` +
         `${indent}  <Route path="/arwdmin/${routeName}" page={Arwdmin${pascalName}${pascalPluralName}Page} name="arwdmin${pascalPluralName}" />`
+      )
     }),
     `${indent}</Set>`
   )

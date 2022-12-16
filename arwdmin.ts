@@ -8,7 +8,7 @@ import { addAuthModel, setupAuth } from './auth'
 import { copyPrismaSchema } from './schema'
 import { addArwdminFormatters } from './formatters'
 import { createArwdminLayoutDir, createLayout } from './layout'
-import { createArwdminPagesDir, createModelPages, createComponentsDir } from './pages/pages'
+import { createArwdminPagesDir, createModelPages, createComponentsDir, createArwdminPage } from './pages/pages'
 
 import { updateRoutes } from './routes'
 import { getModelNames } from './schema'
@@ -56,6 +56,7 @@ const modelNames = await getModelNames(rwRoot)
 const pagesPath = createArwdminPagesDir(rwRoot)
 const componentsPath = createComponentsDir(rwRoot)
 await createModelPages(rwRoot, pagesPath, componentsPath, modelNames)
+createArwdminPage(pagesPath)
 
 const layoutPath = createArwdminLayoutDir(rwRoot)
 createLayout(layoutPath, modelNames)
