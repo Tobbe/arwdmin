@@ -32,23 +32,35 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
     /^\s*import ArwdminLayout from/.test(line)
   )
 
+  let importIndex = 0
+
   if (!hasArwdminLayoutImport) {
     // First look for Layout imports
     let existingImportIndex = findLastIndex(routesFileLines, (line) =>
-      /^\s*import .+Layout\b.* from/.test(line)
+      /^\s*import .+Layout\b.* from 'src\/layouts/.test(line)
     )
+    importIndex = existingImportIndex + 1
 
     if (existingImportIndex === -1) {
-      // Didn't find any Layout imports. Let's look for any kind of import
+      // Didn't find any Layout imports. Let's look for src/ imports
       existingImportIndex = findLastIndex(routesFileLines, (line) =>
-        /^\s*import .+ from/.test(line)
+        /^\s*import .+ from 'src\//.test(line)
       )
+      importIndex = existingImportIndex + 1
+    }
+
+    if (existingImportIndex === -1) {
+      // Didn't find any src/ imports. Let's look for relative imports
+      existingImportIndex = routesFileLines.findIndex((line) =>
+        /^\s*import .+ from '\./.test(line)
+      )
+      importIndex = Math.max(0, existingImportIndex)
     }
 
     routesFileLines.splice(
-      existingImportIndex + 1,
+      importIndex,
       0,
-      "import ArwdminLayout from 'src/layouts/ArwdminLayout'"
+      "import ArwdminLayout from 'src/layouts/ArwdminLayout'\n"
     )
   }
 
@@ -152,7 +164,7 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
     const idField = fields.find((field) => field.isId)
 
     if (!idField?.type) {
-      console.error("Counldn't find the id field type for", name)
+      console.error("Couldn't find the id field type for", name)
       process.exit(1)
     }
 
