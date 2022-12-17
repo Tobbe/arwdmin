@@ -178,8 +178,7 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
           service
             .replace(
               "import { db } from 'src/lib/db'",
-              "import { removeNulls } from '@redwoodjs/api'\n\n" +
-                "import { db } from 'src/lib/db'\n\n" +
+              "import { db } from 'src/lib/db'\n\n" +
                 `const ${modelNames.capitalPluralModelName}_PER_PAGE = 10\n\n` +
                 '\n' +
                 'interface Args {\n' +
@@ -229,10 +228,6 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
                 '    }\n' +
                 '  )\n' +
                 '}\n'
-            )
-            .replace(
-              /update\({(.*?)data: input,/gs,
-              'update({$1data: removeNulls(input),'
             )
             .replaceAll(': (_obj, { root })', ': async (_obj, { root })')
             .replace(
