@@ -58,7 +58,7 @@ export function prepareGeneratorDir(rwRoot: string, generatorDirName: string) {
   return tmpName
 }
 
-function findSearchField(fields: DMMF.Field[]) {
+export function findSearchField(fields: DMMF.Field[]) {
   let fieldNameFromMetaComment
   let fieldNameFromNonIdNoneUniqueString
   let fieldNameFromNonIdString

@@ -26,7 +26,7 @@ const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
           New <%= model.humanizedName %>
         </Link>
       </header>
-      <SearchWidget routesFn={routes.arwdmin<%= model.pluralName %>} />
+      <SearchWidget searchField="<%= searchField %>" routesFn={routes.arwdmin<%= model.pluralName %>} />
       <div className="arwdmin-table-wrapper">
         <table className="arwdmin-table">
           <thead>

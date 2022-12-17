@@ -10,6 +10,7 @@ import {
   getModelNameVariants,
   ModelNameVariants,
 } from '../schema'
+import { findSearchField } from '../sdl'
 import { createEditPage } from './edit'
 import { createNewPage } from './new'
 import { getRenderDataFunction } from './schemaRender'
@@ -112,10 +113,12 @@ export async function createModelPages(
       pascalCasePluralName: modelNameVariants.pascalCasePluralModelName,
     })
     const modelListCell = generateModelListCell(modelNameVariants, modelFields)
+    const searchField = findSearchField(modelFields)
     const modelListComponent = generateModelListComponent(
       modelNameVariants,
       modelFields,
-      renderDataFunction
+      renderDataFunction,
+      searchField
     )
     const modelPage = generateModelPage(modelNameVariants)
     const modelCell = generateModelCell(modelNameVariants, modelFields)
@@ -287,7 +290,8 @@ function generateModelListComponent(
     humanizedName,
   }: ModelNameVariants,
   modelFields: DMMF.Field[],
-  getRenderData: (fieldName: string) => any
+  getRenderData: (fieldName: string) => any,
+  searchField: string
 ) {
   const model = {
     name: modelName,
@@ -305,7 +309,7 @@ function generateModelListComponent(
     'utf-8'
   )
 
-  return ejsRender(template, { model, modelFields, getRenderData })
+  return ejsRender(template, { model, modelFields, getRenderData, searchField })
 }
 
 function generateModelPage({ pascalCaseModelName }: ModelNameVariants) {

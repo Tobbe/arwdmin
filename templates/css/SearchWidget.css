@@ -2,7 +2,7 @@
   width: 100%;
 }
 
-.arwdmin-search-widget form {
+.arwdmin-search-widget .arwdmin-search-input-row {
   display: flex;
   padding-block: var(--size-2);
 }
