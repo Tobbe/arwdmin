@@ -13,7 +13,10 @@ function getComponent(
       return 'TextAreaField'
     }
 
-    if (field.documentation?.includes('@arwdmin-singleline') || /\bshort\b/.test(name)) {
+    if (
+      field.documentation?.includes('@arwdmin-singleline') ||
+      /\bshort\b/.test(name)
+    ) {
       return 'TextField'
     }
 
@@ -180,14 +183,19 @@ export function getRenderDataFunction(
 
     const type = isEnumList ? 'EnumList' : isEnum ? 'Enum' : field.type
 
+    const component = getComponent(type, field, enums)
+    const emptyAs =
+      field.isRequired || component === 'CheckboxField' ? '' : 'emptyAs={null}'
+
     return {
       displayName: humanize(fieldName),
-      component: getComponent(type, field, enums),
+      component,
       defaultProp: getDefaultProp(type),
       validation: getValidation(type, field),
       deserializeFunction: getDeserializationFunction(type),
       displayFunction: getDisplayFunction(type),
       listDisplayFunction: getListDisplayFunction(type, field),
+      emptyAs,
       subData: getSubData(type, field, enums),
     }
   }

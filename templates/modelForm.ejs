@@ -15,12 +15,6 @@ import {
 } from '@redwoodjs/forms'
 import type { RWGqlError } from '@redwoodjs/forms'
 
-const formatDatetime = (value) => {
-  if (value) {
-    return value.replace(/:\d{2}\.\d{3}\w/, '')
-  }
-}
-
 type Form<%= model.pascalName %> = NonNullable<EditArwdmin<%= model.pascalName %>ById['<%= model.camelName %>']>
 
 interface Props {
@@ -72,9 +66,10 @@ const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, 
           <% } else { %>
             <<%= renderData.component %>
               name="<%= field.name %>"
-              <%= renderData.defaultProp %>={<%= model.camelName %>?.<%= field.name %>}
+              <%= renderData.defaultProp %>={<%= model.camelName %>?.<%= field.name %> || undefined}
               className="arwdmin-input"
               errorClassName="arwdmin-input rw-input-error"
+              <%= renderData.emptyAs -%>
               <%= renderData.validation ? `validation=${renderData.validation}` : '' -%>
             />
           <% } %>
