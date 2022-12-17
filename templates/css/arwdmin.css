@@ -7,6 +7,9 @@
   --color-bg-light: #36383e;
   --color-bg-dark: #06080e;
   --color-bad: #801f0c;
+  --color-text-muted: #56585e;
+
+  --font-size-small: 0.7rem;
 }
 
 body,
@@ -170,6 +173,16 @@ html {
 
 textarea.arwdmin-input {
   height: var(--size-11);
+}
+
+.arwdmin-description {
+  margin-top: var(--size-2);
+  font-size: var(--font-size-small);
+  color: var(--color-text-muted);
+}
+
+.arwdmin-description + .arwdmin-input {
+  margin-top: var(--size-1);
 }
 
 :where(html) {

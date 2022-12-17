@@ -187,6 +187,11 @@ export function getRenderDataFunction(
     const emptyAs =
       field.isRequired || component === 'CheckboxField' ? '' : 'emptyAs={null}'
 
+    const description = field.documentation
+      ?.split('\n')
+      .filter((line) => !line.startsWith('@arwdmin'))
+      .join(' ')
+
     return {
       displayName: humanize(fieldName),
       component,
@@ -196,6 +201,7 @@ export function getRenderDataFunction(
       displayFunction: getDisplayFunction(type),
       listDisplayFunction: getListDisplayFunction(type, field),
       emptyAs,
+      description,
       subData: getSubData(type, field, enums),
     }
   }

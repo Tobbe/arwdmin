@@ -49,6 +49,10 @@ const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, 
             <%= renderData.displayName %>
           </Label>
 
+          <%_ if (renderData.description) { %>
+            <div className="arwdmin-description"><%= renderData.description %></div>
+          <% } -%>
+
           <%_ if (renderData.subData) { %>
             <%_ for (const subData of renderData.subData) { %>
               <div className="arwdmin-check-radio-item">
