@@ -28,10 +28,11 @@ export function createArwdminPagesDir(rwRoot: string) {
   return pagesPath
 }
 
-export function createArwdminPage(pagesPath: string) {
+export function createArwdminPage(rwRoot: string, pagesPath: string) {
   const template = fs.readFileSync('./templates/arwdmin.ejs', 'utf-8')
 
-  const arwdminPage = ejsRender(template)
+  const appName = rwRoot.split(path.sep).at(-1)
+  const arwdminPage = ejsRender(template, { appName })
 
   fs.mkdirSync(path.join(pagesPath, 'ArwdminPage'), { recursive: true })
 

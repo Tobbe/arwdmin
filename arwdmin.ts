@@ -58,7 +58,7 @@ const modelNames = await getModelNames(rwRoot)
 
 const componentsPath = createComponentsDir(rwRoot)
 await createModelPages(rwRoot, pagesPath, componentsPath, modelNames)
-createArwdminPage(pagesPath)
+createArwdminPage(rwRoot, pagesPath)
 
 const layoutPath = createArwdminLayoutDir(rwRoot)
 createLayout(layoutPath, modelNames)

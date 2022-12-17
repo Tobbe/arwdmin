@@ -6,15 +6,15 @@ const ArwdminArwdminPage = () => {
   const { isAuthenticated } = useAuth()
 
   return (
-    <>
-      <h1>aRWdmin</h1>
+    <div className="arwdmin-page">
+      <h1><%= appName %></h1>
       {!isAuthenticated && (
         <>
           <Link to={routes.arwdminLogin()}>Log in</Link>
           <Link to={routes.arwdminSignup()}>Sign up</Link>
         </>
       )}
-    </>
+    </div>
   )
 }
 
