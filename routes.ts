@@ -21,11 +21,7 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
     .split('\n')
     // Remove existing arwdmin page routes. We will add them back later
     .filter((line) => {
-      return (
-        !line.includes('path="/arwdmin"') &&
-        !line.includes('path="/arwdminLogin"') &&
-        !line.includes('path="/arwdminSignup"')
-      )
+      return !line.includes('path="/arwdmin"')
     })
 
   const hasArwdminLayoutImport = !!routesFileLines.find((line) =>
@@ -174,10 +170,10 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
   routesFileLines.splice(
     arwdminRoutesBeginIndex,
     0,
-    `${indent}<Route path="/arwdminLogin" page={ArwdminArwdminLoginPage} name="arwdminLogin" />`,
-    `${indent}<Route path="/arwdminSignup" page={ArwdminArwdminSignupPage} name="arwdminSignup" />`,
     `${indent}<Set wrap={ArwdminLayout}>`,
     `${indent}  <Route path="/arwdmin" page={ArwdminArwdminPage} name="arwdmin" />`,
+    `${indent}  <Route path="/arwdminLogin" page={ArwdminArwdminLoginPage} name="arwdminLogin" />`,
+    `${indent}  <Route path="/arwdminSignup" page={ArwdminArwdminSignupPage} name="arwdminSignup" />`,
     `${indent}  <Private unauthenticated="arwdminLogin">`,
     ...modelNames.map((name) => {
       const modelNames = getModelNameVariants(name)

@@ -40,6 +40,11 @@ export function createArwdminPage(rwRoot: string, pagesPath: string) {
     path.join(pagesPath, 'ArwdminPage', 'ArwdminPage.tsx'),
     arwdminPage
   )
+
+  fs.copyFileSync(
+    './templates/css/ArwdminPage.css',
+    path.join(pagesPath, 'ArwdminPage', 'ArwdminPage.css')
+  )
 }
 
 // I was struggling with "path" vs "dir". Ultimately I decided that "dir" is

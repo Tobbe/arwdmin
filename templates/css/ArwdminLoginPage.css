@@ -1,0 +1,19 @@
+.arwdmin-login-page .arwdmin-login {
+  display: flex;
+  justify-content: center;
+  width: var(--size-15);
+  margin: var(--size-9) auto;
+}
+
+.arwdmin-login .arwdmin-login-container {
+  width: 100%;
+}
+
+.arwdmin-login [type=submit] {
+  margin-top: var(--size-3);
+}
+
+.arwdmin-login .arwdmin-login-footer {
+  margin-top: var(--size-3);
+  text-align: center;
+}

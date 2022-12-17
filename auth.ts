@@ -177,6 +177,11 @@ function createLoginPage(pagesPath: string) {
     path.join(pagesPath, 'ArwdminLoginPage', 'ArwdminLoginPage.tsx'),
     loginPage
   )
+
+  fs.copyFileSync(
+    './templates/css/ArwdminLoginPage.css',
+    path.join(pagesPath, 'ArwdminLoginPage', 'ArwdminLoginPage.css')
+  )
 }
 
 function createSignupPage(pagesPath: string) {
@@ -189,5 +194,10 @@ function createSignupPage(pagesPath: string) {
   fs.writeFileSync(
     path.join(pagesPath, 'ArwdminSignupPage', 'ArwdminSignupPage.tsx'),
     signupPage
+  )
+
+  fs.copyFileSync(
+    './templates/css/ArwdminSignupPage.css',
+    path.join(pagesPath, 'ArwdminSignupPage', 'ArwdminSignupPage.css')
   )
 }

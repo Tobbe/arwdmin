@@ -14,7 +14,9 @@ import { toast, Toaster } from '@redwoodjs/web/toast'
 
 import { useAuth } from 'src/auth'
 
-const LoginPage = () => {
+import './ArwdminLoginPage.css'
+
+const ArwdminLoginPage = () => {
   const { isAuthenticated, logIn } = useAuth()
 
   useEffect(() => {
@@ -44,12 +46,12 @@ const LoginPage = () => {
   }
 
   return (
-    <>
+    <div className="arwdmin-login-page">
       <MetaTags title="Login" />
+      <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
 
-      <main>
-        <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
-        <div>
+      <div className="arwdmin-login">
+        <div className="arwdmin-login-container">
           <div>
             <header>
               <h2>Login</h2>
@@ -111,23 +113,21 @@ const LoginPage = () => {
 
                   <FieldError name="password" className="rw-field-error" />
 
-                  <div>
-                    <Submit className="arwdmin-button">Login</Submit>
-                  </div>
+                  <Submit className="arwdmin-button">Login</Submit>
                 </Form>
               </div>
             </div>
           </div>
-          <div>
+          <div className="arwdmin-login-footer">
             <span>Don&apos;t have an account?</span>{' '}
             <Link to={routes.arwdminSignup()}>
               Sign up!
             </Link>
           </div>
         </div>
-      </main>
-    </>
+      </div>
+    </div>
   )
 }
 
-export default LoginPage
+export default ArwdminLoginPage
