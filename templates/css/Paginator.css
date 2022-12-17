@@ -1,7 +1,7 @@
 .arwdmin-paginator ul {
   all: unset;
   --_link-bg: var(--color-bg-dark);
-  --_link-text: var(--color-spare);
+  --_link-text: var(--color-highlight);
 
   display: flex;
   justify-content: center;
