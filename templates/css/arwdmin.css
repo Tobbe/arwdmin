@@ -1,4 +1,4 @@
-:root {
+:root.old {
   --color-bg: #151618;
   --color-highlight: #a9a454;
   --color-primary: #efe4d4;
@@ -8,6 +8,42 @@
   --color-bg-dark: #06080e;
   --color-bad: #801f0c;
   --color-text-muted: #56585e;
+
+  --font-size-small: 0.7rem;
+}
+
+:root {
+  --_color-bg: #fafbfb;
+
+  --_color-bg-light: #ffffff;
+  --color-bg: #ffffff;
+
+  --color-bg-dark: #f9fafc;
+
+  --color-bg-menu: #05613b;
+
+  --color-primary: #011b0b;
+  --color-text: #011b0b;
+  --color-text2: #1b1f28;
+  --color-text3: #111929;
+
+  --color-muted: #2b7858;
+  --color-menu-highlight: #2b7858;
+
+  --color-menu-text-highlight: #f5ffff;
+  --color-menu-text: #92c1ae;
+
+  --color-spare: #eaebef;
+  --color-table-border: #eaebef;
+  --color-input-border: #d9dade;
+
+  --color-highlight: #05613b;
+  --color-link: #05613b;
+
+  --color-text-muted: #69707f;
+
+  --color-bad-light: #fef2f2;
+  --color-bad-dark: #a03a32;
 
   --font-size-small: 0.7rem;
 }
@@ -23,9 +59,8 @@ html {
 }
 
 .arwdmin-cell-error {
-  color: var(--color-bg-dark);
-  background-color: var(--color-bad);
-  border: var(--border-size-1) solid var(--color-bg-dark);
+  color: var(--color-bad-dark);
+  background-color: var(--color-bad-light);
   border-radius: var(--radius-2);
   font-size: var(--font-size-2);
   padding: var(--size-3);
@@ -63,7 +98,7 @@ html {
 .arwdmin-model .arwdmin-table th {
   border-width: 1px 1px 0 0;
   border-style: solid;
-  border-color: var(--color-spare);
+  border-color: var(--color-table-border);
 }
 
 .arwdmin-model nav {
@@ -82,17 +117,22 @@ html {
 }
 
 .arwdmin-table th {
-  color: var(--color-spare);
+  color: var(--color-text-muted);
   background-color: var(--color-bg-dark);
   min-width: var(--size-10);
   padding: var(--size-2);
   overflow: hidden;
 }
 
+.arwdmin-table tbody th {
+  width: var(--size-12);
+  text-align: right;
+}
+
 .arwdmin-table td {
   border-width: 1px 0 0 0;
   border-style: solid;
-  border-color: var(--color-spare);
+  border-color: var(--color-table-border);
   padding: var(--size-2);
 }
 
@@ -100,7 +140,7 @@ html {
   overflow-x: auto;
   /*                  nav bar width         nav bar margin  to give some spacing on the right side */
   width: calc(100vw - var(--size-fluid-8) - var(--size-5) - var(--size-5));
-  border: var(--border-size-1) solid var(--color-spare);
+  border: var(--border-size-1) solid var(--color-table-border);
   border-radius: var(--radius-2);
 }
 
@@ -120,7 +160,7 @@ html {
   display: block;
   margin-top: var(--size-5);
   font-weight: var(--font-weight-6);
-  color: var(--color-spare);
+  color: var(--color-text);
 }
 
 .arwdmin-button {
@@ -148,8 +188,13 @@ html {
 }
 
 .arwdmin-button-delete {
-  background-color: var(--color-bad);
-  color: var(--color-bg-dark)
+  background-color: var(--color-bad-light);
+  color: var(--color-bad-dark)
+}
+
+.arwdmin-button-delete:is(.current, :hover, :focus-visible) {
+  background-color: var(--color-bad-dark);
+  color: var(--color-bad-light);
 }
 
 .arwdmin-input {
@@ -159,7 +204,7 @@ html {
   padding: var(--size-2);
   border-width: var(--border-size-1);
   border-style: solid;
-  border-color: var(--color-bg-dark);
+  border-color: var(--color-input-border);
   color: var(--color-primary);
   background-color: var(--color-bg-light);
   border-radius: var(--radius-2);
