@@ -137,7 +137,7 @@ export async function setupAuth(rwRoot: string) {
       '    handler: async ({ username, hashedPassword, salt }) => {',
       '      const nbrOfUsers = await db.arwdminUser.count()',
       '',
-      '      return db.arwdminUser.create({',
+      '      const user = db.arwdminUser.create({',
       '        data: {',
       '          email: username,',
       '          hashedPassword: hashedPassword,',
@@ -147,6 +147,12 @@ export async function setupAuth(rwRoot: string) {
       '          approved: nbrOfUsers === 0,',
       '        },',
       '      })',
+      '',
+      '      if (nbrOfUsers === 0) {',
+      '        // Immediately log in first user',
+      '      }',
+      '',
+      "      return 'You will need to be approved before you can log in'",
       '    },'
     )
   }
