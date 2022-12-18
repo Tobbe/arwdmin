@@ -19,6 +19,7 @@ import {
 } from './sdl'
 import { moveArwdminServices } from './services'
 import { addMainStyles } from './styling'
+import { updateRedwoodToml } from './redwoodToml'
 
 console.log('aRWdmin v0.1.0')
 console.log()
@@ -47,6 +48,14 @@ function findRwRoot(dir = process.cwd()): string {
   return findRwRoot(dir.split(path.sep).slice(0, -1).join(path.sep))
 }
 
+const appName = rwRoot.split(path.sep).at(-1)
+if (!appName) {
+  console.error('Could not generate an app name')
+  process.exit(1)
+}
+
+updateRedwoodToml(rwRoot, appName)
+
 const pagesPath = createArwdminPagesDir(rwRoot)
 
 addAuthModel(baseProjectRoot)
@@ -58,7 +67,7 @@ const modelNames = await getModelNames(rwRoot)
 
 const componentsPath = createComponentsDir(rwRoot)
 await createModelPages(rwRoot, pagesPath, componentsPath, modelNames)
-createArwdminPage(rwRoot, pagesPath)
+createArwdminPage(appName, pagesPath)
 
 const layoutPath = createArwdminLayoutDir(rwRoot)
 createLayout(layoutPath, modelNames)
