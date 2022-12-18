@@ -28,7 +28,7 @@ export const jsonDisplay = (obj: unknown) => {
 /**
  * `checkForId` will check for any string that's more than 20 characters long
  * and that doesn't contain any whitespace. This should match UUIDs, CUIDs and
- * NanoIDs. 
+ * NanoIDs.
  */
 export const truncate = (
   value: string | number,
@@ -108,7 +108,7 @@ export const timeTag = (dateTime?: string) => {
         humanTime = 'In ' + months + ' months'
       }
     } else if (absDateDiff > 20 * HOUR_IN_MS) {
-      const days = Math.round(dateDiff / HOUR_IN_MS)
+      const days = Math.round(dateDiff / DAY_IN_MS)
 
       if (days === 1) {
         humanTime = 'One day ago'
@@ -120,7 +120,10 @@ export const timeTag = (dateTime?: string) => {
         humanTime = 'In ' + days + ' days'
       }
     } else {
-      humanTime = ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2)
+      humanTime =
+        ('0' + date.getHours()).slice(-2) +
+        ':' +
+        ('0' + date.getMinutes()).slice(-2)
     }
 
     output = (
