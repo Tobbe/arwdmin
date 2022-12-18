@@ -36,6 +36,9 @@ const ArwdminSignupPage = () => {
 
     if (response.message) {
       toast(response.message)
+      setTimeout(() => {
+        navigate(routes.arwdmin())
+      }, 3000)
     } else if (response.error) {
       toast.error(response.error)
     } else {
