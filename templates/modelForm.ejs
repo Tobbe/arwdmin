@@ -70,7 +70,7 @@ const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, 
           <% } else { %>
             <<%= renderData.component %>
               name="<%= field.name %>"
-              <%= renderData.defaultProp %>={<%= model.camelName %>?.<%= field.name %> || undefined}
+              <%= renderData.defaultProp %>={<%= model.camelName %>?.<%= field.name %> ?? undefined}
               className="arwdmin-input"
               errorClassName="arwdmin-input rw-input-error"
               <%= renderData.emptyAs -%>
