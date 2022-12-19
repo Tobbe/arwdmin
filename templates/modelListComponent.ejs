@@ -1,17 +1,46 @@
 import { useState } from 'react'
 
-import { Link, routes } from '@redwoodjs/router'
+import { Link, routes, useParams } from '@redwoodjs/router'
+import { useMutation } from '@redwoodjs/web'
+import { toast } from '@redwoodjs/web/toast'
 
 import SearchWidget from 'src/components/arwdmin/SearchWidget'
 import { truncate, truncateId, truncateMaybeId, checkboxInputTag, formatEnum, timeTag } from 'src/lib/arwdminFormatters'
+import { QUERY } from 'src/pages/Arwdmin/<%= model.pascalName %>/<%= model.pascalPluralName %>Page/<%= model.pascalPluralName %>Cell'
+
+const DELETE_<%= model.capitalName %>_MUTATION = gql`
+  mutation DeleteList<%= model.pascalName %>Mutation($id: <%= idFieldType %>!) {
+    delete<%= model.pascalName %>(id: $id) {
+      id
+    }
+  }
+`
 
 const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
   const [highlightedRow, setHighlightedRow] = useState(-1)
+  const params = useParams()
+  const [delete<%= model.pascalName %>] = useMutation(DELETE_<%= model.capitalName %>_MUTATION, {
+    onCompleted: () => {
+      toast.success('<%= model.pascalName %> deleted')
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+    refetchQueries: [
+      {
+        query: QUERY,
+        variables: {
+          page: params.page || 1,
+          q: params.q,
+        },
+      },
+    ],
+    awaitRefetchQueries: true,
+  })
 
   const onDeleteClick = (id) => {
     if (confirm('Are you sure you want to delete <%= model.name %> ' + id + '?')) {
-      // TODO: Implement
-      // delete<%= model.name %>({ variables: { id } })
+      delete<%= model.name %>({ variables: { id } })
     }
   }
 

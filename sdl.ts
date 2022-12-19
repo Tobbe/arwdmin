@@ -88,13 +88,20 @@ export function findSearchField(fields: DMMF.Field[]) {
     }
   }
 
-  return (
+  const searchField = (
     fieldNameFromMetaComment ||
     fieldNameFromNonIdNoneUniqueString ||
     fieldNameFromNonIdString ||
     fieldNameFromString ||
     fieldNameFromFirstField
   )
+
+  if (!searchField) {
+    console.error("Couldn't find search field")
+    process.exit(1)
+  }
+
+  return searchField
 }
 
 export async function generateSdls(rwRoot: string, modelNames: string[]) {

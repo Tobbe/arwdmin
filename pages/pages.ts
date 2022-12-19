@@ -287,6 +287,7 @@ function generateModelListComponent(
     camelCasePluralModelName,
     humanizedPlural,
     humanizedName,
+    capitalModelName,
   }: ModelNameVariants,
   modelFields: DMMF.Field[],
   getRenderData: (fieldName: string) => any,
@@ -296,10 +297,12 @@ function generateModelListComponent(
     name: modelName,
     pluralName: pascalCasePluralModelName,
     pascalName: pascalCaseModelName,
+    pascalPluralName: pascalCasePluralModelName,
     camelName: camelCaseModelName,
     camelPluralName: camelCasePluralModelName,
     humanizedPluralName: humanizedPlural,
     humanizedName: humanizedName,
+    capitalName: capitalModelName,
   }
 
   // TODO: Make sure the sr-only css class exists
@@ -308,7 +311,10 @@ function generateModelListComponent(
     'utf-8'
   )
 
-  return ejsRender(template, { model, modelFields, getRenderData, searchField })
+  const idField = modelFields.find((field) => field.isId)
+  const idFieldType = idField?.type || 'String'
+
+  return ejsRender(template, { model, modelFields, getRenderData, searchField, idFieldType })
 }
 
 function generateModelPage({ pascalCaseModelName }: ModelNameVariants) {
