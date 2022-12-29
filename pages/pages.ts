@@ -113,7 +113,7 @@ export async function createModelPages(
       pascalCasePluralName: modelNameVariants.pascalCasePluralModelName,
     })
     const modelListCell = generateModelListCell(modelNameVariants, modelFields)
-    const searchField = findSearchField(modelFields)
+    const searchField = findSearchField(modelName, modelFields)
     const modelListComponent = generateModelListComponent(
       modelNameVariants,
       modelFields,

@@ -58,22 +58,52 @@ export function prepareGeneratorDir(rwRoot: string, generatorDirName: string) {
   return tmpName
 }
 
-export function findSearchField(fields: DMMF.Field[]) {
-  let fieldNameFromMetaComment
+export function findSearchField(modelName: string, fields: DMMF.Field[]) {
+  let fieldNameForUsersEmail
+  let fieldNameForUsersUserNameId
+  let fieldNameForUsersUserName
+  let fieldNameForUsersName
+  let fieldNameForUsersFirstName
+  let fieldNameForUsersFullName
   let fieldNameFromNonIdNoneUniqueString
   let fieldNameFromNonIdString
   let fieldNameFromString
   const fieldNameFromFirstField = fields[0]?.name
 
-  for (let field of fields) {
-    if (
-      field.documentation?.includes('@arwdmin-search') &&
-      !fieldNameFromMetaComment
-    ) {
-      fieldNameFromMetaComment = field.name
+  for (const field of fields) {
+    if (field.documentation?.includes('@arwdmin-search')) {
+      // @arwdmin-search trumps everything. Return as soon as we find this
+      return field.name
     }
 
     if (field.type === 'String') {
+      if (
+        modelName.toLowerCase().endsWith('user') ||
+        modelName.toLowerCase().endsWith('users')
+      ) {
+        // For user tables we want to prioritize searching for email, name etc
+
+        if (field.name.toLowerCase() === 'email') {
+          fieldNameForUsersEmail = field.name
+        } else if (field.name.toLowerCase() === 'username') {
+          if (field.isUnique || field.isId) {
+            fieldNameForUsersUserNameId = field.name
+          } else {
+            fieldNameForUsersUserName = field.name
+          }
+        } else if (field.name.toLowerCase() === 'name') {
+          fieldNameForUsersName = field.name
+        } else if (
+          field.name.toLowerCase().replaceAll(/-|_/g, '') === 'firstname'
+        ) {
+          fieldNameForUsersFirstName = field.name
+        } else if (
+          field.name.toLowerCase().replaceAll(/-|_/g, '') === 'fullname'
+        ) {
+          fieldNameForUsersFullName = field.name
+        }
+      }
+
       if (
         !field.isId &&
         !field.isUnique &&
@@ -88,13 +118,17 @@ export function findSearchField(fields: DMMF.Field[]) {
     }
   }
 
-  const searchField = (
-    fieldNameFromMetaComment ||
+  const searchField =
+    fieldNameForUsersUserNameId ||
+    fieldNameForUsersEmail ||
+    fieldNameForUsersUserName ||
+    fieldNameForUsersName ||
+    fieldNameForUsersFirstName ||
+    fieldNameForUsersFullName ||
     fieldNameFromNonIdNoneUniqueString ||
     fieldNameFromNonIdString ||
     fieldNameFromString ||
     fieldNameFromFirstField
-  )
 
   if (!searchField) {
     console.error("Couldn't find search field")
@@ -104,7 +138,11 @@ export function findSearchField(fields: DMMF.Field[]) {
   return searchField
 }
 
-export async function generateSdls(rwRoot: string, modelNames: string[], appName: string) {
+export async function generateSdls(
+  rwRoot: string,
+  modelNames: string[],
+  appName: string
+) {
   const serviceDir = getGeneratorDir(rwRoot, 'services')
   const graphqlDir = getGeneratorDir(rwRoot, 'graphql')
 
@@ -172,7 +210,7 @@ export async function generateSdls(rwRoot: string, modelNames: string[], appName
         ? '      ORDER BY "updatedAt"\n'
         : ''
 
-      const searchField = findSearchField(modelFields)
+      const searchField = findSearchField(name, modelFields)
 
       if (!searchField) {
         console.error('Could not find a field to use for searches')
