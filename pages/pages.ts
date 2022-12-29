@@ -74,7 +74,8 @@ export async function createModelPages(
   rwRoot: string,
   pagesPath: string,
   componentsPath: string,
-  modelNames: string[]
+  modelNames: string[],
+  appName: string
 ) {
   const paginatorPath = path.join(componentsPath, 'Paginator', 'Paginator.tsx')
   const paginatorComponent = generatePaginatorComponent()
@@ -106,7 +107,7 @@ export async function createModelPages(
     const enums = await getEnums(rwRoot)
     const renderDataFunction = getRenderDataFunction(modelFields, enums)
 
-    const modelNameVariants = getModelNameVariants(modelName)
+    const modelNameVariants = getModelNameVariants(modelName, appName)
 
     const modelListPage = generateModelListPage({
       pascalCasePluralName: modelNameVariants.pascalCasePluralModelName,
@@ -135,8 +136,8 @@ export async function createModelPages(
 
     // TODO: Extract createListPage and createDetailsPage (or createSinglePage)
     // similar to crateNewPage and createEditPage below
-    createNewPage(pagesPath, modelName)
-    createEditPage(pagesPath, modelName, modelFields)
+    createNewPage(pagesPath, modelName, appName)
+    createEditPage(pagesPath, modelName, modelFields, appName)
 
     // List page + components
     fs.mkdirSync(

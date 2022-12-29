@@ -4,7 +4,7 @@ import path from 'path'
 import { findLastIndex } from './lib/array'
 import { getModelFields, getModelNameVariants } from './schema'
 
-export async function updateRoutes(rwRoot: string, modelNames: string[]) {
+export async function updateRoutes(rwRoot: string, modelNames: string[], appName: string) {
   let routesPath = path.join(rwRoot, 'web', 'src', 'Routes.tsx')
 
   if (!fs.existsSync(routesPath)) {
@@ -176,7 +176,7 @@ export async function updateRoutes(rwRoot: string, modelNames: string[]) {
     `${indent}  <Route path="/arwdminSignup" page={ArwdminArwdminSignupPage} name="arwdminSignup" />`,
     `${indent}  <Private unauthenticated="arwdminLogin">`,
     ...modelNames.map((name) => {
-      const modelNames = getModelNameVariants(name)
+      const modelNames = getModelNameVariants(name, appName)
       const routeName = modelNames.camelCasePluralModelName
       const pascalName = modelNames.pascalCaseModelName
       const pascalPluralName = modelNames.pascalCasePluralModelName

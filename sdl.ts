@@ -104,7 +104,7 @@ export function findSearchField(fields: DMMF.Field[]) {
   return searchField
 }
 
-export async function generateSdls(rwRoot: string, modelNames: string[]) {
+export async function generateSdls(rwRoot: string, modelNames: string[], appName: string) {
   const serviceDir = getGeneratorDir(rwRoot, 'services')
   const graphqlDir = getGeneratorDir(rwRoot, 'graphql')
 
@@ -117,7 +117,7 @@ export async function generateSdls(rwRoot: string, modelNames: string[]) {
         cwd: rwRoot,
       })
 
-      const modelNames = getModelNameVariants(name)
+      const modelNames = getModelNameVariants(name, appName)
       const modelFields = await getModelFields(rwRoot, name)
 
       const sdlFilename = path.join(

@@ -5,8 +5,8 @@ import { ejsRender } from '../ejs'
 
 import { getModelNameVariants, ModelNameVariants } from '../schema'
 
-export function createNewPage(pagesPath: string, modelName: string) {
-  const modelNameVariants = getModelNameVariants(modelName)
+export function createNewPage(pagesPath: string, modelName: string, appName: string) {
+  const modelNameVariants = getModelNameVariants(modelName, appName)
 
   const newPage = generateNewModelPage(modelNameVariants)
   const newComponent = generateNewModelComponent(modelNameVariants)

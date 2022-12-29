@@ -9,9 +9,10 @@ import { getModelNameVariants, ModelNameVariants } from '../schema'
 export function createEditPage(
   pagesPath: string,
   modelName: string,
-  modelFields: DMMF.Field[]
+  modelFields: DMMF.Field[],
+  appName: string
 ) {
-  const modelNameVariants = getModelNameVariants(modelName)
+  const modelNameVariants = getModelNameVariants(modelName, appName)
 
   const editPage = generateEditModelPage(modelNameVariants)
   const editCell = generateEditModelCell(modelNameVariants, modelFields)

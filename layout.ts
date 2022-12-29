@@ -3,9 +3,9 @@ import path from 'path'
 import { ejsRender } from './ejs'
 import { getModelNameVariants } from './schema'
 
-function generateLayout(modelNames: string[]) {
+function generateLayout(modelNames: string[], appName: string) {
   const models = modelNames.map((modelName) => {
-    const modelNameVariants = getModelNameVariants(modelName)
+    const modelNameVariants = getModelNameVariants(modelName, appName)
 
     return {
       pascalPluralName: modelNameVariants.pascalCasePluralModelName,
@@ -31,8 +31,8 @@ export function createArwdminLayoutDir(rwRoot: string) {
   return layoutPath
 }
 
-export function createLayout(layoutPath: string, modelNames: string[]) {
-  const layout = generateLayout(modelNames)
+export function createLayout(layoutPath: string, modelNames: string[], appName: string) {
+  const layout = generateLayout(modelNames, appName)
 
   fs.writeFileSync(path.join(layoutPath, 'ArwdminLayout.tsx'), layout)
   fs.copyFileSync(

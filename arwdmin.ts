@@ -66,23 +66,23 @@ createAuthPages(pagesPath)
 const modelNames = await getModelNames(rwRoot)
 
 const componentsPath = createComponentsDir(rwRoot)
-await createModelPages(rwRoot, pagesPath, componentsPath, modelNames)
+await createModelPages(rwRoot, pagesPath, componentsPath, modelNames, appName)
 createArwdminPage(appName, pagesPath)
 
 const layoutPath = createArwdminLayoutDir(rwRoot)
-createLayout(layoutPath, modelNames)
+createLayout(layoutPath, modelNames, appName)
 
 addMainStyles(rwRoot)
 
 addArwdminFormatters(rwRoot)
 
-await updateRoutes(rwRoot, modelNames)
+await updateRoutes(rwRoot, modelNames, appName)
 
 const tmpServicesName = prepareGeneratorDir(rwRoot, 'services')
 const tmpGraphqlName = prepareGeneratorDir(rwRoot, 'graphql')
 
 // The sdl generator also generates services
-await generateSdls(rwRoot, modelNames)
+await generateSdls(rwRoot, modelNames, appName)
 
 moveArwdminServices(rwRoot, tmpServicesName)
 moveArwdminSdls(rwRoot, tmpGraphqlName)

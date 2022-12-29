@@ -99,7 +99,21 @@ export interface ModelNameVariants {
   humanizedName: string
 }
 
-export function getModelNameVariants(modelName: string): ModelNameVariants {
+export function getModelNameVariants(
+  modelName: string,
+  appName: string
+): ModelNameVariants {
+  let humanizedName
+  let humanizedPlural
+
+  if (modelName === 'ArwdminUser') {
+    humanizedName = humanize(appName) + ' user'
+    humanizedPlural = humanizedName + 's'
+  } else {
+    humanizedName = humanize(modelName)
+    humanizedPlural = humanize(pluralize(modelName))
+  }
+
   return {
     modelName,
     pluralModelName: pluralize(modelName),
@@ -110,7 +124,7 @@ export function getModelNameVariants(modelName: string): ModelNameVariants {
     capitalModelName: decamelize(modelName).toUpperCase(),
     capitalPluralModelName: decamelize(pluralize(modelName)).toUpperCase(),
     kebabModelName: kebabCase(modelName),
-    humanizedPlural: humanize(pluralize(modelName)),
-    humanizedName: humanize(modelName)
+    humanizedPlural,
+    humanizedName,
   }
 }
