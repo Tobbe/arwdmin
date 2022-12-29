@@ -1,10 +1,15 @@
+import camelcase from 'camelcase'
 import fs from 'fs'
 import path from 'path'
 
 import { findLastIndex } from './lib/array'
 import { getModelFields, getModelNameVariants } from './schema'
 
-export async function updateRoutes(rwRoot: string, modelNames: string[], appName: string) {
+export async function updateRoutes(
+  rwRoot: string,
+  modelNames: string[],
+  appName: string
+) {
   let routesPath = path.join(rwRoot, 'web', 'src', 'Routes.tsx')
 
   if (!fs.existsSync(routesPath)) {
@@ -177,7 +182,10 @@ export async function updateRoutes(rwRoot: string, modelNames: string[], appName
     `${indent}  <Private unauthenticated="arwdminLogin">`,
     ...modelNames.map((name) => {
       const modelNames = getModelNameVariants(name, appName)
-      const routeName = modelNames.camelCasePluralModelName
+      const routeName =
+        modelNames.modelName === 'ArwdminUser'
+          ? camelcase(appName) + 'Users'
+          : modelNames.camelCasePluralModelName
       const pascalName = modelNames.pascalCaseModelName
       const pascalPluralName = modelNames.pascalCasePluralModelName
       const idParamType = idTypes[name] !== 'String' ? ':' + idTypes[name] : ''
