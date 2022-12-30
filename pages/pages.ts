@@ -13,7 +13,8 @@ import {
 import { findSearchField } from '../sdl'
 import { createEditPage } from './edit'
 import { createNewPage } from './new'
-import { getRenderDataFunction } from './schemaRender'
+import { getRenderDataFunction, RenderData } from './schemaRender'
+import { execaSync } from 'execa'
 
 export function createArwdminPagesDir(rwRoot: string) {
   // TODO: read 'web' name from redwood.toml
@@ -65,6 +66,102 @@ export function createComponentsDir(rwRoot: string) {
   return componentsPath
 }
 
+function installNpmPackages(npmPackagesToInstall: Set<string>, rwRoot: string) {
+  for (const npmPackage of npmPackagesToInstall) {
+    execaSync('yarn', ['add', npmPackage], {
+      cwd: path.join(rwRoot, 'web'),
+    })
+  }
+}
+
+function addNpmPackagesToInstall(
+  npmPackagesToInstall: Set<string>,
+  modelFields: DMMF.Field[],
+  getRenderData: (fieldName: string) => RenderData
+) {
+  for (const modelField of modelFields) {
+    const fieldName = modelField.name
+
+    if (fieldName) {
+      const renderData = getRenderData(fieldName)
+      if (renderData.component === 'WysiwygEditor') {
+        npmPackagesToInstall.add('remirror')
+        npmPackagesToInstall.add('@remirror/react')
+        npmPackagesToInstall.add('@remirror/pm')
+      }
+    }
+  }
+}
+
+function copyFormComponents(
+  componentsToCopy: Set<string>,
+  rwRoot: string
+) {
+  // TODO: read 'web' name from redwood.toml
+  const componentsPath = path.join(rwRoot, 'web', 'src', 'components', 'arwdmin')
+
+  for (const component of componentsToCopy) {
+    const componentPath = component.split('/').slice(0, -1)
+    const componentName = component.split('/').at(-1)
+    const fullDir = path.join(componentsPath, ...componentPath)
+
+    if (!componentName) {
+      console.error('Failed to get component name when copying')
+      process.exit(1)
+    }
+
+    fs.mkdirSync(fullDir, { recursive: true })
+    fs.copyFileSync(`./templates/tsx/${component}`, path.join(fullDir, componentName))
+  }
+}
+
+function addComponentsToCopy(
+  componentsToCopy: Set<string>,
+  modelFields: DMMF.Field[],
+  getRenderData: (fieldName: string) => RenderData
+) {
+  for (const modelField of modelFields) {
+    const fieldName = modelField.name
+
+    if (fieldName) {
+      const renderData = getRenderData(fieldName)
+
+      if (renderData.component === 'WysiwygEditor') {
+        componentsToCopy.add('WysiwygEditor/WysiwygEditor.tsx')
+        componentsToCopy.add('WysiwygEditor/Menu.tsx')
+        componentsToCopy.add('WysiwygEditor/FloatingLinkToolbar.tsx')
+      }
+    }
+  }
+}
+
+function modelFormImports(
+  modelFields: DMMF.Field[],
+  getRenderData: (fieldName: string) => RenderData
+) {
+  const rwFormImports = new Set<string>(['Form', 'FormError', 'Label', 'FieldError', 'Submit'])
+  const singleImports = new Set<string>()
+
+  modelFields.map((modelField) => {
+    const component = getRenderData(modelField.name).component
+
+    if (component.endsWith('Field')) {
+      rwFormImports.add(component)
+    } else if (component === 'WysiwygEditor') {
+      singleImports.add(
+        "import WysiwygEditor from 'src/components/arwdmin/WysiwygEditor'"
+      )
+    }
+  })
+
+  return (
+    'import { ' +
+    [...rwFormImports].join(', ') +
+    ", } from '@redwoodjs/forms'\n\n" +
+    [...singleImports].join('\n')
+  )
+}
+
 // TODO: Skip (and warn) models that don't have an id column
 // TODO: Test with pokemon.
 //       Test with DVD (all-caps model).
@@ -101,11 +198,27 @@ export async function createModelPages(
     path.join(componentsPath, 'SearchWidget', 'SearchWidget.css')
   )
 
+  const npmPackagesToInstall: Set<string> = new Set<string>()
+  const componentsToCopy: Set<string> = new Set<string>()
+
   for (const modelName of modelNames) {
     console.log('Creating pages for', modelName)
     const modelFields = await getModelFields(rwRoot, modelName)
     const enums = await getEnums(rwRoot)
     const renderDataFunction = getRenderDataFunction(modelFields, enums)
+    // Collect names of packages to install. But wait with installing until
+    // we've looped over all models to not install the same thing multiple
+    // times
+    addNpmPackagesToInstall(
+      npmPackagesToInstall,
+      modelFields,
+      renderDataFunction
+    )
+    addComponentsToCopy(
+      componentsToCopy,
+      modelFields,
+      renderDataFunction
+    )
 
     const modelNameVariants = getModelNameVariants(modelName, appName)
 
@@ -131,7 +244,8 @@ export async function createModelPages(
     const modelForm = generateModelForm(
       modelNameVariants,
       modelFields,
-      renderDataFunction
+      renderDataFunction,
+      modelFormImports(modelFields, renderDataFunction)
     )
 
     // TODO: Extract createListPage and createDetailsPage (or createSinglePage)
@@ -234,6 +348,9 @@ export async function createModelPages(
       modelForm
     )
   }
+
+  installNpmPackages(npmPackagesToInstall, rwRoot)
+  copyFormComponents(componentsToCopy, rwRoot)
 }
 
 function generateModelListPage({
@@ -315,7 +432,13 @@ function generateModelListComponent(
   const idField = modelFields.find((field) => field.isId)
   const idFieldType = idField?.type || 'String'
 
-  return ejsRender(template, { model, modelFields, getRenderData, searchField, idFieldType })
+  return ejsRender(template, {
+    model,
+    modelFields,
+    getRenderData,
+    searchField,
+    idFieldType,
+  })
 }
 
 function generateModelPage({ pascalCaseModelName }: ModelNameVariants) {
@@ -408,7 +531,8 @@ function generateModelForm(
   }: ModelNameVariants,
   modelFields: DMMF.Field[],
   // TODO: Fix return type
-  getRenderData: (fieldName: string) => any
+  getRenderData: (fieldName: string) => any,
+  modelFormImports: string
 ) {
   const model = {
     pascalName: pascalCaseModelName,
@@ -442,5 +566,10 @@ function generateModelForm(
     (field) => !isRelation(field) && !isAutoGenerated(field)
   )
 
-  return ejsRender(template, { model, modelFields: fields, getRenderData })
+  return ejsRender(template, {
+    model,
+    modelFields: fields,
+    getRenderData,
+    modelFormImports,
+  })
 }

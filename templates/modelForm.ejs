@@ -1,19 +1,8 @@
+import { useForm } from 'react-hook-form'
 import type { EditArwdmin<%= model.pascalName %>ById, Update<%= model.pascalName %>Input } from 'types/graphql'
 
-import {
-  Form,
-  FormError,
-  FieldError,
-  Label,
-  NumberField,
-  RadioField,
-  TextAreaField,
-  TextField,
-  DatetimeLocalField,
-  CheckboxField,
-  Submit,
-} from '@redwoodjs/forms'
 import type { RWGqlError } from '@redwoodjs/forms'
+<%- modelFormImports %>
 
 type Form<%= model.pascalName %> = NonNullable<EditArwdmin<%= model.pascalName %>ById['<%= model.camelName %>']>
 
@@ -25,13 +14,19 @@ interface Props {
 }
 
 const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, onSave, error, loading }) => {
+  const formMethods = useForm<Form<%= model.pascalName %>>()
+
   const onSubmit = (data: Form<%= model.pascalName %>) => {
     onSave(data, <%= model.camelName %>?.id)
   }
 
   return (
     <div>
-      <Form<Form<%= model.pascalName %>> onSubmit={onSubmit} error={error}>
+      <Form<Form<%= model.pascalName %>>
+        onSubmit={onSubmit}
+        error={error}
+        formMethods={formMethods}
+      >
         <FormError
           error={error}
           wrapperClassName="rw-form-error-wrapper"
@@ -74,6 +69,7 @@ const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, 
               className="arwdmin-input"
               errorClassName="arwdmin-input rw-input-error"
               <%= renderData.emptyAs -%>
+              <%- renderData.setValue -%>
               <%= renderData.validation ? `validation=${renderData.validation}` : '' -%>
             />
           <% } %>

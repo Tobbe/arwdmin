@@ -7,10 +7,12 @@ function getComponent(
   enums: DMMF.DatamodelEnum[]
 ) {
   if (type === 'String') {
+    // Using humanize to get separate words out of field names.
+    // I.e. blogPost -> Blog post
     const name = humanize(field.name).toLowerCase()
 
     if (field.documentation?.includes('@arwdmin-multiline')) {
-      return 'TextAreaField'
+      return 'WysiwygEditor'
     }
 
     if (
@@ -31,7 +33,7 @@ function getComponent(
       /\bcomment\b/.test(name) ||
       name === 'bio'
     ) {
-      return 'TextAreaField'
+      return 'WysiwygEditor'
     }
 
     return 'TextField'
@@ -163,6 +165,8 @@ function getSubData(
   return undefined
 }
 
+export type RenderData = ReturnType<ReturnType<typeof getRenderDataFunction>>
+
 export function getRenderDataFunction(
   modelFields: DMMF.Field[],
   enums: DMMF.DatamodelEnum[]
@@ -192,6 +196,11 @@ export function getRenderDataFunction(
       .filter((line) => !line.startsWith('@arwdmin'))
       .join(' ')
 
+    const setValue =
+      component === 'WysiwygEditor'
+        ? `setValue={(value: string) => formMethods.setValue('${fieldName}', value)}`
+        : ''
+
     return {
       displayName: humanize(fieldName),
       component,
@@ -201,6 +210,7 @@ export function getRenderDataFunction(
       displayFunction: getDisplayFunction(type),
       listDisplayFunction: getListDisplayFunction(type, field),
       emptyAs,
+      setValue,
       description,
       subData: getSubData(type, field, enums),
     }
