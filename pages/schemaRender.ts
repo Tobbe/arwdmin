@@ -187,6 +187,16 @@ export function getRenderDataFunction(
 
     const type = isEnumList ? 'EnumList' : isEnum ? 'Enum' : field.type
 
+    let defaultValue: string | boolean | number = 'undefined'
+    if (typeof field.default === 'string') {
+      defaultValue = `'${field.default}'`
+    } else if (
+      typeof field.default === 'boolean' ||
+      typeof field.default === 'number'
+    ) {
+      defaultValue = field.default
+    }
+
     const component = getComponent(type, field, enums)
     const emptyAs =
       field.isRequired || component === 'CheckboxField' ? '' : 'emptyAs={null}'
@@ -205,6 +215,7 @@ export function getRenderDataFunction(
       displayName: humanize(fieldName),
       component,
       defaultProp: getDefaultProp(type),
+      defaultValue,
       validation: getValidation(type, field),
       deserializeFunction: getDeserializationFunction(type),
       displayFunction: getDisplayFunction(type),
