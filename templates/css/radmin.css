@@ -58,7 +58,7 @@ html {
   box-sizing: border-box;
 }
 
-.arwdmin-cell-error {
+.radmin-cell-error {
   color: var(--color-bad-dark);
   background-color: var(--color-bad-light);
   border-radius: var(--radius-2);
@@ -67,7 +67,7 @@ html {
   margin-block: var(--size-3);
 }
 
-.arwdmin-model-list header {
+.radmin-model-list header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -76,47 +76,47 @@ html {
 /* I want the Actions column to only be as wide as the buttons are. I do this
  * by giving the header a smaller width than the buttons, so that they control
  * the actual width of the entire column */
-.arwdmin-model-list thead th:last-of-type {
+.radmin-model-list thead th:last-of-type {
   width: 7rem;
 }
 
-.arwdmin-model-list .arwdmin-row-highlight {
+.radmin-model-list .radmin-row-highlight {
   background-color: var(--color-bg-light);
 }
 
-.arwdmin-model-list td nav {
+.radmin-model-list td nav {
   display: flex;
   justify-content: flex-end;
   align-items: center;
 }
 
-.arwdmin-model .arwdmin-table tr:first-of-type td,
-.arwdmin-model .arwdmin-table tr:first-of-type th {
+.radmin-model .radmin-table tr:first-of-type td,
+.radmin-model .radmin-table tr:first-of-type th {
   border-top: 0;
 }
 
-.arwdmin-model .arwdmin-table th {
+.radmin-model .radmin-table th {
   border-width: 1px 1px 0 0;
   border-style: solid;
   border-color: var(--color-table-border);
 }
 
-.arwdmin-model nav {
+.radmin-model nav {
   display: flex;
   justify-content: center;
   margin-top: var(--size-7);
 }
 
-.arwdmin-model [type=checkbox] {
+.radmin-model [type=checkbox] {
   margin: 0;
 }
 
-.arwdmin-table {
+.radmin-table {
   border-spacing: 0px;
   width: 100%;
 }
 
-.arwdmin-table th {
+.radmin-table th {
   color: var(--color-text-muted);
   background-color: var(--color-bg-dark);
   min-width: var(--size-10);
@@ -124,19 +124,19 @@ html {
   overflow: hidden;
 }
 
-.arwdmin-table tbody th {
+.radmin-table tbody th {
   width: var(--size-12);
   text-align: right;
 }
 
-.arwdmin-table td {
+.radmin-table td {
   border-width: 1px 0 0 0;
   border-style: solid;
   border-color: var(--color-table-border);
   padding: var(--size-2);
 }
 
-.arwdmin-table-wrapper {
+.radmin-table-wrapper {
   overflow-x: auto;
   /*                  nav bar width         nav bar margin  to give some spacing on the right side */
   width: calc(100vw - var(--size-fluid-8) - var(--size-5) - var(--size-5));
@@ -144,26 +144,26 @@ html {
   border-radius: var(--radius-2);
 }
 
-.arwdmin-check-radio-item {
+.radmin-check-radio-item {
   display: flex;
   margin-top: var(--size-2);
 }
 
-.arwdmin-check-radio-item input {
+.radmin-check-radio-item input {
   margin: 0;
   margin-right: var(--size-2);
   background-color: var(--color-bg-light);
   accent-color: var(--color-muted);
 }
 
-.arwdmin-label {
+.radmin-label {
   display: block;
   margin-top: var(--size-5);
   font-weight: var(--font-weight-6);
   color: var(--color-text);
 }
 
-.arwdmin-button {
+.radmin-button {
   all: unset;
   background-color: var(--color-bg-dark);
   color: var(--color-highlight);
@@ -178,26 +178,26 @@ html {
   transition: background-color 0.2s var(--ease-3), color 0.2s var(--ease-3);
 }
 
-.arwdmin-button ~ .arwdmin-button {
+.radmin-button ~ .radmin-button {
   margin-left: var(--size-2);
 }
 
-.arwdmin-button:is(.current, :hover, :focus-visible) {
+.radmin-button:is(.current, :hover, :focus-visible) {
   background-color: var(--color-muted);
   color: var(--color-bg);
 }
 
-.arwdmin-button-delete {
+.radmin-button-delete {
   background-color: var(--color-bad-light);
   color: var(--color-bad-dark)
 }
 
-.arwdmin-button-delete:is(.current, :hover, :focus-visible) {
+.radmin-button-delete:is(.current, :hover, :focus-visible) {
   background-color: var(--color-bad-dark);
   color: var(--color-bad-light);
 }
 
-.arwdmin-input {
+.radmin-input {
   display: block;
   margin-top: var(--size-2);
   width: 100%;
@@ -211,22 +211,22 @@ html {
   outline: none;
 }
 
-.arwdmin-input[type=checkbox] {
+.radmin-input[type=checkbox] {
   width: auto;
   margin-left: 0
 }
 
-textarea.arwdmin-input {
+textarea.radmin-input {
   height: var(--size-11);
 }
 
-.arwdmin-description {
+.radmin-description {
   margin-top: var(--size-2);
   font-size: var(--font-size-small);
   color: var(--color-text-muted);
 }
 
-.arwdmin-description + .arwdmin-input {
+.radmin-description + .radmin-input {
   margin-top: var(--size-1);
 }
 

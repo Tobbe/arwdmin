@@ -1,19 +1,19 @@
-.arwdmin-login-page .arwdmin-login {
+.radmin-signup-page .radmin-signup {
   display: flex;
   justify-content: center;
   width: var(--size-15);
   margin: var(--size-9) auto;
 }
 
-.arwdmin-login .arwdmin-login-container {
+.radmin-signup .radmin-signup-container {
   width: 100%;
 }
 
-.arwdmin-login [type=submit] {
+.radmin-signup [type=submit] {
   margin-top: var(--size-3);
 }
 
-.arwdmin-login .arwdmin-login-footer {
+.radmin-signup .radmin-signup-footer {
   margin-top: var(--size-3);
   text-align: center;
 }

@@ -1,14 +1,14 @@
-import type { EditArwdmin<%= model.pascalName %>ById, Update<%= model.pascalName %>Input } from 'types/graphql'
+import type { EditRadmin<%= model.pascalName %>ById, Update<%= model.pascalName %>Input } from 'types/graphql'
 
 import { navigate, routes } from '@redwoodjs/router'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 
-import <%= model.pascalName %>Form from 'src/components/arwdmin/<%= model.pascalName %>/<%= model.pascalName %>Form'
+import <%= model.pascalName %>Form from 'src/components/radmin/<%= model.pascalName %>/<%= model.pascalName %>Form'
 
 export const QUERY = gql`
-  query EditArwdmin<%= model.pascalName %>ById($id: <%= idFieldType %>!) {
+  query EditRadmin<%= model.pascalName %>ById($id: <%= idFieldType %>!) {
     <%= model.camelName %>: <%= model.camelName %>(id: $id) {
       <%_ for (let field of modelFields) { -%>
         <%= field.name %>
@@ -22,7 +22,7 @@ export const QUERY = gql`
   }
 `
 const UPDATE_<%= model.capitalName %>_MUTATION = gql`
-  mutation UpdateArwdmin<%= model.pascalName %>Mutation($id: <%= idFieldType %>!, $input: Update<%= model.pascalName %>Input!) {
+  mutation UpdateRadmin<%= model.pascalName %>Mutation($id: <%= idFieldType %>!, $input: Update<%= model.pascalName %>Input!) {
     update<%= model.pascalName %>(id: $id, input: $input) {
       <%_ for (let field of modelFields) { -%>
         <%= field.name %>
@@ -42,17 +42,17 @@ export const Failure = ({ error }: CellFailureProps) => {
   console.error('Edit<%= model.pascalName %>Cell error', error)
 
   return (
-    <div className="arwdmin-cell-error">{error?.message}</div>
+    <div className="radmin-cell-error">{error?.message}</div>
   )
 }
 
-export const Success = ({ <%= model.camelName %> }: CellSuccessProps<EditArwdmin<%= model.pascalName %>ById>) => {
+export const Success = ({ <%= model.camelName %> }: CellSuccessProps<EditRadmin<%= model.pascalName %>ById>) => {
   const [update<%= model.pascalName %>, { loading, error }] = useMutation(
     UPDATE_<%= model.capitalName %>_MUTATION,
     {
       onCompleted: () => {
         toast.success('<%= model.pascalName %> updated')
-        navigate(routes.arwdmin<%= model.pascalPluralName %>())
+        navigate(routes.radmin<%= model.pascalPluralName %>())
       },
       onError: (error) => {
         toast.error(error.message)
@@ -62,7 +62,7 @@ export const Success = ({ <%= model.camelName %> }: CellSuccessProps<EditArwdmin
 
   const onSave = (
     input: Update<%= model.pascalName %>Input,
-    id: EditArwdmin<%= model.pascalName %>ById['<%= model.camelName %>']['id']
+    id: EditRadmin<%= model.pascalName %>ById['<%= model.camelName %>']['id']
   ) => {
     update<%= model.pascalName %>({ variables: { id, input } })
   }

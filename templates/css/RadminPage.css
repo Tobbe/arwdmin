@@ -1,9 +1,9 @@
-.arwdmin-page {
+.radmin-page {
   width: var(--size-15);
   margin: var(--size-9) auto;
   text-align: center;
 }
 
-.arwdmin-page a {
+.radmin-page a {
   padding: var(--size-2);
 }

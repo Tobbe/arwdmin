@@ -24,18 +24,18 @@ export async function updateRoutes(
   const routesFileLines = fs
     .readFileSync(routesPath, 'utf-8')
     .split('\n')
-    // Remove existing arwdmin page routes. We will add them back later
+    // Remove existing Radmin page routes. We will add them back later
     .filter((line) => {
-      return !line.includes('path="/arwdmin"')
+      return !line.includes('path="/radmin"')
     })
 
-  const hasArwdminLayoutImport = !!routesFileLines.find((line) =>
-    /^\s*import ArwdminLayout from/.test(line)
+  const hasRadminLayoutImport = !!routesFileLines.find((line) =>
+    /^\s*import RadminLayout from/.test(line)
   )
 
   let importIndex = 0
 
-  if (!hasArwdminLayoutImport) {
+  if (!hasRadminLayoutImport) {
     // First look for Layout imports
     let existingImportIndex = findLastIndex(routesFileLines, (line) =>
       /^\s*import .+Layout\b.* from 'src\/layouts/.test(line)
@@ -61,7 +61,7 @@ export async function updateRoutes(
     routesFileLines.splice(
       importIndex,
       0,
-      "import ArwdminLayout from 'src/layouts/ArwdminLayout'\n"
+      "import RadminLayout from 'src/layouts/RadminLayout'\n"
     )
   }
 
@@ -108,25 +108,25 @@ export async function updateRoutes(
   // Look for existing model pages and remove all of them. Don't want to have
   // routes to models that might have been removed/renamed. And we don't want
   // duplicate routes for models that still exist when we regenerate all routes
-  const arwdminLayoutSetStartIndex = routesFileLines.findIndex((line) =>
-    /<Set wrap={ArwdminLayout}>/.test(line)
+  const radminLayoutSetStartIndex = routesFileLines.findIndex((line) =>
+    /<Set wrap={RadminLayout}>/.test(line)
   )
 
-  if (arwdminLayoutSetStartIndex >= 0) {
-    const arwdminLayoutSetEndIndex = routesFileLines.findIndex(
+  if (radminLayoutSetStartIndex >= 0) {
+    const radminLayoutSetEndIndex = routesFileLines.findIndex(
       (line, index) =>
-        index > arwdminLayoutSetStartIndex && /<\/Set>/.test(line)
+        index > radminLayoutSetStartIndex && /<\/Set>/.test(line)
     )
 
     routesFileLines.splice(
-      arwdminLayoutSetStartIndex,
-      arwdminLayoutSetEndIndex - arwdminLayoutSetStartIndex + 1
+      radminLayoutSetStartIndex,
+      radminLayoutSetEndIndex - radminLayoutSetStartIndex + 1
     )
   }
 
   if (!routesFileLines.some((line) => line.includes('path="/"'))) {
     // No "home" route.
-    // Let's just add a redirect to /arwdmin
+    // Let's just add a redirect to /radmin
     const routerStartIndex = routesFileLines.findIndex((line) =>
       /^\s*<Router.*>\s*$/.test(line)
     )
@@ -140,7 +140,7 @@ export async function updateRoutes(
     routesFileLines.splice(
       routerStartIndex + 1,
       0,
-      '      <Route path="/" redirect="/arwdmin" />'
+      '      <Route path="/" redirect="/radmin" />'
     )
   }
 
@@ -150,13 +150,13 @@ export async function updateRoutes(
   const indent =
     '  ' + routesFileLines[routerEndIndex]?.match(/^(\s*)/)?.[1] ?? ''
 
-  let arwdminRoutesBeginIndex = routerEndIndex - 1
+  let radminRoutesBeginIndex = routerEndIndex - 1
 
   // If the "notfound" page is currently last, let's keep it there
   if (
     /^\s*<Route\s.*\snotfound\s/.test(routesFileLines[routerEndIndex - 1] || '')
   ) {
-    arwdminRoutesBeginIndex--
+    radminRoutesBeginIndex--
   }
 
   const idTypes: Record<string, string> = {}
@@ -173,17 +173,17 @@ export async function updateRoutes(
   }
 
   routesFileLines.splice(
-    arwdminRoutesBeginIndex,
+    radminRoutesBeginIndex,
     0,
-    `${indent}<Set wrap={ArwdminLayout}>`,
-    `${indent}  <Route path="/arwdmin" page={ArwdminArwdminPage} name="arwdmin" />`,
-    `${indent}  <Route path="/arwdminLogin" page={ArwdminArwdminLoginPage} name="arwdminLogin" />`,
-    `${indent}  <Route path="/arwdminSignup" page={ArwdminArwdminSignupPage} name="arwdminSignup" />`,
-    `${indent}  <Private unauthenticated="arwdminLogin">`,
+    `${indent}<Set wrap={RadminLayout}>`,
+    `${indent}  <Route path="/radmin" page={RadminRadminPage} name="radmin" />`,
+    `${indent}  <Route path="/radminLogin" page={RadminRadminLoginPage} name="radminLogin" />`,
+    `${indent}  <Route path="/radminSignup" page={RadminRadminSignupPage} name="radminSignup" />`,
+    `${indent}  <Private unauthenticated="radminLogin">`,
     ...modelNames.map((name) => {
       const modelNames = getModelNameVariants(name, appName)
       const routeName =
-        modelNames.modelName === 'ArwdminUser'
+        modelNames.modelName === 'RadminUser'
           ? camelcase(appName) + 'Users'
           : modelNames.camelCasePluralModelName
       const pascalName = modelNames.pascalCaseModelName
@@ -191,10 +191,10 @@ export async function updateRoutes(
       const idParamType = idTypes[name] !== 'String' ? ':' + idTypes[name] : ''
 
       return (
-        `${indent}    <Route path="/arwdmin/${routeName}/new" page={Arwdmin${pascalName}New${pascalName}Page} name="arwdminNew${pascalName}" />\n` +
-        `${indent}    <Route path="/arwdmin/${routeName}/{id${idParamType}}/edit" page={Arwdmin${pascalName}Edit${pascalName}Page} name="arwdminEdit${pascalName}" />\n` +
-        `${indent}    <Route path="/arwdmin/${routeName}/{id${idParamType}}" page={Arwdmin${pascalName}${pascalName}Page} name="arwdmin${pascalName}" />\n` +
-        `${indent}    <Route path="/arwdmin/${routeName}" page={Arwdmin${pascalName}${pascalPluralName}Page} name="arwdmin${pascalPluralName}" />`
+        `${indent}    <Route path="/radmin/${routeName}/new" page={Radmin${pascalName}New${pascalName}Page} name="radminNew${pascalName}" />\n` +
+        `${indent}    <Route path="/radmin/${routeName}/{id${idParamType}}/edit" page={Radmin${pascalName}Edit${pascalName}Page} name="radminEdit${pascalName}" />\n` +
+        `${indent}    <Route path="/radmin/${routeName}/{id${idParamType}}" page={Radmin${pascalName}${pascalName}Page} name="radmin${pascalName}" />\n` +
+        `${indent}    <Route path="/radmin/${routeName}" page={Radmin${pascalName}${pascalPluralName}Page} name="radmin${pascalPluralName}" />`
       )
     }),
     `${indent}  </Private>`,

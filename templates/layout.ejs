@@ -2,19 +2,19 @@ import { NavLink, routes } from '@redwoodjs/router'
 
 import { useAuth } from 'src/auth'
 
-import './ArwdminLayout.css'
+import './RadminLayout.css'
 
-const ArwdminLayout = ({ children }) => {
+const RadminLayout = ({ children }) => {
   const { logOut, isAuthenticated } = useAuth()
 
   return (
-    <div className="arwdmin-layout">
+    <div className="radmin-layout">
       {isAuthenticated && (<nav>
         <ul>
           <% for (let nameVariants of models) { -%>
             <li>
               <NavLink
-                to={routes.arwdmin<%= nameVariants.pascalPluralName %>()}
+                to={routes.radmin<%= nameVariants.pascalPluralName %>()}
                 activeClassName="current"
                 matchSubPaths
               >
@@ -25,7 +25,7 @@ const ArwdminLayout = ({ children }) => {
         </ul>
         <button
           onClick={logOut}
-          className="arwdmin-button"
+          className="radmin-button"
         >
           Log out
         </button>
@@ -35,4 +35,4 @@ const ArwdminLayout = ({ children }) => {
   )
 }
 
-export default ArwdminLayout
+export default RadminLayout

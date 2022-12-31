@@ -16,12 +16,12 @@ import { createNewPage } from './new'
 import { getRenderDataFunction, RenderData } from './schemaRender'
 import { execaSync } from 'execa'
 
-export function createArwdminPagesDir(rwRoot: string) {
+export function createRadminPagesDir(rwRoot: string) {
   // TODO: read 'web' name from redwood.toml
-  const pagesPath = path.join(rwRoot, 'web', 'src', 'pages', 'Arwdmin')
+  const pagesPath = path.join(rwRoot, 'web', 'src', 'pages', 'Radmin')
 
   // TODO: Prompt if this dir already exists if this is the first time running
-  // aRWdmin
+  // Radmin
   // Begin by deleting to make sure we're removing pages for models that the
   // user has removed
   fs.rmSync(pagesPath, { recursive: true, force: true })
@@ -30,21 +30,21 @@ export function createArwdminPagesDir(rwRoot: string) {
   return pagesPath
 }
 
-export function createArwdminPage(appName: string, pagesPath: string) {
-  const template = fs.readFileSync('./templates/arwdmin.ejs', 'utf-8')
+export function createRadminPage(appName: string, pagesPath: string) {
+  const template = fs.readFileSync('./templates/radmin.ejs', 'utf-8')
 
-  const arwdminPage = ejsRender(template, { appName })
+  const radminPage = ejsRender(template, { appName })
 
-  fs.mkdirSync(path.join(pagesPath, 'ArwdminPage'), { recursive: true })
+  fs.mkdirSync(path.join(pagesPath, 'RadminPage'), { recursive: true })
 
   fs.writeFileSync(
-    path.join(pagesPath, 'ArwdminPage', 'ArwdminPage.tsx'),
-    arwdminPage
+    path.join(pagesPath, 'RadminPage', 'RadminPage.tsx'),
+    radminPage
   )
 
   fs.copyFileSync(
-    './templates/css/ArwdminPage.css',
-    path.join(pagesPath, 'ArwdminPage', 'ArwdminPage.css')
+    './templates/css/RadminPage.css',
+    path.join(pagesPath, 'RadminPage', 'RadminPage.css')
   )
 }
 
@@ -57,7 +57,7 @@ export function createComponentsDir(rwRoot: string) {
     'web',
     'src',
     'components',
-    'arwdmin'
+    'radmin'
   )
 
   fs.rmSync(componentsPath, { recursive: true, force: true })
@@ -98,7 +98,7 @@ function copyFormComponents(
   rwRoot: string
 ) {
   // TODO: read 'web' name from redwood.toml
-  const componentsPath = path.join(rwRoot, 'web', 'src', 'components', 'arwdmin')
+  const componentsPath = path.join(rwRoot, 'web', 'src', 'components', 'radmin')
 
   for (const component of componentsToCopy) {
     const componentPath = component.split('/').slice(0, -1)
@@ -149,7 +149,7 @@ function modelFormImports(
       rwFormImports.add(component)
     } else if (component === 'WysiwygEditor') {
       singleImports.add(
-        "import WysiwygEditor from 'src/components/arwdmin/WysiwygEditor'"
+        "import WysiwygEditor from 'src/components/radmin/WysiwygEditor'"
       )
     }
   })

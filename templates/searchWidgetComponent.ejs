@@ -22,16 +22,16 @@ const SearchWidget: React.FC<Props> = ({ searchField, routesFn }) => {
   }
 
   return (
-    <div className="arwdmin-search-widget">
+    <div className="radmin-search-widget">
       <Form<FormData> onSubmit={onSubmit}>
         <Label name="search">Search for {searchField}</Label>
-        <div className="arwdmin-search-input-row">
+        <div className="radmin-search-input-row">
           <TextField
             name="search"
-            className="arwdmin-input"
+            className="radmin-input"
             defaultValue={params.q}
           />
-          <Submit className="arwdmin-button">Search</Submit>
+          <Submit className="radmin-button">Search</Submit>
         </div>
       </Form>
     </div>

@@ -1,13 +1,13 @@
 import { useForm } from 'react-hook-form'
-import type { EditArwdmin<%= model.pascalName %>ById, Update<%= model.pascalName %>Input } from 'types/graphql'
+import type { EditRadmin<%= model.pascalName %>ById, Update<%= model.pascalName %>Input } from 'types/graphql'
 
 import type { RWGqlError } from '@redwoodjs/forms'
 <%- modelFormImports %>
 
-type Form<%= model.pascalName %> = NonNullable<EditArwdmin<%= model.pascalName %>ById['<%= model.camelName %>']>
+type Form<%= model.pascalName %> = NonNullable<EditRadmin<%= model.pascalName %>ById['<%= model.camelName %>']>
 
 interface Props {
-  <%= model.camelName %>?: EditArwdmin<%= model.pascalName %>ById['<%= model.camelName %>']
+  <%= model.camelName %>?: EditRadmin<%= model.pascalName %>ById['<%= model.camelName %>']
   onSave: (data: Update<%= model.pascalName %>Input, id?: Form<%= model.pascalName %>['id']) => void
   error: RWGqlError
   loading: boolean
@@ -38,19 +38,19 @@ const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, 
           <% const renderData = getRenderData(field.name) %>
           <Label
             name="<%= field.name %>"
-            className="arwdmin-label"
+            className="radmin-label"
             errorClassName="rw-label rw-label-error"
           >
             <%= renderData.displayName %>
           </Label>
 
           <%_ if (renderData.description) { %>
-            <div className="arwdmin-description"><%= renderData.description %></div>
+            <div className="radmin-description"><%= renderData.description %></div>
           <% } -%>
 
           <%_ if (renderData.subData) { %>
             <%_ for (const subData of renderData.subData) { %>
-              <div className="arwdmin-check-radio-item">
+              <div className="radmin-check-radio-item">
                 <<%= renderData.component %>
                   id="<%= model.kebabName %>-<%= field.name %>-<%= subData.value %>"
                   name="<%= field.name %>"
@@ -66,8 +66,8 @@ const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, 
             <<%= renderData.component %>
               name="<%= field.name %>"
               <%= renderData.defaultProp %>={<%= model.camelName %>?.<%= field.name %> ?? <%= renderData.defaultValue %>}
-              className="arwdmin-input"
-              errorClassName="arwdmin-input rw-input-error"
+              className="radmin-input"
+              errorClassName="radmin-input rw-input-error"
               <%= renderData.emptyAs -%>
               <%- renderData.setValue -%>
               <%= renderData.validation ? `validation=${renderData.validation}` : '' -%>
@@ -78,7 +78,7 @@ const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, 
         <% } -%>
 
         <div className="rw-button-group">
-          <Submit disabled={loading} className="arwdmin-button">
+          <Submit disabled={loading} className="radmin-button">
             Save
           </Submit>
         </div>

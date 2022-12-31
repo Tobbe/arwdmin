@@ -1,13 +1,13 @@
 import type {
   Delete<%= model.pascalName %>MutationVariables,
-  FindArwdmin<%= model.pascalName %>ById,
+  FindRadmin<%= model.pascalName %>ById,
 } from 'types/graphql'
 
 import { Link, routes, navigate } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 
-import { checkboxInputTag, formatEnum, timeTag } from 'src/lib/arwdminFormatters'
+import { checkboxInputTag, formatEnum, timeTag } from 'src/lib/radminFormatters'
 
 const DELETE_<%= model.capitalName %>_MUTATION = gql`
   mutation Delete<%= model.pascalName %>Mutation($id: <%= idFieldType %>!) {
@@ -18,14 +18,14 @@ const DELETE_<%= model.capitalName %>_MUTATION = gql`
 `
 
 interface Props {
-  <%= model.camelName %>: NonNullable<FindArwdmin<%= model.pascalName %>ById['<%= model.camelName %>']>
+  <%= model.camelName %>: NonNullable<FindRadmin<%= model.pascalName %>ById['<%= model.camelName %>']>
 }
 
 const <%= model.pascalName %> = ({ <%= model.camelName %> }: Props) => {
   const [delete<%= model.pascalName %>] = useMutation(DELETE_<%= model.capitalName %>_MUTATION, {
     onCompleted: () => {
       toast.success('<%= model.pascalName %> deleted')
-      navigate(routes.arwdmin<%= model.pascalPluralName %>())
+      navigate(routes.radmin<%= model.pascalPluralName %>())
     },
     onError: (error) => {
       toast.error(error.message)
@@ -39,14 +39,14 @@ const <%= model.pascalName %> = ({ <%= model.camelName %> }: Props) => {
   }
 
   return (
-    <div className="arwdmin-model">
+    <div className="radmin-model">
       <header>
         <h2>
           <%= model.pascalName %> {<%= model.camelName %>.id} Details
         </h2>
       </header>
-      <div className="arwdmin-table-wrapper">
-        <table className="arwdmin-table">
+      <div className="radmin-table-wrapper">
+        <table className="radmin-table">
           <tbody>
             <%_ for (let field of modelFields) { -%>
               <% const renderData = getRenderData(field.name) %>
@@ -60,13 +60,13 @@ const <%= model.pascalName %> = ({ <%= model.camelName %> }: Props) => {
       </div>
       <nav>
         <Link
-          className="arwdmin-button"
-          to={routes.arwdminEdit<%= model.pascalName %>({ id: <%= model.camelName %>.id })}
+          className="radmin-button"
+          to={routes.radminEdit<%= model.pascalName %>({ id: <%= model.camelName %>.id })}
         >
           Edit
         </Link>
         <button
-          className="arwdmin-button arwdmin-button-delete"
+          className="radmin-button radmin-button-delete"
           type="button"
           onClick={() => onDeleteClick(<%= model.camelName %>.id)}
         >

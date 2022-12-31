@@ -14,14 +14,14 @@ import { toast, Toaster } from '@redwoodjs/web/toast'
 
 import { useAuth } from 'src/auth'
 
-import './ArwdminSignupPage.css'
+import './RadminSignupPage.css'
 
-const ArwdminSignupPage = () => {
+const RadminSignupPage = () => {
   const { isAuthenticated, signUp } = useAuth()
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(routes.arwdmin())
+      navigate(routes.radmin())
     }
   }, [isAuthenticated])
 
@@ -37,7 +37,7 @@ const ArwdminSignupPage = () => {
     if (response.message) {
       toast(response.message)
       setTimeout(() => {
-        navigate(routes.arwdmin())
+        navigate(routes.radmin())
       }, 3000)
     } else if (response.error) {
       toast.error(response.error)
@@ -48,12 +48,12 @@ const ArwdminSignupPage = () => {
   }
 
   return (
-    <div className="arwdmin-signup-page">
+    <div className="radmin-signup-page">
       <MetaTags title="Signup" />
       <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
 
-      <main className="arwdmin-signup">
-        <div className="arwdmin-signup-container">
+      <main className="radmin-signup">
+        <div className="radmin-signup-container">
           <div>
             <header>
               <h2>Signup</h2>
@@ -64,15 +64,15 @@ const ArwdminSignupPage = () => {
                 <Form onSubmit={onSubmit} className="rw-form-wrapper">
                   <Label
                     name="email"
-                    className="arwdmin-label"
-                    errorClassName="arwdmin-label rw-label-error"
+                    className="radmin-label"
+                    errorClassName="radmin-label rw-label-error"
                   >
                     Email
                   </Label>
                   <TextField
                     name="email"
-                    className="arwdmin-input"
-                    errorClassName="arwdmin-input rw-input-error"
+                    className="radmin-input"
+                    errorClassName="radmin-input rw-input-error"
                     ref={emailRef}
                     validation={{
                       required: {
@@ -85,15 +85,15 @@ const ArwdminSignupPage = () => {
 
                   <Label
                     name="password"
-                    className="arwdmin-label"
-                    errorClassName="arwdmin-label rw-label-error"
+                    className="radmin-label"
+                    errorClassName="radmin-label rw-label-error"
                   >
                     Password
                   </Label>
                   <PasswordField
                     name="password"
-                    className="arwdmin-input"
-                    errorClassName="arwdmin-input rw-input-error"
+                    className="radmin-input"
+                    errorClassName="radmin-input rw-input-error"
                     autoComplete="current-password"
                     validation={{
                       required: {
@@ -104,14 +104,14 @@ const ArwdminSignupPage = () => {
                   />
                   <FieldError name="password" className="rw-field-error" />
 
-                  <Submit className="arwdmin-button">Sign Up</Submit>
+                  <Submit className="radmin-button">Sign Up</Submit>
                 </Form>
               </div>
             </div>
           </div>
-          <div className="arwdmin-signup-footer">
+          <div className="radmin-signup-footer">
             <span>Already have an account?</span>{' '}
-            <Link to={routes.arwdminLogin()}>
+            <Link to={routes.radminLogin()}>
               Log in!
             </Link>
           </div>
@@ -121,4 +121,4 @@ const ArwdminSignupPage = () => {
   )
 }
 
-export default ArwdminSignupPage
+export default RadminSignupPage

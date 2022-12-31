@@ -11,12 +11,12 @@ function getComponent(
     // I.e. blogPost -> Blog post
     const name = humanize(field.name).toLowerCase()
 
-    if (field.documentation?.includes('@arwdmin-multiline')) {
+    if (field.documentation?.includes('@radmin-multiline')) {
       return 'WysiwygEditor'
     }
 
     if (
-      field.documentation?.includes('@arwdmin-singleline') ||
+      field.documentation?.includes('@radmin-singleline') ||
       /\bshort\b/.test(name)
     ) {
       return 'TextField'
@@ -203,7 +203,7 @@ export function getRenderDataFunction(
 
     const description = field.documentation
       ?.split('\n')
-      .filter((line) => !line.startsWith('@arwdmin'))
+      .filter((line) => !line.startsWith('@radmin'))
       .join(' ')
 
     const setValue =

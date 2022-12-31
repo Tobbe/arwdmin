@@ -61,7 +61,7 @@ const Pagination: React.FC<Props> = ({ count, pageName }) => {
   }
 
   return (
-    <nav className="arwdmin-paginator">
+    <nav className="radmin-paginator">
       <ul>
         <li>
           {page > 1 ? <Link to={routes[pageName]({ ...params, page: page - 1 })}>Previous</Link> : <>Previous</>}

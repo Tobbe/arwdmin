@@ -1,13 +1,13 @@
 {
-  "name": "arwdmin",
+  "name": "redwood-admin",
   "version": "0.1.0",
-  "description": "RedwoodJS Admin Panel",
+  "description": "RedwoodJS Admin",
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Tobbe Lundberg",
-  "license": "ISC",
+  "license": "AGPL",
   "dependencies": {
     "@prisma/sdk": "^3.13.0",
     "camelcase": "^7.0.0",

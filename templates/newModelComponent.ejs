@@ -2,7 +2,7 @@ import { navigate, routes } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 
-import <%= model.pascalName %>Form from 'src/components/arwdmin/<%= model.pascalName %>/<%= model.pascalName %>Form'
+import <%= model.pascalName %>Form from 'src/components/radmin/<%= model.pascalName %>/<%= model.pascalName %>Form'
 
 import type { Create<%= model.pascalName %>Input } from 'types/graphql'
 
@@ -33,7 +33,7 @@ const New<%= model.pascalName %> = () => {
   }
 
   return (
-    <div className="arwdmin-model-new">
+    <div className="radmin-model-new">
       <header>
         <h2>New <%= model.pascalName %></h2>
       </header>

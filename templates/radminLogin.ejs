@@ -14,14 +14,14 @@ import { toast, Toaster } from '@redwoodjs/web/toast'
 
 import { useAuth } from 'src/auth'
 
-import './ArwdminLoginPage.css'
+import './RadminLoginPage.css'
 
-const ArwdminLoginPage = () => {
+const RadminLoginPage = () => {
   const { isAuthenticated, logIn } = useAuth()
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(routes.arwdmin())
+      navigate(routes.radmin())
     }
   }, [isAuthenticated])
 
@@ -46,12 +46,12 @@ const ArwdminLoginPage = () => {
   }
 
   return (
-    <div className="arwdmin-login-page">
+    <div className="radmin-login-page">
       <MetaTags title="Login" />
       <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
 
-      <div className="arwdmin-login">
-        <div className="arwdmin-login-container">
+      <div className="radmin-login">
+        <div className="radmin-login-container">
           <div>
             <header>
               <h2>Login</h2>
@@ -62,15 +62,15 @@ const ArwdminLoginPage = () => {
                 <Form onSubmit={onSubmit}>
                   <Label
                     name="email"
-                    className="arwdmin-label"
-                    errorClassName="arwdmin-label rw-label-error"
+                    className="radmin-label"
+                    errorClassName="radmin-label rw-label-error"
                   >
                     Email
                   </Label>
                   <TextField
                     name="email"
-                    className="arwdmin-input"
-                    errorClassName="arwdmin-input rw-input-error"
+                    className="radmin-input"
+                    errorClassName="radmin-input rw-input-error"
                     ref={emailRef}
                     validation={{
                       required: {
@@ -84,15 +84,15 @@ const ArwdminLoginPage = () => {
 
                   <Label
                     name="password"
-                    className="arwdmin-label"
-                    errorClassName="arwdmin-label rw-label-error"
+                    className="radmin-label"
+                    errorClassName="radmin-label rw-label-error"
                   >
                     Password
                   </Label>
                   <PasswordField
                     name="password"
-                    className="arwdmin-input"
-                    errorClassName="arwdmin-input rw-input-error"
+                    className="radmin-input"
+                    errorClassName="radmin-input rw-input-error"
                     autoComplete="current-password"
                     validation={{
                       required: {
@@ -104,7 +104,7 @@ const ArwdminLoginPage = () => {
 
                   {/*<div className="rw-forgot-link">
                     <Link
-                      to={routes.arwdminForgotPassword()}
+                      to={routes.radminForgotPassword()}
                       className="rw-forgot-link"
                     >
                       Forgot Password?
@@ -113,14 +113,14 @@ const ArwdminLoginPage = () => {
 
                   <FieldError name="password" className="rw-field-error" />
 
-                  <Submit className="arwdmin-button">Login</Submit>
+                  <Submit className="radmin-button">Login</Submit>
                 </Form>
               </div>
             </div>
           </div>
-          <div className="arwdmin-login-footer">
+          <div className="radmin-login-footer">
             <span>Don&apos;t have an account?</span>{' '}
-            <Link to={routes.arwdminSignup()}>
+            <Link to={routes.radminSignup()}>
               Sign up!
             </Link>
           </div>
@@ -130,4 +130,4 @@ const ArwdminLoginPage = () => {
   )
 }
 
-export default ArwdminLoginPage
+export default RadminLoginPage

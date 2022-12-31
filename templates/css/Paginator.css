@@ -1,4 +1,4 @@
-.arwdmin-paginator ul {
+.radmin-paginator ul {
   all: unset;
   --_link-bg: var(--color-bg-dark);
   --_link-text: var(--color-highlight);
@@ -10,11 +10,11 @@
   margin-top: var(--size-7);
 }
 
-.arwdmin-paginator li {
+.radmin-paginator li {
   all: unset;
 }
 
-.arwdmin-paginator a {
+.radmin-paginator a {
   background-color: var(--_link-bg);
   color: var(--_link-text);
   padding-inline: var(--size-3);
@@ -27,12 +27,12 @@
     color .2s var(--ease-3);
 }
 
-.arwdmin-paginator a[href]:is(.current, :hover, :focus-visible) {
+.radmin-paginator a[href]:is(.current, :hover, :focus-visible) {
   --_link-bg: var(--color-muted);
   --_link-text: var(--color-bg);
 }
 
-.arwdmin-paginator a:not([href]) {
+.radmin-paginator a:not([href]) {
   cursor: not-allowed;
   --_link-bg: transparent;
 }

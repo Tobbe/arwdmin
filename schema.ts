@@ -41,7 +41,7 @@ export async function getModelNames(rwRoot: string) {
   const modelNames: string[] = []
 
   for (const model of schema.datamodel.models) {
-    if (model.documentation === '@arwdmin skip') {
+    if (model.documentation === '@radmin skip') {
       console.log('Skipping', model.name)
     } else {
       modelNames.push(model.name)
@@ -106,7 +106,7 @@ export function getModelNameVariants(
   let humanizedName
   let humanizedPlural
 
-  if (modelName === 'ArwdminUser') {
+  if (modelName === 'RadminUser') {
     humanizedName = humanize(appName) + ' user'
     humanizedPlural = humanizedName + 's'
   } else {

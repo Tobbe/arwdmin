@@ -1,27 +1,27 @@
 // Run me with
-// npx @digitak/esrun arwdmin.ts
-// npx tsx arwdmin
+// npx @digitak/esrun radmin.ts
+// npx tsx radmin
 
 import fs from 'fs'
 import path from 'path'
 import { addAuthModel, createAuthPages, setupAuth } from './auth'
 import { copyPrismaSchema } from './schema'
-import { addArwdminFormatters } from './formatters'
-import { createArwdminLayoutDir, createLayout } from './layout'
-import { createArwdminPagesDir, createModelPages, createComponentsDir, createArwdminPage } from './pages/pages'
+import { addRadminFormatters } from './formatters'
+import { createRadminLayoutDir, createLayout } from './layout'
+import { createRadminPagesDir, createModelPages, createComponentsDir, createRadminPage } from './pages/pages'
 
 import { updateRoutes } from './routes'
 import { getModelNames } from './schema'
 import {
   generateSdls,
-  moveArwdminSdls,
+  moveRadminSdls,
   prepareGeneratorDir,
 } from './sdl'
-import { moveArwdminServices } from './services'
+import { moveRadminServices } from './services'
 import { addMainStyles } from './styling'
 import { updateRedwoodToml } from './redwoodToml'
 
-console.log('aRWdmin v0.1.0')
+console.log('Radmin v0.1.0')
 console.log()
 
 // TODO: This should just be findRwRoot() when this is an npx command you run
@@ -56,7 +56,7 @@ if (!appName) {
 
 updateRedwoodToml(rwRoot, appName)
 
-const pagesPath = createArwdminPagesDir(rwRoot)
+const pagesPath = createRadminPagesDir(rwRoot)
 
 addAuthModel(baseProjectRoot)
 copyPrismaSchema(baseProjectRoot, rwRoot)
@@ -67,14 +67,14 @@ const modelNames = await getModelNames(rwRoot)
 
 const componentsPath = createComponentsDir(rwRoot)
 await createModelPages(rwRoot, pagesPath, componentsPath, modelNames, appName)
-createArwdminPage(appName, pagesPath)
+createRadminPage(appName, pagesPath)
 
-const layoutPath = createArwdminLayoutDir(rwRoot)
+const layoutPath = createRadminLayoutDir(rwRoot)
 createLayout(layoutPath, modelNames, appName)
 
 addMainStyles(rwRoot)
 
-addArwdminFormatters(rwRoot)
+addRadminFormatters(rwRoot)
 
 await updateRoutes(rwRoot, modelNames, appName)
 
@@ -84,5 +84,5 @@ const tmpGraphqlName = prepareGeneratorDir(rwRoot, 'graphql')
 // The sdl generator also generates services
 await generateSdls(rwRoot, modelNames, appName)
 
-moveArwdminServices(rwRoot, tmpServicesName)
-moveArwdminSdls(rwRoot, tmpGraphqlName)
+moveRadminServices(rwRoot, tmpServicesName)
+moveRadminSdls(rwRoot, tmpGraphqlName)

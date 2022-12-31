@@ -15,12 +15,12 @@ function getGeneratorDir(rwRoot: string, generatorDirName: string) {
  * The goal is to be able to use RW's sdl generator without conflict with
  * existing services and sdl files. To do that we first move existing services
  * and sdl files to a temporary directory. Then we create new (empty)
- * directories that the arwdmin services and sdl files will be generated into.
+ * directories that the Radmin services and sdl files will be generated into.
  *
  * In a later step we will restore the preexisting services and sdl files, so
  * we need to return the path to the temporary directory where they're located.
  *
- * If there already is an arwdmin directory for services or sdl files we'll
+ * If there already is an Radmin directory for services or sdl files we'll
  * have to remove those to avoid conflicts later
  *
  * @param rwRoot The root of the Redwood project
@@ -28,12 +28,12 @@ function getGeneratorDir(rwRoot: string, generatorDirName: string) {
  */
 export function prepareGeneratorDir(rwRoot: string, generatorDirName: string) {
   const generatorDir = getGeneratorDir(rwRoot, generatorDirName)
-  const arwdminGeneratorDir = path.join(generatorDir, 'arwdmin')
+  const radminGeneratorDir = path.join(generatorDir, 'radmin')
   const tmpName = generatorDir + '_' + Date.now()
 
-  if (fs.existsSync(arwdminGeneratorDir)) {
-    // TODO: Prompt if this is the first time arwdmin is run
-    fs.rmSync(arwdminGeneratorDir, { force: true, recursive: true })
+  if (fs.existsSync(radminGeneratorDir)) {
+    // TODO: Prompt if this is the first time radmin is run
+    fs.rmSync(radminGeneratorDir, { force: true, recursive: true })
   }
 
   try {
@@ -71,8 +71,8 @@ export function findSearchField(modelName: string, fields: DMMF.Field[]) {
   const fieldNameFromFirstField = fields[0]?.name
 
   for (const field of fields) {
-    if (field.documentation?.includes('@arwdmin-search')) {
-      // @arwdmin-search trumps everything. Return as soon as we find this
+    if (field.documentation?.includes('@radmin-search')) {
+      // @radmin-search trumps everything. Return as soon as we find this
       return field.name
     }
 
@@ -306,13 +306,13 @@ export async function generateSdls(
   }
 }
 
-export function moveArwdminSdls(rwRoot: string, tmpName: string) {
+export function moveRadminSdls(rwRoot: string, tmpName: string) {
   const graphqlDir = getGeneratorDir(rwRoot, 'graphql')
-  const arwdminServicesDir = path.join(tmpName, 'arwdmin')
+  const radminServicesDir = path.join(tmpName, 'radmin')
 
-  // Move all the newly generated sdls into api/src/graphql_239439403294890/arwdmin/
-  console.log('rename from', graphqlDir, 'to', arwdminServicesDir)
-  fs.renameSync(graphqlDir, arwdminServicesDir)
+  // Move all the newly generated sdls into api/src/graphql_239439403294890/radmin/
+  console.log('rename from', graphqlDir, 'to', radminServicesDir)
+  fs.renameSync(graphqlDir, radminServicesDir)
 
   // Move api/src/graphql_239439403294890 to /api/src/graphql
   console.log('rename from', tmpName, 'to', graphqlDir)

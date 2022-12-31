@@ -4,9 +4,9 @@ import { Link, routes, useParams } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 
-import SearchWidget from 'src/components/arwdmin/SearchWidget'
-import { truncate, truncateId, truncateMaybeId, checkboxInputTag, formatEnum, timeTag } from 'src/lib/arwdminFormatters'
-import { QUERY } from 'src/pages/Arwdmin/<%= model.pascalName %>/<%= model.pascalPluralName %>Page/<%= model.pascalPluralName %>Cell'
+import SearchWidget from 'src/components/radmin/SearchWidget'
+import { truncate, truncateId, truncateMaybeId, checkboxInputTag, formatEnum, timeTag } from 'src/lib/radminFormatters'
+import { QUERY } from 'src/pages/Radmin/<%= model.pascalName %>/<%= model.pascalPluralName %>Page/<%= model.pascalPluralName %>Cell'
 
 const DELETE_<%= model.capitalName %>_MUTATION = gql`
   mutation DeleteList<%= model.pascalName %>Mutation($id: <%= idFieldType %>!) {
@@ -45,19 +45,19 @@ const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
   }
 
   return (
-    <div className="arwdmin-model-list">
+    <div className="radmin-model-list">
       <header>
         <h2><%= model.humanizedPluralName %></h2>
         <Link
-          to={routes.arwdminNew<%= model.pascalName %>()}
-          className="arwdmin-button"
+          to={routes.radminNew<%= model.pascalName %>()}
+          className="radmin-button"
         >
           New <%= model.humanizedName %>
         </Link>
       </header>
-      <SearchWidget searchField="<%= searchField %>" routesFn={routes.arwdmin<%= model.pluralName %>} />
-      <div className="arwdmin-table-wrapper">
-        <table className="arwdmin-table">
+      <SearchWidget searchField="<%= searchField %>" routesFn={routes.radmin<%= model.pluralName %>} />
+      <div className="radmin-table-wrapper">
+        <table className="radmin-table">
           <thead>
             <tr>
               <%_ for (let field of modelFields) { -%>
@@ -81,7 +81,7 @@ const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
                     setHighlightedRow(<%= model.camelName %>.id)
                   }
                 }}
-                className={highlightedRow === <%= model.camelName %>.id ? 'arwdmin-row-highlight' : ''}
+                className={highlightedRow === <%= model.camelName %>.id ? 'radmin-row-highlight' : ''}
               >
                 <%_ for (let field of modelFields) { -%>
                   <%_ const renderData = getRenderData(field.name) -%>
@@ -90,16 +90,16 @@ const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
                 <td>
                   <nav>
                     <Link
-                      to={routes.arwdmin<%= model.pascalName %>({ id: <%= model.camelName %>.id })}
+                      to={routes.radmin<%= model.pascalName %>({ id: <%= model.camelName %>.id })}
                       title={'Show <%= model.name %> ' + <%= model.camelName %>.id + ' details'}
-                      className="arwdmin-button"
+                      className="radmin-button"
                     >
                       Show
                     </Link>
                     <Link
-                      to={routes.arwdminEdit<%= model.pascalName %>({ id: <%= model.camelName %>.id })}
+                      to={routes.radminEdit<%= model.pascalName %>({ id: <%= model.camelName %>.id })}
                       title={'Edit <%= model.name %> ' + <%= model.camelName %>.id}
-                      className="arwdmin-button"
+                      className="radmin-button"
                     >
                       Edit
                     </Link>
@@ -107,7 +107,7 @@ const <%= model.pluralName %> = ({ <%= model.camelPluralName %> }) => {
                       type="button"
                       title={'Delete <%= model.name %> ' + <%= model.camelName %>.id}
                       onClick={() => onDeleteClick(<%= model.camelName %>.id)}
-                      className="arwdmin-button arwdmin-button-delete"
+                      className="radmin-button radmin-button-delete"
                     >
                       Delete
                     </button>

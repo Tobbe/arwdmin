@@ -1,4 +1,4 @@
-.arwdmin-layout {
+.radmin-layout {
   color: var(--color-primary);
   background-color: var(--color-bg);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
@@ -9,7 +9,7 @@
   font-size: var(--font-size-0);
 }
 
-.arwdmin-layout > nav {
+.radmin-layout > nav {
   --_link-bg: var(--color-bg-menu);
   --_link-text: var(--color-menu-text);
 
@@ -25,13 +25,13 @@
   margin-right: var(--size-5);
 }
 
-.arwdmin-layout > nav ul {
+.radmin-layout > nav ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
 
-.arwdmin-layout > nav li a, .arwdmin-layout > nav .arwdmin-button {
+.radmin-layout > nav li a, .radmin-layout > nav .radmin-button {
   display: block;
   background-color: var(--_link-bg);
   color: var(--_link-text);
@@ -45,18 +45,18 @@
     color .2s var(--ease-3);
 }
 
-.arwdmin-layout > nav li a:is(.current, :hover),
-.arwdmin-layout > nav .arwdmin-button:is(.current, :hover) {
+.radmin-layout > nav li a:is(.current, :hover),
+.radmin-layout > nav .radmin-button:is(.current, :hover) {
   --_link-bg: var(--color-menu-highlight);
   --_link-text: var(--color-menu-text-highlight);
 }
 
-.arwdmin-layout > main {
+.radmin-layout > main {
   width: 100%;
   margin-right: var(--size-5);
   margin-bottom: var(--size-5);
 }
 
-.arwdmin-layout a {
+.radmin-layout a {
   color: var(--color-highlight);
 }

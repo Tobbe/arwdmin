@@ -1,9 +1,9 @@
-import type { FindArwdmin<%= model.pascalPluralName %> } from 'types/graphql'
+import type { FindRadmin<%= model.pascalPluralName %> } from 'types/graphql'
 
 import { Link, routes } from '@redwoodjs/router'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 
-import Paginator from 'src/components/arwdmin/Paginator'
+import Paginator from 'src/components/radmin/Paginator'
 
 import <%= model.pascalPluralName %> from './<%= model.pascalPluralName %>'
 
@@ -14,7 +14,7 @@ export const beforeQuery = ({ page, q }) => {
 }
 
 export const QUERY = gql`
-  query FindArwdmin<%= model.pascalPluralName %>($page: Int, $q: String) {
+  query FindRadmin<%= model.pascalPluralName %>($page: Int, $q: String) {
     <%= model.camelName %>Page(page: $page, q: $q) {
       <%= model.camelPluralName %> {
         <%_ for (let field of modelFields) { -%>
@@ -37,7 +37,7 @@ export const Empty = () => {
   return (
     <div className="rw-text-center">
       No <%= model.camelPluralName %> yet.{' '}
-      <Link to={routes.arwdminNew<%= model.name %>()} className="rw-link">
+      <Link to={routes.radminNew<%= model.name %>()} className="rw-link">
         Create one?
       </Link>
     </div>
@@ -47,14 +47,14 @@ export const Empty = () => {
 export const Failure = ({ error }: CellFailureProps) => {
   console.error('error', error)
 
-  return <div className="arwdmin-cell-error">{error?.message}</div>
+  return <div className="radmin-cell-error">{error?.message}</div>
 }
 
-export const Success = ({ <%= model.camelName %>Page }: CellSuccessProps<FindArwdmin<%= model.pascalPluralName %>>) => {
+export const Success = ({ <%= model.camelName %>Page }: CellSuccessProps<FindRadmin<%= model.pascalPluralName %>>) => {
   return (
     <>
       <<%= model.pascalPluralName %> <%= model.camelPluralName %>={<%= model.camelName %>Page.<%= model.camelPluralName %>} />
-      <Paginator count={<%= model.camelName %>Page.count} pageName="arwdmin<%= model.pascalPluralName %>" />
+      <Paginator count={<%= model.camelName %>Page.count} pageName="radmin<%= model.pascalPluralName %>" />
     </>
   )
 }

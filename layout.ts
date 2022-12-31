@@ -18,12 +18,12 @@ function generateLayout(modelNames: string[], appName: string) {
   return ejsRender(template, { models })
 }
 
-export function createArwdminLayoutDir(rwRoot: string) {
+export function createRadminLayoutDir(rwRoot: string) {
   // TODO: read 'web' name from redwood.toml
-  const layoutPath = path.join(rwRoot, 'web', 'src', 'layouts', 'ArwdminLayout')
+  const layoutPath = path.join(rwRoot, 'web', 'src', 'layouts', 'RadminLayout')
 
   // TODO: Prompt if this dir already exists if this is the first time running
-  // aRWdmin
+  // Radmin
   if (!fs.existsSync(layoutPath)) {
     fs.mkdirSync(layoutPath, { recursive: true })
   }
@@ -34,9 +34,9 @@ export function createArwdminLayoutDir(rwRoot: string) {
 export function createLayout(layoutPath: string, modelNames: string[], appName: string) {
   const layout = generateLayout(modelNames, appName)
 
-  fs.writeFileSync(path.join(layoutPath, 'ArwdminLayout.tsx'), layout)
+  fs.writeFileSync(path.join(layoutPath, 'RadminLayout.tsx'), layout)
   fs.copyFileSync(
-    './templates/css/ArwdminLayout.css',
-    path.join(layoutPath, 'ArwdminLayout.css')
+    './templates/css/RadminLayout.css',
+    path.join(layoutPath, 'RadminLayout.css')
   )
 }

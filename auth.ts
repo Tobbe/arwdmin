@@ -11,12 +11,12 @@ export async function addAuthModel(baseProjectRoot: string) {
   console.log('Adding dbAuth model to', schemaPath)
   let schema = fs.readFileSync(schemaPath, 'utf-8')
 
-  // TODO: Remove existing ArwdminUser model
+  // TODO: Remove existing RadminUser model
   //       Figure out how to handle prisma migrations if/when we do
 
-  if (!schema.includes('ArwdminUser')) {
+  if (!schema.includes('RadminUser')) {
     schema += `
-model ArwdminUser {
+model RadminUser {
   id                  Int       @id @default(autoincrement())
   email               String    @unique
   hashedPassword      String
@@ -35,7 +35,7 @@ model ArwdminUser {
     // yarn rw prisma migrate diff --from-schema-datamodel api/db/schema.prisma --to-schema-datasource api/db/schema.prisma
     // TODO: Add confirmation if DATABASE_URL isn't localhost. Mask password
     // when asking for confirmation
-    execaSync('yarn', ['rw', 'prisma', 'migrate', 'dev', '-n', 'arwdminUser'], {
+    execaSync('yarn', ['rw', 'prisma', 'migrate', 'dev', '-n', 'radminUser'], {
       cwd: baseProjectRoot,
     })
   }
@@ -80,8 +80,8 @@ export async function setupAuth(rwRoot: string) {
   const authLines = fs
     .readFileSync(apiFunctionsAuthPath, 'utf-8')
     .replace('salt, userAttributes', 'salt')
-    .replace('db.user.create', 'db.arwdminUser.create')
-    .replace("authModelAccessor: 'user',", "authModelAccessor: 'arwdminUser',")
+    .replace('db.user.create', 'db.radminUser.create')
+    .replace("authModelAccessor: 'user',", "authModelAccessor: 'radminUser',")
     .replace(/\s*\/\/ name: userAttributes.name/, '')
     .split('\n')
   let loginHandlerReturnIndex = -1
@@ -135,9 +135,9 @@ export async function setupAuth(rwRoot: string) {
       signupHandlerStart,
       signupHandlerEnd - signupHandlerStart + 1,
       '    handler: async ({ username, hashedPassword, salt }) => {',
-      '      const nbrOfUsers = await db.arwdminUser.count()',
+      '      const nbrOfUsers = await db.radminUser.count()',
       '',
-      '      const user = db.arwdminUser.create({',
+      '      const user = db.radminUser.create({',
       '        data: {',
       '          email: username,',
       '          hashedPassword: hashedPassword,',
@@ -163,7 +163,7 @@ export async function setupAuth(rwRoot: string) {
   const apiLibAuthPath = path.join(rwRoot, 'api', 'src', 'lib', 'auth.ts')
   const libAuth = fs
     .readFileSync(apiLibAuthPath, 'utf-8')
-    .replace('db.user.findUnique', 'db.arwdminUser.findUnique')
+    .replace('db.user.findUnique', 'db.radminUser.findUnique')
   fs.writeFileSync(apiLibAuthPath, libAuth)
 }
 
@@ -173,37 +173,37 @@ export function createAuthPages(pagesPath: string) {
 }
 
 function createLoginPage(pagesPath: string) {
-  const template = fs.readFileSync('./templates/arwdminLogin.ejs', 'utf-8')
+  const template = fs.readFileSync('./templates/radminLogin.ejs', 'utf-8')
 
   const loginPage = ejsRender(template)
 
-  fs.mkdirSync(path.join(pagesPath, 'ArwdminLoginPage'), { recursive: true })
+  fs.mkdirSync(path.join(pagesPath, 'RadminLoginPage'), { recursive: true })
 
   fs.writeFileSync(
-    path.join(pagesPath, 'ArwdminLoginPage', 'ArwdminLoginPage.tsx'),
+    path.join(pagesPath, 'RadminLoginPage', 'RadminLoginPage.tsx'),
     loginPage
   )
 
   fs.copyFileSync(
-    './templates/css/ArwdminLoginPage.css',
-    path.join(pagesPath, 'ArwdminLoginPage', 'ArwdminLoginPage.css')
+    './templates/css/RadminLoginPage.css',
+    path.join(pagesPath, 'RadminLoginPage', 'RadminLoginPage.css')
   )
 }
 
 function createSignupPage(pagesPath: string) {
-  const template = fs.readFileSync('./templates/arwdminSignup.ejs', 'utf-8')
+  const template = fs.readFileSync('./templates/radminSignup.ejs', 'utf-8')
 
   const signupPage = ejsRender(template)
 
-  fs.mkdirSync(path.join(pagesPath, 'ArwdminSignupPage'), { recursive: true })
+  fs.mkdirSync(path.join(pagesPath, 'RadminSignupPage'), { recursive: true })
 
   fs.writeFileSync(
-    path.join(pagesPath, 'ArwdminSignupPage', 'ArwdminSignupPage.tsx'),
+    path.join(pagesPath, 'RadminSignupPage', 'RadminSignupPage.tsx'),
     signupPage
   )
 
   fs.copyFileSync(
-    './templates/css/ArwdminSignupPage.css',
-    path.join(pagesPath, 'ArwdminSignupPage', 'ArwdminSignupPage.css')
+    './templates/css/RadminSignupPage.css',
+    path.join(pagesPath, 'RadminSignupPage', 'RadminSignupPage.css')
   )
 }

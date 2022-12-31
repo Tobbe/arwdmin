@@ -2,22 +2,22 @@ import { Link, routes } from '@redwoodjs/router'
 
 import { useAuth } from 'src/auth'
 
-import './ArwdminPage.css'
+import './RadminPage.css'
 
-const ArwdminArwdminPage = () => {
+const RadminRadminPage = () => {
   const { isAuthenticated } = useAuth()
 
   return (
-    <div className="arwdmin-page">
+    <div className="radmin-page">
       <h1><%= appName %></h1>
       {!isAuthenticated && (
         <>
-          <Link to={routes.arwdminLogin()}>Log in</Link>
-          <Link to={routes.arwdminSignup()}>Sign up</Link>
+          <Link to={routes.radminLogin()}>Log in</Link>
+          <Link to={routes.radminSignup()}>Sign up</Link>
         </>
       )}
     </div>
   )
 }
 
-export default ArwdminArwdminPage
+export default RadminRadminPage
