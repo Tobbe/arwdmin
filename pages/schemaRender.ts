@@ -105,7 +105,11 @@ function getDeserializationFunction(type: string) {
   }
 }
 
-function getDisplayFunction(type: string) {
+function getDisplayFunction(component: string, type: string) {
+  if (component === 'WysiwygEditor') {
+    return 'sanitizedHtml'
+  }
+
   switch (type) {
     case 'Enum':
     case 'EnumList':
@@ -218,7 +222,7 @@ export function getRenderDataFunction(
       defaultValue,
       validation: getValidation(type, field),
       deserializeFunction: getDeserializationFunction(type),
-      displayFunction: getDisplayFunction(type),
+      displayFunction: getDisplayFunction(component, type),
       listDisplayFunction: getListDisplayFunction(type, field),
       emptyAs,
       setValue,

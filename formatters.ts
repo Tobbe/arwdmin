@@ -13,7 +13,10 @@ export function addRadminFormatters(rwRoot: string) {
 
   // The formatters use string-strip-html, and 8.3.0 is the last version that's
   // not only ESM
-  execaSync('yarn', ['add', 'string-strip-html@8.3.0'], {
+  execaSync('yarn', ['add', 'string-strip-html@8.3.0', 'sanitize-html'], {
+    cwd: path.join(rwRoot, 'web'),
+  })
+  execaSync('yarn', ['add', '-D', '@types/sanitize-html'], {
     cwd: path.join(rwRoot, 'web'),
   })
 }

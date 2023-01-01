@@ -1,7 +1,9 @@
 import React from 'react'
 
 import humanize from 'humanize-string'
-// TODO: Make sure we install this in the user's project
+// TODO: Consider using sanitize-html for everything to get rid of
+// string-strip-html. Should look at package sizes and runtime benchmarks
+import sanitizeHtml from 'sanitize-html';
 import { stripHtml } from 'string-strip-html'
 
 export const formatEnum = (values: string | string[] | null | undefined) => {
@@ -138,4 +140,9 @@ export const timeTag = (dateTime?: string) => {
 
 export const checkboxInputTag = (checked: boolean) => {
   return <input type="checkbox" checked={checked} disabled />
+}
+
+export const sanitizedHtml = (text: string) => {
+  const sanitizedText = sanitizeHtml(text)
+  return <div dangerouslySetInnerHTML={{ __html: sanitizedText }} />
 }
