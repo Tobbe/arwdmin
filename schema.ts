@@ -54,8 +54,6 @@ export async function getModelNames(rwRoot: string) {
 export async function getModelFields(rwRoot: string, modelName: string) {
   const schema = await getSchemaDefinitions(rwRoot)
 
-  // console.log('schema', schema)
-
   const model = schema.datamodel.models.find(
     (model) => model.name === modelName
   )
@@ -63,17 +61,6 @@ export async function getModelFields(rwRoot: string, modelName: string) {
   if (!model) {
     console.error('Could not find model', modelName)
     process.exit(1)
-  }
-
-  // const parentProductField = model.fields.find((field) => field.name === 'parentProduct')
-  // console.log('parentProductField', parentProductField)
-
-  // console.log('fields', model.fields)
-  if (modelName === 'Payment') {
-    // console.log('model', model)
-    // model.fields.forEach((field) => {
-    //   console.log('field', field)
-    // })
   }
 
   return model.fields
