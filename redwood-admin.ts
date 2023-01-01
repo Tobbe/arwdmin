@@ -1,6 +1,5 @@
 // Run me with
-// npx @digitak/esrun radmin.ts
-// npx tsx radmin
+// npx tsx redwood-admin
 
 import fs from 'fs'
 import path from 'path'
