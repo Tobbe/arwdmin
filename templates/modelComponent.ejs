@@ -59,7 +59,7 @@ const <%= model.pascalName %> = ({ <%= model.camelName %> }: Props) => {
           </tbody>
         </table>
       </div>
-      <nav>
+      <div className="radmin-button-group">
         <Link
           className="radmin-button"
           to={routes.radminEdit<%= model.pascalName %>({ id: <%= model.camelName %>.id })}
@@ -73,7 +73,7 @@ const <%= model.pascalName %> = ({ <%= model.camelName %> }: Props) => {
         >
           Delete
         </button>
-      </nav>
+      </div>
     </div>
   )
 }
