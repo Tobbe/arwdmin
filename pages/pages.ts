@@ -16,6 +16,7 @@ import { createNewPage } from './new'
 import { getRenderDataFunction, RenderData } from './schemaRender'
 import { execaSync } from 'execa'
 import humanize from 'humanize-string'
+import pascalcase from 'pascalcase'
 
 export function createRadminPagesDir(rwRoot: string) {
   // TODO: read 'web' name from redwood.toml
@@ -678,7 +679,11 @@ function generateModelComponent(
   const idField = modelFields.find((field) => field.isId)
   const idFieldType = idField?.type || 'String'
 
-  return ejsRender(template, { model, modelFields, getRenderData, idFieldType })
+  const relationLists = modelFields.filter(
+    (field) => typeof field.relationName !== 'undefined' && field.isList
+  )
+
+  return ejsRender(template, { model, modelFields, getRenderData, idFieldType, relationLists, pascalcase })
 }
 
 function generatePaginatorComponent() {

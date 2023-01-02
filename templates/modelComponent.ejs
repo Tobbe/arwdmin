@@ -39,6 +39,15 @@ const <%= model.pascalName %> = ({ <%= model.camelName %> }: Props) => {
     }
   }
 
+  <%_ for (const relationListField of relationLists) { %>
+    type <%= pascalcase(relationListField.name) %>Relation = Exclude<typeof <%= model.camelName %>.<%= relationListField.name %>[number], null>
+
+    const <%= model.camelName %><%= pascalcase(relationListField.name) %> = <%= model.camelName %>.<%= relationListField.name %>
+      .filter<<%= pascalcase(relationListField.name) %>Relation>(
+        (field): field is <%= pascalcase(relationListField.name) %>Relation => field !== null
+      )
+  <% } %>
+
   return (
     <div className="radmin-model">
       <header>
@@ -53,7 +62,31 @@ const <%= model.pascalName %> = ({ <%= model.camelName %> }: Props) => {
               <% const renderData = getRenderData(field.name) %>
               <tr>
                 <th><%= field.name %></th>
-                <td>{<%= renderData.displayFunction %>(<%= model.camelName %>.<%= field.name %>)}</td>
+                <%_ if (typeof field.relationName !== 'undefined') { -%>
+                  <td>
+                  <%_ if (field.isList) { %>
+                    <ul className="radmin-relation">
+                      {<%= model.camelName %><%= pascalcase(field.name) %>.map((field) => {
+                        return (
+                          <li key={field.id}>
+                            <Link to={routes.radmin<%= field.type %>({ id: field.id })}>
+                              {relation(field)}
+                            </Link>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  <%_ } else { -%>
+                    {<%= model.camelName %>.<%= field.name %> && (
+                      <Link to={routes.radmin<%= field.type %>({ id: <%= model.camelName %>.<%= field.name %>.id })}>
+                        {relation(<%= model.camelName %>.<%= field.name %>)}
+                      </Link>
+                    )}
+                  <% } %>
+                  </td>
+                <%_ } else { -%>
+                  <td>{<%= renderData.displayFunction %>(<%= model.camelName %>.<%= field.name %>)}</td>
+                <% } %>
               </tr>
             <% } %>
           </tbody>

@@ -6,6 +6,8 @@ import humanize from 'humanize-string'
 import sanitizeHtml from 'sanitize-html'
 import { stripHtml } from 'string-strip-html'
 
+import { AvailableRoutes, Link } from '@redwoodjs/router'
+
 export const formatEnum = (values: string | string[] | null | undefined) => {
   let output = ''
 
@@ -147,58 +149,16 @@ export const sanitizedHtml = (text: string) => {
   return <div dangerouslySetInnerHTML={{ __html: sanitizedText }} />
 }
 
-export const relation = (
-  fields:
-    | Record<string, string | number>
-    | (Record<string, string | number> | null)[]
-    | null
-    | undefined
-) => {
-  if (!fields) {
-    return null
-  }
-
-  if (Array.isArray(fields)) {
-    const nonNullFields = fields.filter<Record<string, string | number>>(
-      (field): field is Record<string, string | number> => field !== null
-    )
-    if (nonNullFields.length === 0) {
-      return null
-    }
-
+export const relation = (field: Record<string, string | number>) => {
+  const keys = Object.keys(field)
+  const humanReadable = keys.find((key) => key !== 'id' && key !== '__typename')
+  if (humanReadable) {
     return (
-      <ul>
-        {nonNullFields.map((field) => {
-          const keys = Object.keys(field)
-          const humanReadable = keys.find(
-            (key) => key !== 'id' && key !== '__typename'
-          )
-          if (humanReadable) {
-            return (
-              <li key={field.id}>
-                {truncateId(field.id)} - {field[humanReadable]}
-              </li>
-            )
-          } else {
-            return <li key={field.id}>{field.id}</li>
-          }
-        })}
-      </ul>
+      <span>
+        {truncateId(field.id)} - {field[humanReadable]}
+      </span>
     )
   } else {
-    const field = fields
-    const keys = Object.keys(field)
-    const humanReadable = keys.find(
-      (key) => key !== 'id' && key !== '__typename'
-    )
-    if (humanReadable) {
-      return (
-        <span>
-          {truncateId(field.id)} - {field[humanReadable]}
-        </span>
-      )
-    } else {
-      return <span>{field.id}</span>
-    }
+    return <span>{field.id}</span>
   }
 }
