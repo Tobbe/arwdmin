@@ -6,8 +6,6 @@ import humanize from 'humanize-string'
 import sanitizeHtml from 'sanitize-html'
 import { stripHtml } from 'string-strip-html'
 
-import { AvailableRoutes, Link } from '@redwoodjs/router'
-
 export const formatEnum = (values: string | string[] | null | undefined) => {
   let output = ''
 
@@ -77,7 +75,7 @@ const MONTH_IN_MS = 30 * 24 * 60 * 60 * 1000
 const DAY_IN_MS = 24 * 60 * 60 * 1000
 const HOUR_IN_MS = 60 * 60 * 1000
 
-export const timeTag = (dateTime?: string) => {
+export const timeTag = (dateTime: string | undefined | null) => {
   let output: string | JSX.Element = ''
 
   if (dateTime) {
@@ -140,11 +138,15 @@ export const timeTag = (dateTime?: string) => {
   return output
 }
 
-export const checkboxInputTag = (checked: boolean) => {
-  return <input type="checkbox" checked={checked} disabled />
+export const checkboxInputTag = (checked: boolean | null | undefined) => {
+  return <input type="checkbox" checked={!!checked} disabled />
 }
 
-export const sanitizedHtml = (text: string) => {
+export const sanitizedHtml = (text: string | null | undefined) => {
+  if (!text) {
+    return null
+  }
+
   const sanitizedText = sanitizeHtml(text)
   return <div dangerouslySetInnerHTML={{ __html: sanitizedText }} />
 }
