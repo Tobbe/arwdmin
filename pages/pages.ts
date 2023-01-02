@@ -15,6 +15,7 @@ import { createEditPage } from './edit'
 import { createNewPage } from './new'
 import { getRenderDataFunction, RenderData } from './schemaRender'
 import { execaSync } from 'execa'
+import humanize from 'humanize-string'
 
 export function createRadminPagesDir(rwRoot: string) {
   // TODO: read 'web' name from redwood.toml
@@ -52,13 +53,7 @@ export function createRadminPage(appName: string, pagesPath: string) {
 // the actual directory or folder. "path" is the path to the dir. "path" is
 // always a string
 export function createComponentsDir(rwRoot: string) {
-  const componentsPath = path.join(
-    rwRoot,
-    'web',
-    'src',
-    'components',
-    'radmin'
-  )
+  const componentsPath = path.join(rwRoot, 'web', 'src', 'components', 'radmin')
 
   fs.rmSync(componentsPath, { recursive: true, force: true })
   fs.mkdirSync(componentsPath)
@@ -93,10 +88,7 @@ function addNpmPackagesToInstall(
   }
 }
 
-function copyFormComponents(
-  componentsToCopy: Set<string>,
-  rwRoot: string
-) {
+function copyFormComponents(componentsToCopy: Set<string>, rwRoot: string) {
   // TODO: read 'web' name from redwood.toml
   const componentsPath = path.join(rwRoot, 'web', 'src', 'components', 'radmin')
 
@@ -111,7 +103,10 @@ function copyFormComponents(
     }
 
     fs.mkdirSync(fullDir, { recursive: true })
-    fs.copyFileSync(`./templates/tsx/${component}`, path.join(fullDir, componentName))
+    fs.copyFileSync(
+      `./templates/tsx/${component}`,
+      path.join(fullDir, componentName)
+    )
   }
 }
 
@@ -139,7 +134,13 @@ function modelFormImports(
   modelFields: DMMF.Field[],
   getRenderData: (fieldName: string) => RenderData
 ) {
-  const rwFormImports = new Set<string>(['Form', 'FormError', 'Label', 'FieldError', 'Submit'])
+  const rwFormImports = new Set<string>([
+    'Form',
+    'FormError',
+    'Label',
+    'FieldError',
+    'Submit',
+  ])
   const singleImports = new Set<string>()
 
   modelFields.map((modelField) => {
@@ -214,11 +215,7 @@ export async function createModelPages(
       modelFields,
       renderDataFunction
     )
-    addComponentsToCopy(
-      componentsToCopy,
-      modelFields,
-      renderDataFunction
-    )
+    addComponentsToCopy(componentsToCopy, modelFields, renderDataFunction)
 
     const modelNameVariants = getModelNameVariants(modelName, appName)
 
@@ -234,7 +231,11 @@ export async function createModelPages(
       searchField
     )
     const modelPage = generateModelPage(modelNameVariants)
-    const modelCell = generateModelCell(modelNameVariants, modelFields)
+    const modelCell = await generateModelCell(
+      rwRoot,
+      modelNameVariants,
+      modelFields
+    )
     const modelComponent = generateModelComponent(
       modelNameVariants,
       modelFields,
@@ -451,8 +452,174 @@ function generateModelPage({ pascalCaseModelName }: ModelNameVariants) {
   return ejsRender(template, { model })
 }
 
-function generateModelCell(
-  { pascalCaseModelName, camelCaseModelName }: ModelNameVariants,
+function getHumanReadableField(fields: DMMF.Field[]) {
+  let name: string | undefined = undefined
+  let title: string | undefined = undefined
+  let desc: string | undefined = undefined
+  let header: string | undefined = undefined
+  let topic: string | undefined = undefined
+  let subject: string | undefined = undefined
+  let firstName: string | undefined = undefined
+  let fullName: string | undefined = undefined
+  let lastName: string | undefined = undefined
+  let nick: string | undefined = undefined
+  let nickname: string | undefined = undefined
+  let username: string | undefined = undefined
+  let handle: string | undefined = undefined
+  let email: string | undefined = undefined
+
+  for (const field of fields) {
+    const lowerName = humanize(field.name).toLowerCase()
+    const splitName = lowerName.split(' ')
+
+    if (lowerName === 'name') {
+      name = field.name
+    } else if (lowerName === 'title') {
+      title = 'title'
+    } else if (
+      splitName.includes('description') ||
+      splitName.includes('desc')
+    ) {
+      desc = field.name
+    } else if (lowerName === 'header') {
+      header = field.name
+    } else if (lowerName === 'topic') {
+      topic = field.name
+    } else if (lowerName === 'subject') {
+      subject = field.name
+    } else if (lowerName === 'firstname') {
+      firstName = field.name
+    } else if (lowerName === 'fullname') {
+      fullName = field.name
+    } else if (lowerName === 'lastname') {
+      lastName = field.name
+    } else if (lowerName === 'nick') {
+      nick = field.name
+    } else if (lowerName === 'nickname') {
+      nickname = field.name
+    } else if (lowerName === 'username') {
+      username = field.name
+    } else if (lowerName === 'handle') {
+      handle = field.name
+    } else if (lowerName === 'email') {
+      email = field.name
+    }
+  }
+
+  return (
+    name ||
+    title ||
+    header ||
+    topic ||
+    subject ||
+    username ||
+    email ||
+    nick ||
+    nickname ||
+    fullName ||
+    firstName ||
+    lastName ||
+    desc ||
+    handle
+  )
+}
+
+// This is what relations can look like (I've only kept relevant fields)
+// {
+//   name: 'parentId',
+//   kind: 'scalar',
+//   type: 'String',
+// },
+// {
+//   name: 'parentProduct',
+//   kind: 'object',
+//   type: 'Product',
+//   relationName: 'ParentProduct',
+//   relationFromFields: [ 'parentId' ],
+//   relationToFields: [ 'id' ],
+// },
+// {
+//   name: 'variants',
+//   kind: 'object',
+//   type: 'Product',
+//   relationName: 'ParentProduct',
+//   relationFromFields: [],
+//   relationToFields: [],
+// },
+// {
+//   name: 'CategoryToProduct',
+//   kind: 'object',
+//   type: 'CategoryToProduct',
+//   relationName: 'CategoryToProductToProduct',
+//   relationFromFields: [],
+//   relationToFields: [],
+// },
+async function getRelationFields(
+  rwRoot: string,
+  modelName: string,
+  modelFields: DMMF.Field[],
+  field: DMMF.Field
+) {
+  let toFields: DMMF.Field['relationToFields']
+  let relationModelFields: DMMF.Field[]
+
+  // field.type is the name of the model that has the relation definition
+  if (field.type === modelName) {
+    // Self-relation
+
+    relationModelFields = modelFields
+
+    if (field.relationToFields?.length && field.relationToFields?.length > 0) {
+      // This is easy. We have direct access to the name of the id field (most likely "id")
+      toFields = field.relationToFields
+    } else {
+      const relationField = modelFields.find((f) => {
+        return (
+          f.relationName === field.relationName &&
+          f.relationToFields?.length &&
+          f.relationToFields?.length > 0
+        )
+      })
+
+      toFields = relationField?.relationToFields
+    }
+  } else {
+    // Relation to another model
+
+    relationModelFields = await getModelFields(rwRoot, field.type)
+
+    if (field.relationToFields?.length && field.relationToFields?.length > 0) {
+      // This is easy. We have direct access to the name of the id field (most likely "id")
+      toFields = field.relationToFields
+    } else {
+      const relationField = relationModelFields.find((f) => {
+        return (
+          f.relationName === field.relationName &&
+          f.relationToFields?.length &&
+          f.relationToFields?.length > 0
+        )
+      })
+
+      toFields = relationField?.relationToFields
+    }
+  }
+
+  if (!toFields) {
+    console.error(
+      'Couldn\'t find any "to" fields for relation',
+      field.relationName
+    )
+    process.exit(1)
+  }
+
+  const humanReadableField = getHumanReadableField(relationModelFields)
+
+  return [...toFields, ...(humanReadableField ? [humanReadableField] : [])]
+}
+
+async function generateModelCell(
+  rwRoot: string,
+  { modelName, pascalCaseModelName, camelCaseModelName }: ModelNameVariants,
   modelFields: DMMF.Field[]
 ) {
   const model = {
@@ -462,19 +629,30 @@ function generateModelCell(
 
   const template = fs.readFileSync('./templates/modelCell.ejs', 'utf-8')
 
-  // Skip all relation fields (but we still keep relation ids)
-  // So if the model has `authorId: Int` and `author: Author` we'll only
-  // include `authorId`
-  function isRelation(field: DMMF.Field) {
-    return field.kind === 'object'
-  }
-
-  const fields = modelFields.filter((field) => !isRelation(field))
-
   const idField = modelFields.find((field) => field.isId)
   const idFieldType = idField?.type || 'String'
 
-  return ejsRender(template, { model, modelFields: fields, idFieldType })
+  const queryFieldPromises = modelFields.map(async (field) => {
+    let relationFields: any
+
+    if (typeof field.relationName !== 'undefined') {
+      relationFields = await getRelationFields(
+        rwRoot,
+        modelName,
+        modelFields,
+        field
+      )
+    }
+
+    return {
+      name: field.name,
+      relationFields,
+    }
+  })
+
+  const queryFields = await Promise.all(queryFieldPromises)
+
+  return ejsRender(template, { model, queryFields, idFieldType })
 }
 
 function generateModelComponent(

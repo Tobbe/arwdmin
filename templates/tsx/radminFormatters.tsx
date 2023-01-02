@@ -3,7 +3,7 @@ import React from 'react'
 import humanize from 'humanize-string'
 // TODO: Consider using sanitize-html for everything to get rid of
 // string-strip-html. Should look at package sizes and runtime benchmarks
-import sanitizeHtml from 'sanitize-html';
+import sanitizeHtml from 'sanitize-html'
 import { stripHtml } from 'string-strip-html'
 
 export const formatEnum = (values: string | string[] | null | undefined) => {
@@ -145,4 +145,60 @@ export const checkboxInputTag = (checked: boolean) => {
 export const sanitizedHtml = (text: string) => {
   const sanitizedText = sanitizeHtml(text)
   return <div dangerouslySetInnerHTML={{ __html: sanitizedText }} />
+}
+
+export const relation = (
+  fields:
+    | Record<string, string | number>
+    | (Record<string, string | number> | null)[]
+    | null
+    | undefined
+) => {
+  if (!fields) {
+    return null
+  }
+
+  if (Array.isArray(fields)) {
+    const nonNullFields = fields.filter<Record<string, string | number>>(
+      (field): field is Record<string, string | number> => field !== null
+    )
+    if (nonNullFields.length === 0) {
+      return null
+    }
+
+    return (
+      <ul>
+        {nonNullFields.map((field) => {
+          const keys = Object.keys(field)
+          const humanReadable = keys.find(
+            (key) => key !== 'id' && key !== '__typename'
+          )
+          if (humanReadable) {
+            return (
+              <li key={field.id}>
+                {truncateId(field.id)} - {field[humanReadable]}
+              </li>
+            )
+          } else {
+            return <li key={field.id}>{field.id}</li>
+          }
+        })}
+      </ul>
+    )
+  } else {
+    const field = fields
+    const keys = Object.keys(field)
+    const humanReadable = keys.find(
+      (key) => key !== 'id' && key !== '__typename'
+    )
+    if (humanReadable) {
+      return (
+        <span>
+          {truncateId(field.id)} - {field[humanReadable]}
+        </span>
+      )
+    } else {
+      return <span>{field.id}</span>
+    }
+  }
 }

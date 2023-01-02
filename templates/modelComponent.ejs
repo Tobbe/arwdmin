@@ -8,7 +8,7 @@ import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 
 // TODO: Only import formatters that are used
-import { checkboxInputTag, formatEnum, timeTag, sanitizedHtml } from 'src/lib/radminFormatters'
+import { checkboxInputTag, formatEnum, timeTag, sanitizedHtml, relation } from 'src/lib/radminFormatters'
 
 const DELETE_<%= model.capitalName %>_MUTATION = gql`
   mutation Delete<%= model.pascalName %>Mutation($id: <%= idFieldType %>!) {

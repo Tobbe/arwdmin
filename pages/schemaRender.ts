@@ -105,9 +105,15 @@ function getDeserializationFunction(type: string) {
   }
 }
 
-function getDisplayFunction(component: string, type: string) {
+function getDisplayFunction(component: string, type: string, isRelation: boolean) {
   if (component === 'WysiwygEditor') {
     return 'sanitizedHtml'
+  }
+  // TODO: Will probably be able to look at `component` to determine that this
+  // is a relation field later. For now I'm passing a separate prop for just
+  // handling relation fields
+  if (isRelation) {
+    return 'relation'
   }
 
   switch (type) {
@@ -215,6 +221,8 @@ export function getRenderDataFunction(
         ? `setValue={(value: string) => formMethods.setValue('${fieldName}', value)}`
         : ''
 
+    const isRelation = typeof field.relationName !== 'undefined'
+
     return {
       displayName: humanize(fieldName),
       component,
@@ -222,7 +230,7 @@ export function getRenderDataFunction(
       defaultValue,
       validation: getValidation(type, field),
       deserializeFunction: getDeserializationFunction(type),
-      displayFunction: getDisplayFunction(component, type),
+      displayFunction: getDisplayFunction(component, type, isRelation),
       listDisplayFunction: getListDisplayFunction(type, field),
       emptyAs,
       setValue,

@@ -7,11 +7,13 @@ import <%= model.pascalName %> from './<%= model.pascalName %>'
 export const QUERY = gql`
   query FindRadmin<%= model.pascalName %>ById($id: <%= idFieldType %>!) {
     <%= model.camelName %>: <%= model.camelName %>(id: $id) {
-      <%_ for (let field of modelFields) { -%>
+      <%_ for (let field of queryFields) { -%>
         <%= field.name %>
-        <%_ if (field.kind === 'object') { -%>
+        <%_ if (field.relationFields) { -%>
           {
-            id
+            <%_ for (let name of field.relationFields) { -%>
+              <%= name %>
+            <% } -%>
           }
         <% } -%>
       <% } %>
