@@ -61,7 +61,7 @@ export async function setupAuth(rwRoot: string) {
     })
     execaSync(
       'yarn',
-      ['rw', 'setup', 'auth', 'dbAuth', '--no-warn', '--no-webauthn', '-f'],
+      ['rw', 'setup', 'auth', 'dbAuth', '--no-webauthn', '-f'],
       {
         cwd: rwRoot,
       }
