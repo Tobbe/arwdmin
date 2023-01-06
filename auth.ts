@@ -150,6 +150,7 @@ export async function setupAuth(rwRoot: string) {
       '',
       '      if (nbrOfUsers === 0) {',
       '        // Immediately log in first user',
+      '        return user',
       '      }',
       '',
       "      return 'You will need to be approved before you can log in'",
