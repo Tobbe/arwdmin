@@ -29,9 +29,9 @@ const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, 
       >
         <FormError
           error={error}
-          wrapperClassName="rw-form-error-wrapper"
-          titleClassName="rw-form-error-title"
-          listClassName="rw-form-error-list"
+          wrapperClassName="radmin-form-error-wrapper"
+          titleClassName="radmin-form-error-title"
+          listClassName="radmin-form-error-list"
         />
 
         <%_ for (const field of modelFields) { -%>
@@ -39,7 +39,7 @@ const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, 
           <Label
             name="<%= field.name %>"
             className="radmin-label"
-            errorClassName="rw-label rw-label-error"
+            errorClassName="radmin-label radmin-label-error"
           >
             <%= renderData.displayName %>
             <% if (field.isRequired) { %>
@@ -59,7 +59,7 @@ const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, 
                   name="<%= field.name %>"
                   defaultValue="<%= subData.value %>"
                   defaultChecked={<%= model.camelName %>?.<%= field.name %> === '<%= subData.value %>'}
-                  errorClassName="rw-input-error"
+                  errorClassName="radmin-input-error"
                   <%= renderData.validation ? `validation=${renderData.validation}` : '' -%>
                 />
                 <div><%= subData.displayName %></div>
@@ -70,14 +70,14 @@ const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, 
               name="<%= field.name %>"
               <%= renderData.defaultProp %>={<%= model.camelName %>?.<%= field.name %> ?? <%= renderData.defaultValue %>}
               className="radmin-input"
-              errorClassName="radmin-input rw-input-error"
+              errorClassName="radmin-input radmin-input-error"
               <%= renderData.emptyAs -%>
               <%- renderData.setValue -%>
               <%= renderData.validation ? `validation=${renderData.validation}` : '' -%>
             />
           <% } %>
 
-          <FieldError name="<%= field.name %>" className="rw-field-error" />
+          <FieldError name="<%= field.name %>" className="radmin-field-error" />
         <% } -%>
 
         <div className="radmin-button-group">

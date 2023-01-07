@@ -58,13 +58,45 @@ html {
   box-sizing: border-box;
 }
 
-.radmin-cell-error {
+.radmin-cell-error, .radmin-form-error-wrapper {
   color: var(--color-bad-dark);
   background-color: var(--color-bad-light);
   border-radius: var(--radius-2);
   font-size: var(--font-size-2);
   padding: var(--size-3);
   margin-block: var(--size-3);
+}
+
+.radmin-form-error-title {
+  margin-top: 0;
+  margin-bottom: 0;
+  font-weight: var(--font-weight-6)
+}
+
+.radmin-form-error-list {
+  margin-top: var(--size-2);
+  list-style-type: disc;
+  list-style-position: inside;
+}
+
+.radmin-input-error {
+  border-color: var(--color-bad-dark);
+  color: var(--color-bad-dark);
+}
+
+.radmin-input-error:focus{
+  outline: none;
+  border-color: var(--color-bad-dark);
+  box-shadow: 0 0 5px var(--color-bad-dark);
+}
+
+.radmin-field-error {
+  display: block;
+  margin-top: var(--size-1);
+  font-weight: var(--font-weight-6);
+  text-transform: uppercase;
+  font-size: var(--font-size-small);
+  color: var(--color-bad-dark);
 }
 
 .radmin-model-list header {
