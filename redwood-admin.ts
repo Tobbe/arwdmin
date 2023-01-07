@@ -1,5 +1,5 @@
 // Run me with
-// npx tsx redwood-admin
+// npx tsx redwood-admin /path/to/admin
 
 import fs from 'fs'
 import path from 'path'
@@ -19,7 +19,7 @@ import {
 import { moveRadminServices } from './services'
 import { addMainStyles } from './styling'
 import { updateRedwoodToml } from './redwoodToml'
-import { copyDatabaseUrl, generateAppName } from './radminInit'
+import { copyDatabaseUrl, cssOnly, generateAppName, getRwRoot } from './radminInit'
 
 console.log('Radmin v0.1.0')
 console.log()
@@ -27,9 +27,10 @@ console.log()
 // TODO: This should just be findRwRoot() when this is an npx command you run
 // inside your project
 const baseProjectRoot = findRwRoot(path.join(process.cwd(), '..', 'acm-store-rw'))
-const rwRoot = path.join(baseProjectRoot, '..', 'acm-admin')
 
-if (process.argv.includes('--css')) {
+const rwRoot = getRwRoot()
+
+if (cssOnly()) {
   addMainStyles(rwRoot)
 
   process.exit(0)
