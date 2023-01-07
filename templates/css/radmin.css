@@ -163,6 +163,12 @@ html {
   color: var(--color-text);
 }
 
+.radmin-label .radmin-required {
+  padding-left: var(--size-2);
+  font-weight: var(--font-weight-4);
+  font-style: italic;
+}
+
 .radmin-button-group {
   display: flex;
   justify-content: center;

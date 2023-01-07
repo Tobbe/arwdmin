@@ -42,6 +42,9 @@ const <%= model.pascalName %>Form: React.FC<Props> = ({ <%= model.camelName %>, 
             errorClassName="rw-label rw-label-error"
           >
             <%= renderData.displayName %>
+            <% if (field.isRequired) { %>
+              <span className="radmin-required">Required</span>
+            <% } %>
           </Label>
 
           <%_ if (renderData.description) { %>
