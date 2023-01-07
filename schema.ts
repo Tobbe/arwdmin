@@ -41,7 +41,7 @@ export async function getModelNames(rwRoot: string) {
   const modelNames: string[] = []
 
   for (const model of schema.datamodel.models) {
-    if (model.documentation === '@radmin skip') {
+    if (model.documentation?.includes('@radmin-skip')) {
       console.log('Skipping', model.name)
     } else {
       modelNames.push(model.name)
@@ -63,7 +63,9 @@ export async function getModelFields(rwRoot: string, modelName: string) {
     process.exit(1)
   }
 
-  return model.fields
+  return model.fields.filter(
+    (field) => !field.documentation?.includes('@radmin-skip')
+  )
 }
 
 export async function getEnums(rwRoot: string) {
