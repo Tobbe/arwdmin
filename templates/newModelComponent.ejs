@@ -7,7 +7,7 @@ import <%= model.pascalName %>Form from 'src/components/radmin/<%= model.pascalN
 import type { Create<%= model.pascalName %>Input } from 'types/graphql'
 
 const CREATE_<%= model.capitalName %>_MUTATION = gql`
-  mutation Create<%= model.pascalName %>Mutation($input: Create<%= model.pascalName %>Input!) {
+  mutation CreateRadmin<%= model.pascalName %>Mutation($input: Create<%= model.pascalName %>Input!) {
     create<%= model.pascalName %>(input: $input) {
       id
     }
@@ -20,7 +20,7 @@ const New<%= model.pascalName %> = () => {
     {
       onCompleted: () => {
         toast.success('<%= model.pascalName %> created')
-        navigate(routes.<%= model.camelPluralName %>())
+        navigate(routes.radmin<%= model.pascalPluralName %>())
       },
       onError: (error) => {
         toast.error(error.message)

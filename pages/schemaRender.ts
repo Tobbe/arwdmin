@@ -77,8 +77,6 @@ function getDefaultProp(type: string) {
 function getValidation(type: string, field: DMMF.Field) {
   switch (type) {
     case 'Boolean':
-    case 'Enum':
-    case 'EnumList':
       return ''
     case 'Json':
       return `{{ valueAsJSON: true${

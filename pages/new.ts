@@ -35,12 +35,14 @@ function generateNewModelPage({ pascalCaseModelName }: ModelNameVariants) {
 
 function generateNewModelComponent({
   pascalCaseModelName,
+  pascalCasePluralModelName,
   camelCaseModelName,
   camelCasePluralModelName,
   capitalModelName,
 }: ModelNameVariants) {
   const model = {
     pascalName: pascalCaseModelName,
+    pascalPluralName: pascalCasePluralModelName,
     camelName: camelCaseModelName,
     camelPluralName: camelCasePluralModelName,
     capitalName: capitalModelName,

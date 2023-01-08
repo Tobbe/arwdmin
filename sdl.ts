@@ -165,18 +165,55 @@ export async function generateSdls(
 
       const sdl = fs.readFileSync(sdlFilename, 'utf-8')
 
+      let inModelType = false
+      let inCreateModelInput = false
+      let inUpdateModelInput = false
+
       fs.writeFileSync(
         sdlFilename,
         prettify(
-          sdl.replace(
-            'type Query {',
-            `type ${modelNames.pascalCaseModelName}Page {\n` +
-              `  ${modelNames.camelCasePluralModelName}: [${modelNames.pascalCaseModelName}!]!\n` +
-              `  count: BigInt!\n` +
-              '}\n\n' +
-              'type Query {\n' +
-              ` ${modelNames.camelCaseModelName}Page(page: Int, q: String): ${modelNames.pascalCaseModelName}Page @requireAuth`
-          ),
+          sdl
+            .split('\n')
+            .filter((row) => {
+              // Remove fields that are skipped by @radmin-skip
+
+              if (row === '  type ' + name + ' {') {
+                inModelType = true
+              } else if (row === '  input Create' + name + 'Input {') {
+                inCreateModelInput = true
+              } else if (row === '  input Update' + name + 'Input {') {
+                inUpdateModelInput = true
+              }
+
+              if (row === '  }') {
+                inModelType = false
+                inCreateModelInput = false
+                inUpdateModelInput = false
+              }
+
+              if (!inModelType && !inCreateModelInput && !inUpdateModelInput) {
+                return true
+              }
+
+              const match = row.match(/    (\w+): /)
+
+              if (!match) {
+                return true
+              }
+
+              // Only keep the field if it's part of `modelFields`
+              return modelFields.find((field) => field.name === match[1])
+            })
+            .join('\n')
+            .replace(
+              'type Query {',
+              `type ${modelNames.pascalCaseModelName}Page {\n` +
+                `  ${modelNames.camelCasePluralModelName}: [${modelNames.pascalCaseModelName}!]!\n` +
+                `  count: BigInt!\n` +
+                '}\n\n' +
+                'type Query {\n' +
+                ` ${modelNames.camelCaseModelName}Page(page: Int, q: String): ${modelNames.pascalCaseModelName}Page @requireAuth`
+            ),
           'ts'
         )
       )
