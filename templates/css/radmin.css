@@ -19,6 +19,7 @@
   --color-bg: #ffffff;
 
   --color-bg-dark: #f9fafc;
+  --color-bg-highlight: #ebf3f0;
 
   --color-bg-menu: #05613b;
 
@@ -113,7 +114,7 @@ html {
 }
 
 .radmin-model-list .radmin-row-highlight {
-  background-color: var(--color-bg-light);
+  background-color: var(--color-bg-highlight);
 }
 
 .radmin-model-list td nav {
